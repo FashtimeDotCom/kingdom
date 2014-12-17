@@ -3,20 +3,43 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.acccount;
+package com.josue.credential.manager.account;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author Josue
  */
-public class Resource {
+@MappedSuperclass
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class Resource implements Serializable {
 
+    @Id
     private String uuid;
     private String href;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date_created", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date dateCreated;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_update", columnDefinition = "TIMESTAMP")
     private Date lastUpdate;
+
+    @PrePersist
+    public void init() {
+        this.uuid = UUID.randomUUID().toString();
+    }
 
     public String getUuid() {
         return uuid;
