@@ -14,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -39,6 +40,12 @@ public class Resource implements Serializable {
     @PrePersist
     public void init() {
         this.uuid = UUID.randomUUID().toString();
+        this.dateCreated = new Date();
+    }
+
+    @PreUpdate
+    public void updateLastUpdate() {
+        this.lastUpdate = new Date();
     }
 
     public String getUuid() {
