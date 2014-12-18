@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.account;
+package com.josue.credential.manager;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -52,7 +53,7 @@ public class Resource implements Serializable {
         return uuid;
     }
 
-    public void setUuid(String uuid) {
+    protected void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
@@ -82,11 +83,11 @@ public class Resource implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 13 * hash + (this.uuid != null ? this.uuid.hashCode() : 0);
-        hash = 13 * hash + (this.href != null ? this.href.hashCode() : 0);
-        hash = 13 * hash + (this.dateCreated != null ? this.dateCreated.hashCode() : 0);
-        hash = 13 * hash + (this.lastUpdate != null ? this.lastUpdate.hashCode() : 0);
+        int hash = 7;
+        hash = 19 * hash + Objects.hashCode(this.uuid);
+        hash = 19 * hash + Objects.hashCode(this.href);
+        hash = 19 * hash + Objects.hashCode(this.dateCreated);
+        hash = 19 * hash + Objects.hashCode(this.lastUpdate);
         return hash;
     }
 
@@ -99,16 +100,16 @@ public class Resource implements Serializable {
             return false;
         }
         final Resource other = (Resource) obj;
-        if ((this.uuid == null) ? (other.uuid != null) : !this.uuid.equals(other.uuid)) {
+        if (!Objects.equals(this.uuid, other.uuid)) {
             return false;
         }
-        if ((this.href == null) ? (other.href != null) : !this.href.equals(other.href)) {
+        if (!Objects.equals(this.href, other.href)) {
             return false;
         }
-        if (this.dateCreated != other.dateCreated && (this.dateCreated == null || !this.dateCreated.equals(other.dateCreated))) {
+        if (!Objects.equals(this.dateCreated, other.dateCreated)) {
             return false;
         }
-        if (this.lastUpdate != other.lastUpdate && (this.lastUpdate == null || !this.lastUpdate.equals(other.lastUpdate))) {
+        if (!Objects.equals(this.lastUpdate, other.lastUpdate)) {
             return false;
         }
         return true;

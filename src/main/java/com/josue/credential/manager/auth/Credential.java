@@ -5,42 +5,63 @@
  */
 package com.josue.credential.manager.auth;
 
-import javax.persistence.Entity;
-import javax.validation.constraints.NotNull;
+import com.josue.credential.manager.Resource;
+import com.josue.credential.manager.account.Manager;
+import java.util.Objects;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
 
 /**
  *
  * @author Josue
  */
-@Entity
-public class Credential extends AbstractCredential {
+@MappedSuperclass
+public class Credential extends Resource {
 
-    @NotNull
-    private String login;
-    @NotNull
-    private String password;
+    @OneToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
-    public String getLogin() {
-        return login;
+    @OneToOne(targetEntity = Manager.class)
+    @JoinColumn(name = "manager_uuid")
+    private Resource manager;
+
+    @Enumerated(EnumType.STRING)
+    private CredentialStatus status;
+
+    public Role getRole() {
+        return role;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
-    public String getPassword() {
-        return password;
+    public Resource getManager() {
+        return manager;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setManager(Resource manager) {
+        this.manager = manager;
+    }
+
+    public CredentialStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CredentialStatus status) {
+        this.status = status;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 59 * hash + (this.login != null ? this.login.hashCode() : 0);
-        hash = 59 * hash + (this.password != null ? this.password.hashCode() : 0);
+        hash = 97 * hash + Objects.hashCode(this.role);
+        hash = 97 * hash + Objects.hashCode(this.manager);
+        hash = 97 * hash + Objects.hashCode(this.status);
         return hash;
     }
 
@@ -53,10 +74,13 @@ public class Credential extends AbstractCredential {
             return false;
         }
         final Credential other = (Credential) obj;
-        if ((this.login == null) ? (other.login != null) : !this.login.equals(other.login)) {
+        if (!Objects.equals(this.role, other.role)) {
             return false;
         }
-        if ((this.password == null) ? (other.password != null) : !this.password.equals(other.password)) {
+        if (!Objects.equals(this.manager, other.manager)) {
+            return false;
+        }
+        if (this.status != other.status) {
             return false;
         }
         return true;

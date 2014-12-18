@@ -5,9 +5,13 @@
  */
 package com.josue.credential.manager.account;
 
+import com.josue.credential.manager.Resource;
 import java.util.Date;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -23,30 +27,31 @@ import javax.validation.constraints.NotNull;
 @Table(name = "manager_invitation")
 public class ManagerInvitation extends Resource {
 
-    @OneToOne(targetEntity = Manager.class)
-    @JoinColumn(name = "target_manager")
-    private Resource targetManager;
+    @NotNull
+    @Column(name = "target_email")
+    String targetEmail;
 
     @OneToOne(targetEntity = Manager.class)
     @JoinColumn(name = "author_manager")
     private Resource authorManager;
 
+    @NotNull
     private String token;
 
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "valid_until", columnDefinition = "TIMESTAMP")
+    @Column(name = "valid_until", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date validUntil;
 
     @NotNull
-    private boolean active;
+    @Enumerated(EnumType.STRING)
+    private ManagerInvitationStatus status;
 
-    public Resource getTargetManager() {
-        return targetManager;
+    public String getTargetEmail() {
+        return targetEmail;
     }
 
-    public void setTargetManager(Resource targetManager) {
-        this.targetManager = targetManager;
+    public void setTargetEmail(String targetEmail) {
+        this.targetEmail = targetEmail;
     }
 
     public Resource getAuthorManager() {
@@ -73,22 +78,22 @@ public class ManagerInvitation extends Resource {
         this.validUntil = validUntil;
     }
 
-    public boolean isActive() {
-        return active;
+    public ManagerInvitationStatus getStatus() {
+        return status;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(ManagerInvitationStatus status) {
+        this.status = status;
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 71 * hash + (this.targetManager != null ? this.targetManager.hashCode() : 0);
-        hash = 71 * hash + (this.authorManager != null ? this.authorManager.hashCode() : 0);
-        hash = 71 * hash + (this.token != null ? this.token.hashCode() : 0);
-        hash = 71 * hash + (this.validUntil != null ? this.validUntil.hashCode() : 0);
-        hash = 71 * hash + (this.active ? 1 : 0);
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.targetEmail);
+        hash = 97 * hash + Objects.hashCode(this.authorManager);
+        hash = 97 * hash + Objects.hashCode(this.token);
+        hash = 97 * hash + Objects.hashCode(this.validUntil);
+        hash = 97 * hash + Objects.hashCode(this.status);
         return hash;
     }
 
@@ -101,19 +106,19 @@ public class ManagerInvitation extends Resource {
             return false;
         }
         final ManagerInvitation other = (ManagerInvitation) obj;
-        if (this.targetManager != other.targetManager && (this.targetManager == null || !this.targetManager.equals(other.targetManager))) {
+        if (!Objects.equals(this.targetEmail, other.targetEmail)) {
             return false;
         }
-        if (this.authorManager != other.authorManager && (this.authorManager == null || !this.authorManager.equals(other.authorManager))) {
+        if (!Objects.equals(this.authorManager, other.authorManager)) {
             return false;
         }
-        if ((this.token == null) ? (other.token != null) : !this.token.equals(other.token)) {
+        if (!Objects.equals(this.token, other.token)) {
             return false;
         }
-        if (this.validUntil != other.validUntil && (this.validUntil == null || !this.validUntil.equals(other.validUntil))) {
+        if (!Objects.equals(this.validUntil, other.validUntil)) {
             return false;
         }
-        if (this.active != other.active) {
+        if (this.status != other.status) {
             return false;
         }
         return true;

@@ -5,6 +5,8 @@
  */
 package com.josue.credential.manager.account;
 
+import com.josue.credential.manager.Resource;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -16,12 +18,12 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Manager extends Resource {
 
-    @Column(name = "first_name")
     @NotNull
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "last_name")
     @NotNull
+    @Column(name = "last_name")
     private String lastName;
 
     @NotNull
@@ -49,6 +51,36 @@ public class Manager extends Resource {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.firstName);
+        hash = 17 * hash + Objects.hashCode(this.lastName);
+        hash = 17 * hash + Objects.hashCode(this.email);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Manager other = (Manager) obj;
+        if (!Objects.equals(this.firstName, other.firstName)) {
+            return false;
+        }
+        if (!Objects.equals(this.lastName, other.lastName)) {
+            return false;
+        }
+        if (!Objects.equals(this.email, other.email)) {
+            return false;
+        }
+        return true;
     }
 
 }

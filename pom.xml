@@ -105,6 +105,39 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+    
+    <profiles>
+        <profile>
+            <id>test-mysql</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-mysql</directory>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+        <profile>
+            <id>test-h2</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>src/test/resources-h2</directory>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+    </profiles>
+    
 
     <build>
         <finalName>credential-manager</finalName>
@@ -116,6 +149,19 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
+            </plugin>
+            <!-- Integration tests -->
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.18</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.account;
+package com.josue.credential.manager.business;
 
+import com.josue.credential.manager.Resource;
 import javax.persistence.Entity;
 
 /**
@@ -53,10 +54,7 @@ public class Document extends Resource {
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
-        if ((this.content == null) ? (other.content != null) : !this.content.equals(other.content)) {
-            return false;
-        }
-        return true;
+        return !((this.content == null) ? (other.content != null) : !this.content.equals(other.content));
     }
 
 }

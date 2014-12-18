@@ -22,7 +22,7 @@ import javax.persistence.Table;
 public class Role implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(unique = true)
@@ -34,7 +34,7 @@ public class Role implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
+    protected void setId(int id) {
         this.id = id;
     }
 

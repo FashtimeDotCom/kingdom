@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.auth;
+package com.josue.credential.manager.auth.shiro;
 
+import com.josue.credential.manager.auth.Role;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.shiro.authz.Permission;
