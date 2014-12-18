@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-integration-test-mysql</actionName>
+            <displayName>integration-test-mysql</displayName>
+            <goals>
+                <goal>failsafe:integration-test</goal>
+            </goals>
+            <activatedProfiles>
+                <activatedProfile>test-mysql</activatedProfile>
+            </activatedProfiles>
+        </action>
+    </actions>

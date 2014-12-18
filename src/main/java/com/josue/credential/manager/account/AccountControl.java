@@ -5,17 +5,25 @@
  */
 package com.josue.credential.manager.account;
 
+import com.josue.credential.manager.JpaRepository;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 /**
  *
  * @author iFood
  */
+@ApplicationScoped
 public class AccountControl {
-    
-    public ManagerInvitation invite(ManagerInvitation managerInvitation){
+
+    @Inject
+    JpaRepository repository;
+
+    public ManagerInvitation invite(ManagerInvitation managerInvitation) {
         return null;
     }
-    
-    public ManagerInvitation confirm(ManagerInvitation managerInvitation){
+
+    public ManagerInvitation confirm(ManagerInvitation managerInvitation) {
         return null;
     }
 }
