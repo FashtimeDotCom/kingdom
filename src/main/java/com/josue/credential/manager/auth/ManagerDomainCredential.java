@@ -6,7 +6,6 @@
 package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.Resource;
-import com.josue.credential.manager.account.Manager;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,9 +17,9 @@ import javax.persistence.Table;
  * @author Josue
  */
 @Entity
-@Table(name = "domain_manager_credential")
+@Table(name = "manager_domain_credential")
 //http://stackoverflow.com/questions/5127129/mapping-many-to-many-association-table-with-extra-columns
-public class DomainManagerCredential extends Resource {
+public class ManagerDomainCredential extends Resource {
 
     @ManyToOne
     @JoinColumn(name = "domain_uuid")
@@ -28,9 +27,11 @@ public class DomainManagerCredential extends Resource {
 
     @ManyToOne
     @JoinColumn(name = "credential_uuid")
-    private Manager manager;
+    private ManagerCredential credential;
 
+    //Role for this domain
     @OneToOne
+    @JoinColumn(name = "domain_role_uuid")
     private Role role;
 
     public Domain getDomain() {
@@ -41,12 +42,12 @@ public class DomainManagerCredential extends Resource {
         this.domain = domain;
     }
 
-    public Manager getManager() {
-        return manager;
+    public ManagerCredential getCredential() {
+        return credential;
     }
 
-    public void setManager(Manager manager) {
-        this.manager = manager;
+    public void setCredential(ManagerCredential credential) {
+        this.credential = credential;
     }
 
     public Role getRole() {

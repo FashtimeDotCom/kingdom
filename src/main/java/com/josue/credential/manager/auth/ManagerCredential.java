@@ -8,8 +8,6 @@ package com.josue.credential.manager.auth;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -22,9 +20,6 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 //http://stackoverflow.com/questions/1733560/making-foreign-keys-unique-in-jpa
-@Table(name = "manager_credential", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"manager_uuid"})
-})
 public class ManagerCredential extends Credential {
 
     @NotNull
@@ -33,12 +28,28 @@ public class ManagerCredential extends Credential {
     @NotNull
     private String password;
 
-    //Informations about this Credential
-    @OneToMany(mappedBy = "owner")
+    //*** START - Informations about this Credential ***
+    //Owned domains
+    @OneToMany(mappedBy = "owner")//TODO fetch type Lazy ?
     private Set<Domain> ownedDomains;
 
-    @OneToMany(mappedBy = "manager")
-    private Set<DomainManagerCredential> domains;
+    //Domain credentials
+    @OneToMany(mappedBy = "credential")
+    private Set<ManagerDomainCredential> domains;
+
+    @OneToMany(mappedBy = "ownerManagerCredential")
+    private Set<APIDomainCredential> apiCredentials;
+
+    //*** END ***
+    @Override
+    public Object getPrincipal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object getCredentials() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     public String getLogin() {
         return login;
@@ -56,15 +67,28 @@ public class ManagerCredential extends Credential {
         this.password = password;
     }
 
-    @Override
-    public Object getPrincipal() {
-        return login;
+    public Set<Domain> getOwnedDomains() {
+        return ownedDomains;
     }
 
-    @Override
-    public Object getCredentials() {
-        //TODO check
-        return password;
+    public void setOwnedDomains(Set<Domain> ownedDomains) {
+        this.ownedDomains = ownedDomains;
+    }
+
+    public Set<ManagerDomainCredential> getDomains() {
+        return domains;
+    }
+
+    public void setDomains(Set<ManagerDomainCredential> domains) {
+        this.domains = domains;
+    }
+
+    public Set<APIDomainCredential> getApiCredentials() {
+        return apiCredentials;
+    }
+
+    public void setApiCredentials(Set<APIDomainCredential> apiCredentials) {
+        this.apiCredentials = apiCredentials;
     }
 
 }

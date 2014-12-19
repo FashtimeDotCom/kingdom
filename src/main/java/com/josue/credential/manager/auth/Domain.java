@@ -34,7 +34,7 @@ public class Domain extends Resource {
     private ManagerCredential owner;
 
     @OneToMany(mappedBy = "domain", cascade = CascadeType.ALL)//TODO check cascade
-    private Set<DomainManagerCredential> domainManagers;
+    private Set<ManagerDomainCredential> domainManagers;
 
     public String getName() {
         return name;
@@ -68,11 +68,11 @@ public class Domain extends Resource {
         this.owner = owner;
     }
 
-    public Set<DomainManagerCredential> getDomainManagers() {
+    public Set<ManagerDomainCredential> getDomainManagers() {
         return domainManagers;
     }
 
-    public void setDomainManagers(Set<DomainManagerCredential> domainManagers) {
+    public void setDomainManagers(Set<ManagerDomainCredential> domainManagers) {
         this.domainManagers = domainManagers;
     }
 

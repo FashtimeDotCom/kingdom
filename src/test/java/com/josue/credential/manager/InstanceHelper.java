@@ -42,8 +42,24 @@ public abstract class InstanceHelper {
         manager.setEmail("josue@gmail.com");
         manager.setFirstName("josue");
         manager.setLastName("Eduardo");
+//        manager.set
 
         return manager;
     }
 
+//    public static ManagerCredential createManagerCredential() {
+//        ManagerCredential credential = new ManagerCredential();
+//        credential.setLogin("login123");
+////        credential.se
+//    }
+//    public static Domain creteDomain() {
+//        return creteDomain(cre)
+//    }
+//
+//    public static Domain creteDomain(ManagerCredential owner) {
+//        Domain domain = new Domain();
+//        domain.setName("DEFAULT-DOMAIN");
+//        domain.setDescription("A default domain");
+//        domain.setOwner(null);
+//    }
 }
