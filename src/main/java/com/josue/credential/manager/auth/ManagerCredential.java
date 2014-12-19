@@ -5,29 +5,40 @@
  */
 package com.josue.credential.manager.auth;
 
-import javax.persistence.AssociationOverride;
+import java.util.Set;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author Josue
  */
-@Entity
+
 /*
  * A Manager can have multiple APICredentials, but only one Credential...
  */
-@AssociationOverride(name = "manager",
-        joinColumns = @JoinColumn(name = "manager_uuid", unique = true))
-@Table(name = "manager_credential")
+@Entity
+//http://stackoverflow.com/questions/1733560/making-foreign-keys-unique-in-jpa
+@Table(name = "manager_credential", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"manager_uuid"})
+})
 public class ManagerCredential extends Credential {
 
     @NotNull
     private String login;
+
     @NotNull
     private String password;
+
+    //Informations about this Credential
+    @OneToMany(mappedBy = "owner")
+    private Set<Domain> ownedDomains;
+
+    @OneToMany(mappedBy = "manager")
+    private Set<DomainManagerCredential> domains;
 
     public String getLogin() {
         return login;
@@ -46,29 +57,14 @@ public class ManagerCredential extends Credential {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + (this.login != null ? this.login.hashCode() : 0);
-        hash = 59 * hash + (this.password != null ? this.password.hashCode() : 0);
-        return hash;
+    public Object getPrincipal() {
+        return login;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ManagerCredential other = (ManagerCredential) obj;
-        if ((this.login == null) ? (other.login != null) : !this.login.equals(other.login)) {
-            return false;
-        }
-        if ((this.password == null) ? (other.password != null) : !this.password.equals(other.password)) {
-            return false;
-        }
-        return true;
+    public Object getCredentials() {
+        //TODO check
+        return password;
     }
 
 }

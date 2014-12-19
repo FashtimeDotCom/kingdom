@@ -8,8 +8,6 @@ package com.josue.credential.manager.auth;
 import com.josue.credential.manager.ArquillianTestBase;
 import com.josue.credential.manager.InstanceHelper;
 import com.josue.credential.manager.JpaRepository;
-import com.josue.credential.manager.account.Manager;
-import java.util.UUID;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -53,45 +51,44 @@ public class AuthPersistenceIT {
         assertEquals(role, foundRole);
     }
 
-    @Test
-    public void testApiCredential() {
-        Manager manager = InstanceHelper.createManager();
-        repository.create(manager);
-
-        Role role = InstanceHelper.createRole();
-        repository.create(role);
-
-        APICredential credential = new APICredential();
-        credential.setApiKey(UUID.randomUUID().toString());
-        credential.setRole(role);
-        credential.setStatus(CredentialStatus.ACTIVE);
-        credential.setManager(manager);
-
-        repository.create(credential);
-
-        APICredential foundCredential = repository.find(APICredential.class, credential.getUuid());
-        assertEquals(credential, foundCredential);
-    }
-
-    @Test
-    public void testManagerCredential() {
-        Manager manager = InstanceHelper.createManager();
-        repository.create(manager);
-
-        Role role = InstanceHelper.createRole();
-        repository.create(role);
-
-        ManagerCredential credential = new ManagerCredential();
-        credential.setLogin("user.login");
-        credential.setManager(manager);
-        credential.setPassword("manager-psw-123");
-        credential.setRole(role);
-        credential.setStatus(CredentialStatus.ACTIVE);
-
-        repository.create(credential);
-
-        ManagerCredential foundCredential = repository.find(ManagerCredential.class, credential.getUuid());
-        assertEquals(credential, foundCredential);
-    }
-
+//    @Test
+//    public void testApiCredential() {
+//        Manager manager = InstanceHelper.createManager();
+//        repository.create(manager);
+//
+//        Role role = InstanceHelper.createRole();
+//        repository.create(role);
+//
+//        APICredential credential = new APICredential();
+//        credential.setApiKey(UUID.randomUUID().toString());
+//        credential.setRole(role);
+//        credential.setStatus(CredentialStatus.ACTIVE);
+//        credential.setManager(manager);
+//
+//        repository.create(credential);
+//
+//        APICredential foundCredential = repository.find(APICredential.class, credential.getUuid());
+//        assertEquals(credential, foundCredential);
+//    }
+//
+//    @Test
+//    public void testManagerCredential() {
+//        Manager manager = InstanceHelper.createManager();
+//        repository.create(manager);
+//
+//        Role role = InstanceHelper.createRole();
+//        repository.create(role);
+//
+//        ManagerCredential credential = new ManagerCredential();
+//        credential.setLogin("user.login");
+//        credential.setManager(manager);
+//        credential.setPassword("manager-psw-123");
+//        credential.setRole(role);
+//        credential.setStatus(CredentialStatus.ACTIVE);
+//
+//        repository.create(credential);
+//
+//        ManagerCredential foundCredential = repository.find(ManagerCredential.class, credential.getUuid());
+//        assertEquals(credential, foundCredential);
+//    }
 }

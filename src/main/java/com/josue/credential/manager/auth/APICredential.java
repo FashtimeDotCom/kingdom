@@ -5,10 +5,8 @@
  */
 package com.josue.credential.manager.auth;
 
-import javax.persistence.AssociationOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 /**
@@ -20,9 +18,16 @@ import javax.persistence.Table;
 /*
  * A Manager can have multiple APICredentials, but only one Credential... see Credential class
  */
-@AssociationOverride(name = "manager",
-        joinColumns = @JoinColumn(name = "manager_uuid", unique = false))
+//@AssociationOverride(name = "manager",
+//        joinColumns = @JoinColumn(name = "manager_uuid", unique = false))
 public class APICredential extends Credential {
+
+    public APICredential() {
+    }
+
+    public APICredential(String apiKey) {
+        this.apiKey = apiKey;
+    }
 
     @Column(name = "api_key")
     private String apiKey;
@@ -52,6 +57,16 @@ public class APICredential extends Credential {
         }
         final APICredential other = (APICredential) obj;
         return !((this.apiKey == null) ? (other.apiKey != null) : !this.apiKey.equals(other.apiKey));
+    }
+
+    @Override
+    public Object getCredentials() {
+        return apiKey; //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object getPrincipal() {
+        return apiKey; //To change body of generated methods, choose Tools | Templates.
     }
 
 }

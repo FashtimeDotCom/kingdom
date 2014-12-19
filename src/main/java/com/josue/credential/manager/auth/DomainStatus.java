@@ -3,19 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.account;
-
-import javax.enterprise.context.ApplicationScoped;
+package com.josue.credential.manager.auth;
 
 /**
  *
  * @author Josue
  */
-@ApplicationScoped
-public class AccountService {
+public enum DomainStatus {
 
-    public void sentInvitation() {
-
-    }
-
+    ACTIVE, INACTIVE
 }

@@ -6,9 +6,10 @@
 package com.josue.credential.manager.account;
 
 import com.josue.credential.manager.Resource;
-import java.util.Objects;
+import com.josue.credential.manager.auth.ManagerCredential;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -28,6 +29,12 @@ public class Manager extends Resource {
 
     @NotNull
     private String email;
+
+    //Global account
+    //Owns the rel
+    //store the main login permissions
+    @OneToOne
+    private ManagerCredential credential;
 
     public String getFirstName() {
         return firstName;
@@ -53,34 +60,12 @@ public class Manager extends Resource {
         this.email = email;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 17 * hash + Objects.hashCode(this.firstName);
-        hash = 17 * hash + Objects.hashCode(this.lastName);
-        hash = 17 * hash + Objects.hashCode(this.email);
-        return hash;
+    public ManagerCredential getCredential() {
+        return credential;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Manager other = (Manager) obj;
-        if (!Objects.equals(this.firstName, other.firstName)) {
-            return false;
-        }
-        if (!Objects.equals(this.lastName, other.lastName)) {
-            return false;
-        }
-        if (!Objects.equals(this.email, other.email)) {
-            return false;
-        }
-        return true;
+    public void setCredential(ManagerCredential credential) {
+        this.credential = credential;
     }
 
 }
