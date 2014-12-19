@@ -51,6 +51,11 @@ public class AuthPersistenceIT {
         assertEquals(role, foundRole);
     }
 
+    @Test
+    public void testDomain() {
+
+    }
+
 //    @Test
 //    public void testApiCredential() {
 //        Manager manager = InstanceHelper.createManager();
