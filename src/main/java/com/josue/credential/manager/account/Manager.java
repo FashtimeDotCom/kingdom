@@ -6,9 +6,14 @@
 package com.josue.credential.manager.account;
 
 import com.josue.credential.manager.Resource;
+import com.josue.credential.manager.auth.APIDomainCredential;
+import com.josue.credential.manager.auth.Domain;
 import com.josue.credential.manager.auth.ManagerCredential;
+import com.josue.credential.manager.auth.ManagerDomainCredential;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -40,6 +45,19 @@ public class Manager extends Resource {
     //store the main login permissions
     @OneToOne
     private ManagerCredential credential;
+    
+    //*** START - Informations about this Credential ***
+    //Owned domains
+    @OneToMany(mappedBy = "owner")//TODO fetch type Lazy ?
+    private Set<Domain> ownedDomains;
+
+    //Domain credentials
+    @OneToMany(mappedBy = "manager")
+    private Set<ManagerDomainCredential> domains;
+
+    @OneToMany(mappedBy = "manager")
+    private Set<APIDomainCredential> apiCredentials;
+    //*** END ***
 
     public String getFirstName() {
         return firstName;
@@ -72,5 +90,31 @@ public class Manager extends Resource {
     public void setCredential(ManagerCredential credential) {
         this.credential = credential;
     }
+
+    public Set<Domain> getOwnedDomains() {
+        return ownedDomains;
+    }
+
+    public void setOwnedDomains(Set<Domain> ownedDomains) {
+        this.ownedDomains = ownedDomains;
+    }
+
+    public Set<ManagerDomainCredential> getDomains() {
+        return domains;
+    }
+
+    public void setDomains(Set<ManagerDomainCredential> domains) {
+        this.domains = domains;
+    }
+
+    public Set<APIDomainCredential> getApiCredentials() {
+        return apiCredentials;
+    }
+
+    public void setApiCredentials(Set<APIDomainCredential> apiCredentials) {
+        this.apiCredentials = apiCredentials;
+    }
+    
+    
 
 }

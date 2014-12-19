@@ -64,7 +64,6 @@ public class APICredentialRealm extends AuthorizingRealm {
 
         Set<Permission> permissions = new HashSet<>();
         permissions.add(perm);
-
         info.setObjectPermissions(permissions);
 
         info.setRoles(new HashSet<>(Arrays.asList(fetchedDomainName)));

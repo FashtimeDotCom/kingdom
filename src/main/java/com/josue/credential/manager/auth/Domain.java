@@ -6,6 +6,7 @@
 package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.Resource;
+import com.josue.credential.manager.account.Manager;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -30,50 +31,10 @@ public class Domain extends Resource {
 
 //    //TODO other properties
     @ManyToOne
-    @JoinColumn(name = "owner_credential_uuid")
-    private ManagerCredential owner;
+    @JoinColumn(name = "owner_uuid")
+    private Manager owner;
 
     @OneToMany(mappedBy = "domain", cascade = CascadeType.ALL)//TODO check cascade
     private Set<ManagerDomainCredential> domainManagers;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public DomainStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(DomainStatus status) {
-        this.status = status;
-    }
-
-    public ManagerCredential getOwner() {
-        return owner;
-    }
-
-    public void setOwner(ManagerCredential owner) {
-        this.owner = owner;
-    }
-
-    public Set<ManagerDomainCredential> getDomainManagers() {
-        return domainManagers;
-    }
-
-    public void setDomainManagers(Set<ManagerDomainCredential> domainManagers) {
-        this.domainManagers = domainManagers;
-    }
 
 }

@@ -6,6 +6,7 @@
 package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.Resource;
+import com.josue.credential.manager.account.Manager;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,36 +27,12 @@ public class ManagerDomainCredential extends Resource {
     private Domain domain;
 
     @ManyToOne
-    @JoinColumn(name = "credential_uuid")
-    private ManagerCredential credential;
+    @JoinColumn(name = "manager_uuid")
+    private Manager manager;
 
     //Role for this domain
     @OneToOne
     @JoinColumn(name = "domain_role_uuid")
     private Role role;
-
-    public Domain getDomain() {
-        return domain;
-    }
-
-    public void setDomain(Domain domain) {
-        this.domain = domain;
-    }
-
-    public ManagerCredential getCredential() {
-        return credential;
-    }
-
-    public void setCredential(ManagerCredential credential) {
-        this.credential = credential;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 
 }
