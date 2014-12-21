@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.shiro.api;
 
-import com.josue.credential.manager.JpaRepository;
+import com.josue.credential.manager.account.AccountRepository;
 import com.josue.credential.manager.auth.APICredential;
 import com.josue.credential.manager.auth.shiro.AccessLevelPermission;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ public class APICredentialRealm extends AuthorizingRealm {
 
     //Here we can inject other beans because 'JpaRepository' is CDI aware (see CustomEnvironmentLoaderListener)
     @Inject
-    JpaRepository persistence;
+    AccountRepository persistence;
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {

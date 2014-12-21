@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.shiro;
 
-import com.josue.credential.manager.JpaRepository;
+import com.josue.credential.manager.account.AccountRepository;
 import com.josue.credential.manager.auth.APICredential;
 import javax.inject.Inject;
 import org.apache.shiro.authc.AuthenticationException;
@@ -22,7 +22,7 @@ public class CDIAwareJPARealm extends AuthenticatingRealm {
 
     //Here we can inject other beans because 'CDIAwareJPARealm' is CDI aware (see CustomEnvironmentLoaderListener)
     @Inject
-    JpaRepository persistence;
+    AccountRepository persistence;
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {

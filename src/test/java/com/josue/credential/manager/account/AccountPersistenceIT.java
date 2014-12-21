@@ -7,10 +7,7 @@ package com.josue.credential.manager.account;
 
 import com.josue.credential.manager.ArquillianTestBase;
 import com.josue.credential.manager.InstanceHelper;
-import com.josue.credential.manager.JpaRepository;
-import com.josue.credential.manager.account.Manager;
-import com.josue.credential.manager.account.ManagerInvitation;
-import com.josue.credential.manager.account.ManagerInvitationStatus;
+import com.josue.credential.manager.auth.ManagerCredential;
 import java.util.UUID;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -44,12 +41,14 @@ public class AccountPersistenceIT {
     EntityManager em;
 
     @Inject
-    JpaRepository repository;
+    AccountRepository repository;
 
     @Test
     public void testCreateManager() {
+
         Manager manager = InstanceHelper.createManager();
-        repository.create(manager);
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
 
         Manager foundManager = repository.find(Manager.class, manager.getUuid());
         assertEquals(manager, foundManager);
@@ -57,11 +56,12 @@ public class AccountPersistenceIT {
 
     @Test
     public void testManagerInvitation() {
-        ManagerInvitation invitation = new ManagerInvitation();
 
         Manager authorManager = InstanceHelper.createManager();
-        repository.create(authorManager);
+        ManagerCredential credential = InstanceHelper.createManagerCredential(authorManager);
+        repository.create(credential);
 
+        ManagerInvitation invitation = new ManagerInvitation();
         invitation.setAuthorManager(authorManager);
         invitation.setTargetEmail("eduardo@gmail.com");
         invitation.setStatus(ManagerInvitationStatus.CREATED);
@@ -75,14 +75,7 @@ public class AccountPersistenceIT {
         assertNotNull(invitation.getToken());
         assertNotNull(invitation.getTargetEmail());
 
-        invitation.getValidUntil().compareTo(foundInvitation.getValidUntil());
-        invitation.getValidUntil().equals(foundInvitation.getValidUntil());
-        if (invitation.getValidUntil().getTime() == foundInvitation.getValidUntil().getTime()) {
-
-        }
-
         assertEquals(invitation, foundInvitation);
 
     }
-
 }

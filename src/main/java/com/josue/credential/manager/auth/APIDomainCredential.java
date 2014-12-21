@@ -5,36 +5,68 @@
  */
 package com.josue.credential.manager.auth;
 
-import com.josue.credential.manager.Resource;
-import com.josue.credential.manager.account.Manager;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author Josue
  */
 @Entity
-@Table(name = "api_domain_credential")
-public class APIDomainCredential extends Resource {
+@Table(name = "api_domain_credential", uniqueConstraints
+        = @UniqueConstraint(columnNames = {"domain_uuid", "api_credential_uuid"}))
+public class APIDomainCredential extends DomainCredential {
 
-    @ManyToOne
-    @JoinColumn(name = "domain_uuid")
-    private Domain domain;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "api_credential_uuid")
     private APICredential credential;
 
-    @OneToOne
-    @JoinColumn(name = "role_uuid")
-    private Role role;
+    public String getName() {
+        return name;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "manager_uuid")
-    private Manager manager;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public APICredential getCredential() {
+        return credential;
+    }
+
+    public void setCredential(APICredential credential) {
+        this.credential = credential;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.name);
+        hash = 97 * hash + Objects.hashCode(this.credential);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final APIDomainCredential other = (APIDomainCredential) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.credential, other.credential)) {
+            return false;
+        }
+        return true;
+    }
 
 }

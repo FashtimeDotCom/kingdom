@@ -5,8 +5,10 @@
  */
 package com.josue.credential.manager.auth;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -18,7 +20,8 @@ import javax.validation.constraints.NotNull;
  * A Manager can have multiple APICredentials, but only one Credential...
  */
 @Entity
-@Table(name = "manager_credential")
+@Table(name = "manager_credential", uniqueConstraints
+        = @UniqueConstraint(columnNames = {"login"}))
 //http://stackoverflow.com/questions/1733560/making-foreign-keys-unique-in-jpa
 public class ManagerCredential extends Credential {
 
@@ -27,7 +30,6 @@ public class ManagerCredential extends Credential {
 
     @NotNull
     private String password;
-
 
     //*** END ***
     @Override
@@ -40,5 +42,46 @@ public class ManagerCredential extends Credential {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.login);
+        hash = 67 * hash + Objects.hashCode(this.password);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ManagerCredential other = (ManagerCredential) obj;
+        if (!Objects.equals(this.login, other.login)) {
+            return false;
+        }
+        if (!Objects.equals(this.password, other.password)) {
+            return false;
+        }
+        return true;
+    }
+
 }

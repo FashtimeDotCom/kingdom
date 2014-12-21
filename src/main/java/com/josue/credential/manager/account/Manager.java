@@ -6,15 +6,9 @@
 package com.josue.credential.manager.account;
 
 import com.josue.credential.manager.Resource;
-import com.josue.credential.manager.auth.APIDomainCredential;
-import com.josue.credential.manager.auth.Domain;
-import com.josue.credential.manager.auth.ManagerCredential;
-import com.josue.credential.manager.auth.ManagerDomainCredential;
-import java.util.Set;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -25,11 +19,11 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "manager", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"credential_uuid"})
+    @UniqueConstraint(columnNames = {"email"})
 })
 public class Manager extends Resource {
 
-    @NotNull
+    @NotNull//TODO check JSRs @NotNull on jaxrs
     @Column(name = "first_name")
     private String firstName;
 
@@ -39,25 +33,6 @@ public class Manager extends Resource {
 
     @NotNull
     private String email;
-
-    //Global account
-    //Owns the rel
-    //store the main login permissions
-    @OneToOne
-    private ManagerCredential credential;
-    
-    //*** START - Informations about this Credential ***
-    //Owned domains
-    @OneToMany(mappedBy = "owner")//TODO fetch type Lazy ?
-    private Set<Domain> ownedDomains;
-
-    //Domain credentials
-    @OneToMany(mappedBy = "manager")
-    private Set<ManagerDomainCredential> domains;
-
-    @OneToMany(mappedBy = "manager")
-    private Set<APIDomainCredential> apiCredentials;
-    //*** END ***
 
     public String getFirstName() {
         return firstName;
@@ -83,38 +58,34 @@ public class Manager extends Resource {
         this.email = email;
     }
 
-    public ManagerCredential getCredential() {
-        return credential;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.firstName);
+        hash = 53 * hash + Objects.hashCode(this.lastName);
+        hash = 53 * hash + Objects.hashCode(this.email);
+        return hash;
     }
 
-    public void setCredential(ManagerCredential credential) {
-        this.credential = credential;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Manager other = (Manager) obj;
+        if (!Objects.equals(this.firstName, other.firstName)) {
+            return false;
+        }
+        if (!Objects.equals(this.lastName, other.lastName)) {
+            return false;
+        }
+        if (!Objects.equals(this.email, other.email)) {
+            return false;
+        }
+        return true;
     }
-
-    public Set<Domain> getOwnedDomains() {
-        return ownedDomains;
-    }
-
-    public void setOwnedDomains(Set<Domain> ownedDomains) {
-        this.ownedDomains = ownedDomains;
-    }
-
-    public Set<ManagerDomainCredential> getDomains() {
-        return domains;
-    }
-
-    public void setDomains(Set<ManagerDomainCredential> domains) {
-        this.domains = domains;
-    }
-
-    public Set<APIDomainCredential> getApiCredentials() {
-        return apiCredentials;
-    }
-
-    public void setApiCredentials(Set<APIDomainCredential> apiCredentials) {
-        this.apiCredentials = apiCredentials;
-    }
-    
-    
 
 }

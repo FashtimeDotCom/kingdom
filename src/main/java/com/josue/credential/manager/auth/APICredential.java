@@ -8,18 +8,13 @@ package com.josue.credential.manager.auth;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-/**
- *
- * @author Josue
- */
-@Entity
-@Table(name = "api_credential")
 /*
  * A Manager can have multiple APICredentials, but only one Credential... see Credential class
  */
-//@AssociationOverride(name = "manager",
-//        joinColumns = @JoinColumn(name = "manager_uuid", unique = false))
+@Entity
+@Table(name = "api_credential", uniqueConstraints = @UniqueConstraint(columnNames = {"api_key"}))
 public class APICredential extends Credential {
 
     public APICredential() {

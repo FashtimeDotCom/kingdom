@@ -7,6 +7,8 @@ package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.Resource;
 import com.josue.credential.manager.account.Manager;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
@@ -22,7 +24,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 public abstract class Credential extends Resource implements AuthenticationToken {
 
     //enforce relationship
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "manager_uuid")
     private Manager manager;
 
@@ -44,6 +46,32 @@ public abstract class Credential extends Resource implements AuthenticationToken
 
     public void setStatus(CredentialStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.manager);
+        hash = 29 * hash + Objects.hashCode(this.status);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Credential other = (Credential) obj;
+        if (!Objects.equals(this.manager, other.manager)) {
+            return false;
+        }
+        if (this.status != other.status) {
+            return false;
+        }
+        return true;
     }
 
 }

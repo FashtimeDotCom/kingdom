@@ -5,7 +5,9 @@
  */
 package com.josue.credential.manager;
 
-import com.josue.credential.manager.auth.Role;
+import com.josue.credential.manager.account.AccountRepository;
+import com.josue.credential.manager.account.Manager;
+import com.josue.credential.manager.auth.ManagerCredential;
 import com.josue.credential.manager.liquibase.LiquibaseHelper;
 import java.io.File;
 import javax.inject.Inject;
@@ -58,16 +60,16 @@ public class JpaTest {
     EntityManager em;
 
     @Inject
-    JpaRepository repository;
+    AccountRepository repository;
 
     @Test
-    public void testRole() {
-        Role role = InstanceHelper.createRole();
-        repository.create(role);
+    public void testCreateManager() {
+        Manager manager = InstanceHelper.createManager();
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
 
-        Role foundRole = repository.find(Role.class, role.getId());
-
-        assertEquals(role, foundRole);
+        Manager foundManager = repository.find(Manager.class, manager.getUuid());
+        assertEquals(manager, foundManager);
     }
 
 }

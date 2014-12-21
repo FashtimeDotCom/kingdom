@@ -5,7 +5,6 @@
  */
 package com.josue.credential.manager.account;
 
-import com.josue.credential.manager.JpaRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -17,7 +16,7 @@ import javax.inject.Inject;
 public class AccountControl {
 
     @Inject
-    JpaRepository repository;
+    AccountRepository repository;
 
     public ManagerInvitation invite(ManagerInvitation managerInvitation) {
         return null;

@@ -7,7 +7,8 @@ package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.ArquillianTestBase;
 import com.josue.credential.manager.InstanceHelper;
-import com.josue.credential.manager.JpaRepository;
+import com.josue.credential.manager.account.AccountRepository;
+import com.josue.credential.manager.account.Manager;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -39,7 +40,7 @@ public class AuthPersistenceIT {
     EntityManager em;
 
     @Inject
-    JpaRepository repository;
+    AccountRepository repository;
 
     @Test
     public void testRole() {
@@ -47,53 +48,84 @@ public class AuthPersistenceIT {
         repository.create(role);
 
         Role foundRole = repository.find(Role.class, role.getId());
-
         assertEquals(role, foundRole);
     }
 
     @Test
     public void testDomain() {
+        Manager manager = InstanceHelper.createManager();
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
+
+        Domain domain = InstanceHelper.createDomain(manager);
+        repository.create(domain);
+
+        Domain foundDomain = repository.find(Domain.class, domain.getUuid());
+        assertEquals(domain, foundDomain);
 
     }
 
-//    @Test
-//    public void testApiCredential() {
-//        Manager manager = InstanceHelper.createManager();
-//        repository.create(manager);
-//
-//        Role role = InstanceHelper.createRole();
-//        repository.create(role);
-//
-//        APICredential credential = new APICredential();
-//        credential.setApiKey(UUID.randomUUID().toString());
-//        credential.setRole(role);
-//        credential.setStatus(CredentialStatus.ACTIVE);
-//        credential.setManager(manager);
-//
-//        repository.create(credential);
-//
-//        APICredential foundCredential = repository.find(APICredential.class, credential.getUuid());
-//        assertEquals(credential, foundCredential);
-//    }
-//
-//    @Test
-//    public void testManagerCredential() {
-//        Manager manager = InstanceHelper.createManager();
-//        repository.create(manager);
-//
-//        Role role = InstanceHelper.createRole();
-//        repository.create(role);
-//
-//        ManagerCredential credential = new ManagerCredential();
-//        credential.setLogin("user.login");
-//        credential.setManager(manager);
-//        credential.setPassword("manager-psw-123");
-//        credential.setRole(role);
-//        credential.setStatus(CredentialStatus.ACTIVE);
-//
-//        repository.create(credential);
-//
-//        ManagerCredential foundCredential = repository.find(ManagerCredential.class, credential.getUuid());
-//        assertEquals(credential, foundCredential);
-//    }
+    @Test
+    public void testApiCredential() {
+        Manager manager = InstanceHelper.createManager();
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
+
+        APICredential foundCredential = repository.find(APICredential.class, credential.getUuid());
+        assertEquals(credential, foundCredential);
+    }
+
+    @Test
+    public void testManagerCredential() {
+        Manager manager = InstanceHelper.createManager();
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
+
+        ManagerCredential foundCredential = repository.find(ManagerCredential.class, credential.getUuid());
+        assertEquals(credential, foundCredential);
+    }
+
+    @Test
+    public void testApiDomainCredential() {
+        Manager manager = InstanceHelper.createManager();
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
+
+        Domain domain = InstanceHelper.createDomain(manager);
+        repository.create(domain);
+
+        APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
+        repository.create(credapiCredential);
+
+        Role role = InstanceHelper.createRole();
+        repository.create(role);
+
+        APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, role);
+        repository.create(domainCredential);
+
+        APIDomainCredential foundDomainCredential = repository.find(APIDomainCredential.class, domainCredential.getUuid());
+        assertEquals(domainCredential, foundDomainCredential);
+    }
+
+    @Test
+    public void testManagerDomainCredential() {
+        Manager manager = InstanceHelper.createManager();
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
+
+        Domain domain = InstanceHelper.createDomain(manager);
+        repository.create(domain);
+
+        ManagerCredential managerCredential = InstanceHelper.createManagerCredential(manager);
+        repository.create(managerCredential);
+
+        Role role = InstanceHelper.createRole();
+        repository.create(role);
+
+        ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, managerCredential, role);
+        repository.create(domainCredential);
+
+        ManagerDomainCredential foundDomainCredential = repository.find(ManagerDomainCredential.class, domainCredential.getUuid());
+        assertEquals(domainCredential, foundDomainCredential);
+    }
 }

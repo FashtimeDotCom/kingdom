@@ -20,7 +20,7 @@ import javax.transaction.Transactional;
 public class JpaRepository {
 
     @PersistenceContext
-    private EntityManager em;
+    protected EntityManager em;
 
     public <T> void create(T entity) {
         em.persist(entity);
