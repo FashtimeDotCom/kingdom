@@ -36,12 +36,17 @@ public class APICredentialRealm extends AuthorizingRealm {
     @Inject
     AccountRepository persistence;
 
+    public APICredentialRealm() {
+        super();
+        setAuthenticationTokenClass(APICredential.class);
+    }
+
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {
         APICredential token = (APICredential) authToken;
 
         //Make use of JPA
-        APICredential apiCredentialToken = persistence.find(APICredential.class, token.getApiKey());
+        APICredential apiCredentialToken = persistence.findByToken(token.getApiKey());
 
         if (apiCredentialToken != null) {
             return new SimpleAuthenticationInfo(apiCredentialToken.getUuid(), apiCredentialToken.getCredentials(), getName());

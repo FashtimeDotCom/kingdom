@@ -5,6 +5,7 @@
  */
 package com.josue.credential.manager.account;
 
+import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -22,6 +23,8 @@ import javax.ws.rs.core.UriInfo;
 @RequestScoped
 public class AccountRest {
 
+    private static final Logger LOG = Logger.getLogger(AccountRest.class.getName());
+
     @Context
     private UriInfo context;
 
@@ -31,6 +34,14 @@ public class AccountRest {
     @GET
     @Produces("text/plain")
     public String getAccount() {
+//        Subject subject = SecurityUtils.getSubject();
+//        LOG.log(Level.INFO, subject.getPrincipal().toString());
+        //domain: 70f4b4b0-18d2-4707-824b-b30af193d99b
+//
+//        if (subject.isPermitted(new AccessLevelPermission("70f4b4b0-18d2-4707-824b-b30af193d99b", new Role(1)))) {
+//            LOG.log(Level.INFO, "*** HAS ACCESS ***");
+//        }
         return "OK";
     }
+
 }

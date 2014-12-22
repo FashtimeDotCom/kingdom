@@ -22,6 +22,11 @@ public class AccessLevelPermission implements Permission {
         this.accessLevels = accessLevels;
     }
 
+    public AccessLevelPermission(Object domain, Role role) {
+        this.accessLevels = new HashMap<>();
+        this.accessLevels.put(domain, role);
+    }
+
     public AccessLevelPermission() {
         this.accessLevels = new HashMap<>();
     }

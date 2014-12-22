@@ -6,6 +6,7 @@
 package com.josue.credential.manager.account;
 
 import com.josue.credential.manager.JpaRepository;
+import com.josue.credential.manager.auth.APICredential;
 import com.josue.credential.manager.auth.ManagerDomainCredential;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
@@ -25,9 +26,11 @@ public class AccountRepository extends JpaRepository {
         query.setParameter("managerUuid", managerUuid);
         List<ManagerDomainCredential> resultList = query.getResultList();
         return resultList;
+    }
 
-//
-//
-//        return roles;
+    public APICredential findByToken(String token) {
+        TypedQuery<APICredential> query = em.createQuery("SELECT cred FROM APICredential cred WHERE cred.apiKey = :token", APICredential.class);
+        query.setParameter("token", token);
+        return query.getResultList().get(0);
     }
 }

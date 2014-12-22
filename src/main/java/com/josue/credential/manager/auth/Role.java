@@ -23,6 +23,13 @@ import javax.persistence.UniqueConstraint;
 //TODO extend from Resource
 public class Role implements Serializable {
 
+    public Role() {
+    }
+
+    public Role(int level) {
+        this.level = level;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
