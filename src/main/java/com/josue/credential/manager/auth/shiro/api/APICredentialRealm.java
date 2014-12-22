@@ -37,7 +37,6 @@ public class APICredentialRealm extends AuthorizingRealm {
     AccountRepository persistence;
 
     public APICredentialRealm() {
-        super();
         setAuthenticationTokenClass(APICredential.class);
     }
 
@@ -46,14 +45,14 @@ public class APICredentialRealm extends AuthorizingRealm {
         APICredential token = (APICredential) authToken;
 
         //Make use of JPA
-        APICredential apiCredentialToken = persistence.findByToken(token.getApiKey());
+        APICredential foundApiCredential = persistence.findByToken(token.getApiKey());
 
-        if (apiCredentialToken != null) {
-            return new SimpleAuthenticationInfo(apiCredentialToken.getUuid(), apiCredentialToken.getCredentials(), getName());
+        if (foundApiCredential != null) {
+            return new SimpleAuthenticationInfo(foundApiCredential.getUuid(), foundApiCredential.getCredentials(), getName());
         }
         throw new AuthenticationException("No credential found for APIKEY: " + token.getApiKey());
     }
-
+    
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
@@ -76,4 +75,11 @@ public class APICredentialRealm extends AuthorizingRealm {
 //        info.setRoles(new HashSet<>(Arrays.asList(fetchedDomainName)));
         return info;
     }
+
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return true;
+    }
+    
+
 }

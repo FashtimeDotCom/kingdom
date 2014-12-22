@@ -10,9 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
-import org.apache.shiro.authc.credential.DefaultPasswordService;
-import org.apache.shiro.authc.credential.PasswordMatcher;
-import org.apache.shiro.authc.credential.PasswordService;
 import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.web.env.DefaultWebEnvironment;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
@@ -31,12 +28,15 @@ public class CustomEnvironmentLoaderListener extends EnvironmentLoaderListener {
     protected WebEnvironment createEnvironment(ServletContext pServletContext) {
         WebEnvironment environment = super.createEnvironment(pServletContext);
         RealmSecurityManager rsm = (RealmSecurityManager) environment.getSecurityManager();
-
-        PasswordService passwordService = new DefaultPasswordService();
-        PasswordMatcher passwordMatcher = new PasswordMatcher();
-        passwordMatcher.setPasswordService(passwordService);
-
-        jpaRealm.setCredentialsMatcher(passwordMatcher);
+        //TODO check for how to read from shiro.ini
+        
+        
+//        PasswordService passwordService = new DefaultPasswordService();
+//        PasswordMatcher passwordMatcher = new PasswordMatcher();
+//        passwordMatcher.setPasswordService(passwordService);
+//        jpaRealm.setCredentialsMatcher(passwordMatcher);
+        
+        //TODO add another realms here
         rsm.setRealm(jpaRealm);
         ((DefaultWebEnvironment) environment).setSecurityManager(rsm);
 
