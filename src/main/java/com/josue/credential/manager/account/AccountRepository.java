@@ -6,7 +6,10 @@
 package com.josue.credential.manager.account;
 
 import com.josue.credential.manager.JpaRepository;
+import com.josue.credential.manager.auth.ManagerDomainCredential;
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
@@ -17,9 +20,14 @@ import javax.transaction.Transactional;
 @Transactional(Transactional.TxType.REQUIRED)//TODO chage
 public class AccountRepository extends JpaRepository {
 
-//    public void createManager(Manager manager) {
-////        em.persist(manager.getCredential());
-////        em.persist(manager);
+    public List<ManagerDomainCredential> getManagerCredentials(String managerUuid) {
+        TypedQuery<ManagerDomainCredential> query = em.createQuery("SELECT MDC.domain, mdc.role FROM ManagerDomainCredential mdc WHERE MDC.uuid = :managerUuid", ManagerDomainCredential.class);
+        query.setParameter("managerUuid", managerUuid);
+        List<ManagerDomainCredential> resultList = query.getResultList();
+        return resultList;
+
 //
-//    }
+//
+//        return roles;
+    }
 }

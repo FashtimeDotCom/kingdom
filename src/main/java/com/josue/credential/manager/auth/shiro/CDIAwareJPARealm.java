@@ -12,13 +12,15 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.realm.AuthenticatingRealm;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
 
 /**
  *
  * @author Josue
  */
-public class CDIAwareJPARealm extends AuthenticatingRealm {
+public class CDIAwareJPARealm extends AuthorizingRealm {
 
     //Here we can inject other beans because 'CDIAwareJPARealm' is CDI aware (see CustomEnvironmentLoaderListener)
     @Inject
@@ -36,6 +38,11 @@ public class CDIAwareJPARealm extends AuthenticatingRealm {
         } else {
             return null;
         }
+    }
+
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

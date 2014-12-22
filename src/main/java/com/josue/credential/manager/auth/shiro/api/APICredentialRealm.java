@@ -7,9 +7,13 @@ package com.josue.credential.manager.auth.shiro.api;
 
 import com.josue.credential.manager.account.AccountRepository;
 import com.josue.credential.manager.auth.APICredential;
+import com.josue.credential.manager.auth.ManagerDomainCredential;
+import com.josue.credential.manager.auth.Role;
 import com.josue.credential.manager.auth.shiro.AccessLevelPermission;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 import org.apache.shiro.authc.AuthenticationException;
@@ -42,7 +46,7 @@ public class APICredentialRealm extends AuthorizingRealm {
         if (apiCredentialToken != null) {
             return new SimpleAuthenticationInfo(apiCredentialToken.getUuid(), apiCredentialToken.getCredentials(), getName());
         }
-        throw new AuthenticationException("Not credential found for APIKEY: " + token.getApiKey());
+        throw new AuthenticationException("No credential found for APIKEY: " + token.getApiKey());
     }
 
     @Override
@@ -52,21 +56,19 @@ public class APICredentialRealm extends AuthorizingRealm {
         String principalToken = (String) getAvailablePrincipal(principals);
 
         //TODO improve this... should not fetch the entire entity to use the Role
-        APICredential fetchedCredential = persistence.find(APICredential.class, principalToken);
-        //Role role = fetchedCredential.getRole();
+        List<ManagerDomainCredential> managerCredentials = persistence.getManagerCredentials(principalToken);
+        Map<Object, Role> roles = new HashMap<>();
+        for (ManagerDomainCredential mdc : managerCredentials) {
+            roles.put(mdc.getDomain().getUuid(), mdc.getRole());
+        }
 
-        //TODO how o check which resource manager is accessing ?
-        String fetchedDomainName = "uuid-doc-123-TODO-check-if-OK";
-        // ... multiple permissions map
+//        String fetchedDomainName = "uuid-doc-123-TODO-check-if-OK";
+        AccessLevelPermission permissions = new AccessLevelPermission(roles);
 
-        AccessLevelPermission perm = new AccessLevelPermission();
-        perm.addAccessLevel(fetchedDomainName, null);;//TODO null... here goes the role
-
-        Set<Permission> permissions = new HashSet<>();
-        permissions.add(perm);
-        info.setObjectPermissions(permissions);
-
-        info.setRoles(new HashSet<>(Arrays.asList(fetchedDomainName)));
+        Set<Permission> permSet = new HashSet<>();
+        permSet.add(permissions);
+        info.setObjectPermissions(permSet);
+//        info.setRoles(new HashSet<>(Arrays.asList(fetchedDomainName)));
         return info;
     }
 }

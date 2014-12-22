@@ -18,6 +18,10 @@ public class AccessLevelPermission implements Permission {
 
     private final Map<Object, Role> accessLevels;
 
+    public AccessLevelPermission(Map<Object, Role> accessLevels) {
+        this.accessLevels = accessLevels;
+    }
+
     public AccessLevelPermission() {
         this.accessLevels = new HashMap<>();
     }

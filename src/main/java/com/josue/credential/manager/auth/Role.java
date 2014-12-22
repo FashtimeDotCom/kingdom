@@ -20,6 +20,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = "level"))
+//TODO extend from Resource
 public class Role implements Serializable {
 
     @Id
