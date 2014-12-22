@@ -7,7 +7,7 @@ package com.josue.credential.manager.auth.shiro.api;
 
 import com.josue.credential.manager.account.AccountRepository;
 import com.josue.credential.manager.auth.APICredential;
-import com.josue.credential.manager.auth.ManagerDomainCredential;
+import com.josue.credential.manager.auth.APIDomainCredential;
 import com.josue.credential.manager.auth.Role;
 import com.josue.credential.manager.auth.shiro.AccessLevelPermission;
 import java.util.HashMap;
@@ -45,14 +45,14 @@ public class APICredentialRealm extends AuthorizingRealm {
         APICredential token = (APICredential) authToken;
 
         //Make use of JPA
-        APICredential foundApiCredential = persistence.findByToken(token.getApiKey());
+        APICredential foundApiCredential = persistence.findApiCredentialByToken(token.getApiKey());
 
         if (foundApiCredential != null) {
             return new SimpleAuthenticationInfo(foundApiCredential.getUuid(), foundApiCredential.getCredentials(), getName());
         }
         throw new AuthenticationException("No credential found for APIKEY: " + token.getApiKey());
     }
-    
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
@@ -60,10 +60,10 @@ public class APICredentialRealm extends AuthorizingRealm {
         String principalToken = (String) getAvailablePrincipal(principals);
 
         //TODO improve this... should not fetch the entire entity to use the Role
-        List<ManagerDomainCredential> managerCredentials = persistence.getManagerCredentials(principalToken);
+        List<APIDomainCredential> managerCredentials = persistence.getApiDomainCredentials(principalToken);
         Map<Object, Role> roles = new HashMap<>();
-        for (ManagerDomainCredential mdc : managerCredentials) {
-            roles.put(mdc.getDomain().getUuid(), mdc.getRole());
+        for (APIDomainCredential adc : managerCredentials) {
+            roles.put(adc.getDomain().getUuid(), adc.getRole());
         }
 
 //        String fetchedDomainName = "uuid-doc-123-TODO-check-if-OK";
@@ -80,6 +80,5 @@ public class APICredentialRealm extends AuthorizingRealm {
     public boolean supports(AuthenticationToken token) {
         return true;
     }
-    
 
 }

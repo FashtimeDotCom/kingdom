@@ -44,7 +44,13 @@ public class AccountRest {
         //domain: 70f4b4b0-18d2-4707-824b-b30af193d99b
 
         if (subject.isPermitted(new AccessLevelPermission("70f4b4b0-18d2-4707-824b-b30af193d99b", new Role(1)))) {
+            LOG.log(Level.INFO, "*** HAS ACCESS Role 1***");
+        }
+        if (subject.isPermitted(new AccessLevelPermission("AAAAAA", new Role(1)))) {
             LOG.log(Level.INFO, "*** HAS ACCESS ***");
+        }
+        if (subject.isPermitted(new AccessLevelPermission("70f4b4b0-18d2-4707-824b-b30af193d99b", new Role(2)))) {
+            LOG.log(Level.INFO, "*** HAS ACCESS Role2 ***");
         }
         return "OK";
     }
