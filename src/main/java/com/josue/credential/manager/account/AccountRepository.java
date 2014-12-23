@@ -9,6 +9,7 @@ import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.APICredential;
 import com.josue.credential.manager.auth.APIDomainCredential;
 import com.josue.credential.manager.auth.ManagerCredential;
+import com.josue.credential.manager.auth.ManagerDomainCredential;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Query;
@@ -41,6 +42,13 @@ public class AccountRepository extends JpaRepository {
         TypedQuery<ManagerCredential> query = em.createQuery("SELECT cred FROM ManagerCredential cred WHERE cred.login = :login", ManagerCredential.class);
         query.setParameter("login", login);
         return query.getResultList().get(0);
+    }
+
+    public List<ManagerDomainCredential> getManagerDomainCredentials(String credentialUuid) {
+        Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", ManagerDomainCredential.class);
+        query.setParameter("credentialUuid", credentialUuid);
+        List<ManagerDomainCredential> resultList = query.getResultList();
+        return resultList;
     }
 
 }
