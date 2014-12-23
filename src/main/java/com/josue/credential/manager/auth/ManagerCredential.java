@@ -25,6 +25,14 @@ import javax.validation.constraints.NotNull;
 //http://stackoverflow.com/questions/1733560/making-foreign-keys-unique-in-jpa
 public class ManagerCredential extends Credential {
 
+    public ManagerCredential() {
+    }
+
+    public ManagerCredential(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
     @NotNull
     private String login;
 
@@ -34,12 +42,12 @@ public class ManagerCredential extends Credential {
     //*** END ***
     @Override
     public Object getPrincipal() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return login;
     }
 
     @Override
     public Object getCredentials() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return password;
     }
 
     public String getLogin() {

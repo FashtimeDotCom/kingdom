@@ -57,10 +57,10 @@ public class APICredentialRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         //TODO check if can reuse the fetched entity, and if its safe
-        String principalToken = (String) getAvailablePrincipal(principals);
+        String principalUuid = (String) getAvailablePrincipal(principals);
 
         //TODO improve this... should not fetch the entire entity to use the Role
-        List<APIDomainCredential> managerCredentials = persistence.getApiDomainCredentials(principalToken);
+        List<APIDomainCredential> managerCredentials = persistence.getApiDomainCredentials(principalUuid);
         Map<Object, Role> roles = new HashMap<>();
         for (APIDomainCredential adc : managerCredentials) {
             roles.put(adc.getDomain().getUuid(), adc.getRole());
@@ -78,7 +78,7 @@ public class APICredentialRealm extends AuthorizingRealm {
 
     @Override
     public boolean supports(AuthenticationToken token) {
-        return true;
+        return token instanceof APICredential;
     }
 
 }

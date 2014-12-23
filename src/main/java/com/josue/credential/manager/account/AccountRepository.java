@@ -8,6 +8,7 @@ package com.josue.credential.manager.account;
 import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.APICredential;
 import com.josue.credential.manager.auth.APIDomainCredential;
+import com.josue.credential.manager.auth.ManagerCredential;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Query;
@@ -22,6 +23,12 @@ import javax.transaction.Transactional;
 @Transactional(Transactional.TxType.REQUIRED)//TODO chage
 public class AccountRepository extends JpaRepository {
 
+    public APICredential findApiCredentialByToken(String token) {
+        TypedQuery<APICredential> query = em.createQuery("SELECT cred FROM APICredential cred WHERE cred.apiKey = :token", APICredential.class);
+        query.setParameter("token", token);
+        return query.getResultList().get(0);
+    }
+
     public List<APIDomainCredential> getApiDomainCredentials(String credentialUuid) {
         Query query = em.createQuery("SELECT apiCred FROM APIDomainCredential apiCred WHERE apiCred.credential.uuid = :credentialUuid", APIDomainCredential.class);
         query.setParameter("credentialUuid", credentialUuid);
@@ -29,9 +36,11 @@ public class AccountRepository extends JpaRepository {
         return resultList;
     }
 
-    public APICredential findApiCredentialByToken(String token) {
-        TypedQuery<APICredential> query = em.createQuery("SELECT cred FROM APICredential cred WHERE cred.apiKey = :token", APICredential.class);
-        query.setParameter("token", token);
+    //***************
+    public ManagerCredential findManagerCredentialByLogin(String login) {
+        TypedQuery<ManagerCredential> query = em.createQuery("SELECT cred FROM ManagerCredential cred WHERE cred.login = :login", ManagerCredential.class);
+        query.setParameter("login", login);
         return query.getResultList().get(0);
     }
+
 }
