@@ -37,7 +37,7 @@ public class AccountRepository extends JpaRepository {
         return resultList;
     }
 
-    //***************
+    //******* Manager credential ********
     public ManagerCredential findManagerCredentialByLogin(String login) {
         TypedQuery<ManagerCredential> query = em.createQuery("SELECT cred FROM ManagerCredential cred WHERE cred.login = :login", ManagerCredential.class);
         query.setParameter("login", login);
