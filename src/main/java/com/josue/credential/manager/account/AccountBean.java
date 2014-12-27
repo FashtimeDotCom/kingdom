@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.account;
 
-import com.josue.credential.manager.auth.Domain;
+import com.josue.credential.manager.auth.DomainCredential;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,13 +47,12 @@ public class AccountBean implements Serializable {
     }
 
     private void fetchDomains() {
-        Subject currentUser = SecurityUtils.getSubject();
-        List<Domain> foundDomains = control.getManagerDomains(currentUser.getPrincipal().toString());
+        List<DomainCredential> joinedDomains = control.getJoinedDomains();
 
         domains = new ArrayList<>();
-        for (Domain d : foundDomains) {
-            domains.add(d.getName());
-            selectedDomain = d.getName();
+        for (DomainCredential d : joinedDomains) {
+            domains.add(d.getDomain().getName());
+            selectedDomain = d.getDomain().getName();
         }
 
     }

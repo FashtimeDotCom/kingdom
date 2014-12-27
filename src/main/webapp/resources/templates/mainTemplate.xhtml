@@ -11,7 +11,7 @@
         <h:outputStylesheet name="css/default.css"/>
         <h:outputStylesheet name="css/cssLayout.css"/>
         <h:outputStylesheet name="css/style.css"/>
-        <title>Facelets Template</title>
+        <title>Credential Manager</title>
     </h:head>
 
     <h:body>
@@ -22,7 +22,7 @@
                 <ui:insert name="top">
                     <p:panelGrid columns="2" style="position: absolute; bottom: 0; right: 0;">
                         <h:form>
-                            <p:selectOneMenu id="console" value="#{accountBean.selectedDomain}" onchange="submit()"  valueChangeListener="#{accountBean.updateDomain}" style="width:125px">
+                            <p:selectOneMenu id="console" value="#{accountBean.selectedDomain}" onchange="submit()"  valueChangeListener="#{accountBean.updateDomain}" style="width:150px">
                                 <f:selectItems value="#{accountBean.domains}" var="domain" itemValue="#{domain}" itemLabel="#{domain}"/>
                             </p:selectOneMenu>
                         </h:form>
@@ -30,7 +30,7 @@
                             <p:commandButton value="Logout" ajax="false" actionListener="#{loginController.logout()}"/>
                         </h:form>
                     </p:panelGrid>
-                    <h:outputText value="North unit content." />
+                    <h:outputText value="#{accountBean.manager.email}"/>
 
                 </ui:insert>
             </p:layoutUnit>
@@ -41,11 +41,11 @@
                         <p:growl id="messages" showDetail="false"/>
 
                         <p:menu style="width: 170px">
-                            <p:submenu label="Menu 1">
+                            <p:submenu label="Account">
                                 <p:menuitem value="Domains" outcome="/secured/domains" ajax="false" update="messages" icon="ui-icon-disk" />
                                 <p:menuitem value="API Keys"  outcome="/secured/api-keys" ajax="false" icon="ui-icon-arrowrefresh-1-w"/>
                             </p:submenu>
-                            <p:submenu label="Menu 2">
+                            <p:submenu label="Domain actions">
                                 <p:menuitem value="Invitations"  outcome="/secured/invitations" ajax="false" icon="ui-icon-close"/>
                             </p:submenu>
                             <p:submenu label="Navigations">

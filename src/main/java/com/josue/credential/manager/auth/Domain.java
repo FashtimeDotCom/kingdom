@@ -6,6 +6,7 @@
 package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.Resource;
+import com.josue.credential.manager.account.Manager;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,7 +22,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "domain", uniqueConstraints
-        = @UniqueConstraint(columnNames = {"uuid", "owner_credential_uuid"}))
+        = @UniqueConstraint(columnNames = {"uuid", "owner_uuid"}))
 public class Domain extends Resource {
 
     private String name;
@@ -32,8 +33,8 @@ public class Domain extends Resource {
 
 //    //TODO other properties
     @ManyToOne
-    @JoinColumn(name = "owner_credential_uuid")
-    private ManagerCredential ownerCredential;
+    @JoinColumn(name = "owner_uuid")
+    private Manager owner;
 
     public String getName() {
         return name;
@@ -59,21 +60,21 @@ public class Domain extends Resource {
         this.status = status;
     }
 
-    public ManagerCredential getOwnerCredential() {
-        return ownerCredential;
+    public Manager getOwner() {
+        return owner;
     }
 
-    public void setOwnerCredential(ManagerCredential ownerCredential) {
-        this.ownerCredential = ownerCredential;
+    public void setOwner(Manager owner) {
+        this.owner = owner;
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + Objects.hashCode(this.name);
-        hash = 47 * hash + Objects.hashCode(this.description);
-        hash = 47 * hash + Objects.hashCode(this.status);
-        hash = 47 * hash + Objects.hashCode(this.ownerCredential);
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.name);
+        hash = 83 * hash + Objects.hashCode(this.description);
+        hash = 83 * hash + Objects.hashCode(this.status);
+        hash = 83 * hash + Objects.hashCode(this.owner);
         return hash;
     }
 
@@ -95,7 +96,7 @@ public class Domain extends Resource {
         if (this.status != other.status) {
             return false;
         }
-        if (!Objects.equals(this.ownerCredential, other.ownerCredential)) {
+        if (!Objects.equals(this.owner, other.owner)) {
             return false;
         }
         return true;

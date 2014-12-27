@@ -78,12 +78,12 @@ public abstract class InstanceHelper {
     }
 
     //#### Domain ####
-    public static Domain createDomain(ManagerCredential ownerCredential) {
+    public static Domain createDomain(Manager owner) {
         Domain domain = new Domain();
-        domain.setName("default-domain-name");
+        domain.setName(Long.toHexString(Double.doubleToLongBits(Math.random())));
         domain.setStatus(DomainStatus.ACTIVE);
         domain.setDescription("Description 123");
-        domain.setOwnerCredential(ownerCredential);
+        domain.setOwner(owner);
         return domain;
     }
 

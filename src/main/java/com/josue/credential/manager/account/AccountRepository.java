@@ -9,6 +9,7 @@ import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.APICredential;
 import com.josue.credential.manager.auth.APIDomainCredential;
 import com.josue.credential.manager.auth.Domain;
+import com.josue.credential.manager.auth.DomainCredential;
 import com.josue.credential.manager.auth.ManagerCredential;
 import com.josue.credential.manager.auth.ManagerDomainCredential;
 import java.util.List;
@@ -52,15 +53,26 @@ public class AccountRepository extends JpaRepository {
         return resultList;
     }
 
-    //Business methods
-    public List<Domain> getManagerDomainByCredential(String credentialUuid) {
-        Query query = em.createQuery("SELECT manCred.domain FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", Domain.class);
+    //*** Business methods ***
+    //Control change some data, we dont want to update it on database
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public List<DomainCredential> getJoinedDomainsByCredential(String credentialUuid) {
+        Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", DomainCredential.class);
         query.setParameter("credentialUuid", credentialUuid);
-        List<Domain> resultList = query.getResultList();
+        List<DomainCredential> resultList = query.getResultList();
         return resultList;
     }
 
-    public List<Domain> getOwnedDomainsByCredential(String credentialUuid) {
+    //Control change some data, we dont want to update it on database
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public List<APIDomainCredential> getApiCredentialsByManager(String managerUuid) {
+        Query query = em.createQuery("SELECT apiDomCred FROM APIDomainCredential apiDomCred WHERE apiDomCred.credential.manager.uuid = :managerUuid", APIDomainCredential.class);
+        query.setParameter("managerUuid", managerUuid);
+        List<APIDomainCredential> resultList = query.getResultList();
+        return resultList;
+    }
+
+    public List<Domain> getDomainsByCredential(String credentialUuid) {
         Query query = em.createQuery("SELECT manCred.domain FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", Domain.class);
         query.setParameter("credentialUuid", credentialUuid);
         List<Domain> resultList = query.getResultList();
@@ -72,6 +84,13 @@ public class AccountRepository extends JpaRepository {
         query.setParameter("credentialUuid", credentialUuid);
         Manager manager = query.getSingleResult();
         return manager;
+    }
+
+    public List<Domain> getOwnedDomainsByManager(String managerUuid) {
+        Query query = em.createQuery("SELECT domain FROM Domain domain WHERE domain.owner.uuid = :managerUuid", Domain.class);
+        query.setParameter("managerUuid", managerUuid);
+        List<Domain> domains = query.getResultList();
+        return domains;
     }
 
 }

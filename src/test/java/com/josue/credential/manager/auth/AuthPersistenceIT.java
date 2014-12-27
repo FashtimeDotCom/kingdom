@@ -57,7 +57,7 @@ public class AuthPersistenceIT {
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
-        Domain domain = InstanceHelper.createDomain(credential);
+        Domain domain = InstanceHelper.createDomain(manager);
         repository.create(domain);
 
         Domain foundDomain = repository.find(Domain.class, domain.getUuid());
@@ -94,7 +94,7 @@ public class AuthPersistenceIT {
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
-        Domain domain = InstanceHelper.createDomain(credential);
+        Domain domain = InstanceHelper.createDomain(manager);
         repository.create(domain);
 
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
@@ -116,7 +116,7 @@ public class AuthPersistenceIT {
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
-        Domain domain = InstanceHelper.createDomain(credential);
+        Domain domain = InstanceHelper.createDomain(manager);
         repository.create(domain);
 
         ManagerCredential managerCredential = InstanceHelper.createManagerCredential(manager);
