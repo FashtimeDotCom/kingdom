@@ -5,6 +5,8 @@
  */
 package com.josue.credential.manager.account;
 
+import com.josue.credential.manager.auth.Domain;
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -17,6 +19,14 @@ public class AccountControl {
 
     @Inject
     AccountRepository repository;
+
+    public Manager getManagerByCredential(String credentialUuid) {
+        return repository.getManagerByCredential(credentialUuid);
+    }
+
+    public List<Domain> getManagerDomains(String credentialUuid) {
+        return repository.getManagerDomainByCredential(credentialUuid);
+    }
 
     public ManagerInvitation invite(ManagerInvitation managerInvitation) {
         return null;

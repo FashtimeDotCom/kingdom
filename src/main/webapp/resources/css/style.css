@@ -1,0 +1,20 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 26, 2014, 2:48:48 PM
+    Author     : Josue
+*/
+//remove layoutUnit border
+.ui-layout-pane {
+    border: 0;
+}
+
+//remove panelgrid border
+.ui-panelgrid td, .ui-panelgrid tr
+{
+   border-style: none !important;
+}
+

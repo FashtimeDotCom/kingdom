@@ -8,6 +8,7 @@ package com.josue.credential.manager.account;
 import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.APICredential;
 import com.josue.credential.manager.auth.APIDomainCredential;
+import com.josue.credential.manager.auth.Domain;
 import com.josue.credential.manager.auth.ManagerCredential;
 import com.josue.credential.manager.auth.ManagerDomainCredential;
 import java.util.List;
@@ -49,6 +50,28 @@ public class AccountRepository extends JpaRepository {
         query.setParameter("credentialUuid", credentialUuid);
         List<ManagerDomainCredential> resultList = query.getResultList();
         return resultList;
+    }
+
+    //Business methods
+    public List<Domain> getManagerDomainByCredential(String credentialUuid) {
+        Query query = em.createQuery("SELECT manCred.domain FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", Domain.class);
+        query.setParameter("credentialUuid", credentialUuid);
+        List<Domain> resultList = query.getResultList();
+        return resultList;
+    }
+
+    public List<Domain> getOwnedDomainsByCredential(String credentialUuid) {
+        Query query = em.createQuery("SELECT manCred.domain FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", Domain.class);
+        query.setParameter("credentialUuid", credentialUuid);
+        List<Domain> resultList = query.getResultList();
+        return resultList;
+    }
+
+    public Manager getManagerByCredential(String credentialUuid) {
+        TypedQuery<Manager> query = em.createQuery("SELECT cred.manager FROM ManagerCredential cred WHERE cred.uuid = :credentialUuid", Manager.class);
+        query.setParameter("credentialUuid", credentialUuid);
+        Manager manager = query.getSingleResult();
+        return manager;
     }
 
 }
