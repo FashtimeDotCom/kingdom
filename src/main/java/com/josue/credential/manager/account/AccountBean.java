@@ -63,17 +63,6 @@ public class AccountBean implements Serializable {
         manager = control.getManagerByCredential(currentUser.getPrincipal().toString());
     }
 
-    public String logout() {
-
-        Subject currentUser = SecurityUtils.getSubject();
-        try {
-            currentUser.logout();
-        } catch (Exception e) {
-            LOG.warning(e.toString());
-        }
-        return "/login.xhtml?faces-redirect=true";
-    }
-
     public void updateDomain(ValueChangeEvent event) {
         LOG.log(Level.INFO, "TRYING TO CHANGE TO DOMAIN {0}", event.getNewValue());
         for (String domain : domains) {

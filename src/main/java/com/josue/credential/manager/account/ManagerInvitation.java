@@ -32,7 +32,7 @@ public class ManagerInvitation extends Resource {
     String targetEmail;
 
     @OneToOne(targetEntity = Manager.class)
-    @JoinColumn(name = "author_manager")
+    @JoinColumn(name = "author_manager_uuid")
     private Resource authorManager;
 
     @NotNull
