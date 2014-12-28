@@ -41,4 +41,11 @@ public class DomainControl {
         }
         return joinedDomains;
     }
+
+    public Domain createDomain(Domain domain) {
+        Manager actualManager = repository.find(Manager.class, currentManager.getUuid());
+        domain.setOwner(actualManager);
+        repository.create(domain);
+        return domain;
+    }
 }

@@ -14,9 +14,25 @@
             <ui:define name="content">
 
                 <h2>Domains</h2>
-               
-                
 
+                <h:form>
+                    <p:panel id="panel" header="New Domain">
+                        <p:messages id="domainMessage" />
+
+                        <p:panelGrid columns="2" styleClass="borderless">
+                            <p:outputLabel value="Name:" for="name" />
+                            <p:inputText id="name" value="#{domainBean.domain.name}" title="Name" required="true" label="Name" requiredMessage="Name is required"/>
+                            <p:outputLabel value="Description:" for="description" />
+                            <p:inputText id="description" value="#{domainBean.domain.description}" title="Description"/>
+                            <p:outputLabel value="Status:" for="status" />
+                            <p:selectOneMenu id="status" value="#{domainBean.domain.status}">
+                                <f:selectItems value="#{domainBean.domainStatuses}" />
+                            </p:selectOneMenu>
+                            <h:inputHidden />
+                            <p:commandButton value="Create" action="#{domainBean.createDomain()}" update="panel" style="float: right"/>
+                        </p:panelGrid>
+                    </p:panel>
+                </h:form>
 
 
             </ui:define>

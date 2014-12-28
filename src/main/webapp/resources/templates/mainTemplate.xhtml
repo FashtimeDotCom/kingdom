@@ -22,12 +22,12 @@
                 <ui:insert name="top">
                     <p:panelGrid columns="2" style="position: absolute; bottom: 0; right: 0;">
                         <h:form>
-                            <p:selectOneMenu id="console" value="#{domainBean.selectedDomain}" onchange="submit()"  valueChangeListener="#{domainBean.updateDomain}" style="width:150px">
+                            <p:selectOneMenu id="console" value="#{domainBean.selectedDomain}" onchange="submit()"  valueChangeListener="#{domainBean.changeDomain}" style="width:150px">
                                 <f:selectItems value="#{domainBean.domains}" var="domain" itemValue="#{domain}" itemLabel="#{domain}"/>
                             </p:selectOneMenu>
                         </h:form>
                         <h:form>
-                            <p:commandButton value="Logout" ajax="false" actionListener="#{loginController.logout()}"/>
+                            <p:commandButton value="Logout" ajax="false" action="#{loginController.logout()}"/>
                         </h:form>
                     </p:panelGrid>
                     <h:outputText value="#{accountBean.manager.email}"/>
@@ -45,6 +45,7 @@
                             <p:submenu label="Domain">
                                 <p:menuitem value="Owned" outcome="/secured/domain/owned" ajax="false" update="messages" icon="ui-icon-disk" />
                                 <p:menuitem value="Joined" outcome="/secured/domain/joined" ajax="false" update="messages" icon="ui-icon-disk" />
+                                <p:menuitem value="Create"  outcome="/secured/domain/create" ajax="false" icon="ui-icon-arrowrefresh-1-w"/> 
                             </p:submenu>
                             <p:submenu label="API key">
                                 <p:menuitem value="List"  outcome="/secured/apikey/list" ajax="false" icon="ui-icon-arrowrefresh-1-w"/> 

@@ -7,6 +7,7 @@ package com.josue.credential.manager.business.domain;
 
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.DomainCredential;
+import com.josue.credential.manager.auth.domain.DomainStatus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,11 @@ public class DomainBean implements Serializable {
     private List<Domain> ownedDomains;
     private List<DomainCredential> joinedDomains;
 
+    private Domain domain;
+
     @PostConstruct
     public void init() {
+        this.domain = new Domain();
         this.ownedDomains = control.getOwnedDomains();
         this.joinedDomains = control.getJoinedDomains();
 
@@ -55,11 +59,16 @@ public class DomainBean implements Serializable {
         }
     }
 
-    public void updateDomain(ValueChangeEvent event) {
+    public String createDomain() {
+        control.createDomain(domain);
+        return "/secured/domain/owned.xhtml?faces-redirect=true";
+    }
+
+    public void changeDomain(ValueChangeEvent event) {
         LOG.log(Level.INFO, "TRYING TO CHANGE TO DOMAIN {0}", event.getNewValue());
-        for (String domain : domains) {
-            if (domain.equals(event.getNewValue())) {
-                selectedDomain = domain;
+        for (String d : domains) {
+            if (d.equals(event.getNewValue())) {
+                selectedDomain = d;
                 LOG.log(Level.INFO, "CHANGING TO DOMAIN {0}", event.getNewValue());
             }
         }
@@ -95,6 +104,18 @@ public class DomainBean implements Serializable {
 
     public void setDomains(List<String> domains) {
         this.domains = domains;
+    }
+
+    public Domain getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Domain domain) {
+        this.domain = domain;
+    }
+
+    public DomainStatus[] getDomainStatuses() {
+        return DomainStatus.values();
     }
 
 }
