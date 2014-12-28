@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
  *
  */
 //TODO change to REQUIRED
+//TODO update inherited classes TxType
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 public class JpaRepository {
 

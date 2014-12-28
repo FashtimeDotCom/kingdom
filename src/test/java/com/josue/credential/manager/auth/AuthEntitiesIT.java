@@ -7,10 +7,6 @@ package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.ArquillianTestBase;
 import com.josue.credential.manager.InstanceHelper;
-import com.josue.credential.manager.TestLogger;
-import com.josue.credential.manager.account.AccountRepository;
-import com.josue.credential.manager.account.ManagerInvitation;
-import com.josue.credential.manager.account.ManagerInvitationStatus;
 import com.josue.credential.manager.auth.credential.APICredential;
 import com.josue.credential.manager.auth.credential.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
@@ -18,9 +14,12 @@ import com.josue.credential.manager.auth.credential.ManagerDomainCredential;
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.role.Role;
+import com.josue.credential.manager.business.account.AccountRepository;
+import com.josue.credential.manager.business.account.ManagerInvitation;
+import com.josue.credential.manager.business.account.ManagerInvitationStatus;
 import java.util.UUID;
+import java.util.logging.Logger;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -40,7 +39,6 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.ROLLBACK)
-@Interceptors({TestLogger.class})
 public class AuthEntitiesIT {
 
     @Deployment
@@ -49,9 +47,12 @@ public class AuthEntitiesIT {
         return ArquillianTestBase.createDefaultDeployment();
     }
 
+    private static final Logger LOG = Logger.getLogger(AuthEntitiesIT.class.getName());
+
     @PersistenceContext
     EntityManager em;
 
+    //Here we can use any JPARepository, since only super class methods are used
     @Inject
     AccountRepository repository;
 
@@ -66,6 +67,7 @@ public class AuthEntitiesIT {
 
     @Test
     public void testDomain() {
+//        LOG.log(Level.INFO, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         Manager manager = InstanceHelper.createManager();
         repository.create(manager);
 

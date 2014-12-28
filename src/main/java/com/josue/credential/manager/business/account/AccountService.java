@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.account;
+package com.josue.credential.manager.business.account;
 
 import javax.enterprise.context.ApplicationScoped;
 

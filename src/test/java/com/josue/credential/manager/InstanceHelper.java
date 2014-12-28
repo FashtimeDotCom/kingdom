@@ -106,4 +106,49 @@ public abstract class InstanceHelper {
         return domainCredential;
     }
 
+    //#### FULL ENTITY TREE CREATION ####
+    public static APIDomainCredential createFullAPIDomainCredential(JpaRepository repository) {
+        Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
+
+        Domain domain = InstanceHelper.createDomain(manager);
+        repository.create(domain);
+
+        APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
+        repository.create(credapiCredential);
+
+        Role role = InstanceHelper.createRole();
+        repository.create(role);
+
+        APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, role);
+        repository.create(domainCredential);
+
+        return domainCredential;
+    }
+
+    public static ManagerDomainCredential createFullManagerDomainCredential(JpaRepository repository) {
+        Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
+
+        Domain domain = InstanceHelper.createDomain(manager);
+        repository.create(domain);
+
+        APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
+        repository.create(credapiCredential);
+
+        Role role = InstanceHelper.createRole();
+        repository.create(role);
+
+        ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, role);
+        repository.create(domainCredential);
+
+        return domainCredential;
+    }
+
 }

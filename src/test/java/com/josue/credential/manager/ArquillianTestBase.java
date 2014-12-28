@@ -10,7 +10,6 @@ import com.josue.credential.manager.liquibase.LiquibaseTestHelper;
 import java.io.File;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.jboss.shrinkwrap.resolver.api.maven.Maven.resolver;
 
@@ -36,7 +35,8 @@ public abstract class ArquillianTestBase {
                 .addClass(LiquibaseTestHelper.class)
                 .addAsResource("liquibase")
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                //                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
                 .addAsLibraries(dependecies);
 
         return war;

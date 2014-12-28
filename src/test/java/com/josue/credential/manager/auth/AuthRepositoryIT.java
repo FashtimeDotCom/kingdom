@@ -7,7 +7,6 @@ package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.ArquillianTestBase;
 import com.josue.credential.manager.InstanceHelper;
-import com.josue.credential.manager.Logged;
 import com.josue.credential.manager.auth.credential.APICredential;
 import com.josue.credential.manager.auth.credential.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
@@ -16,6 +15,7 @@ import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.role.Role;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -36,7 +36,6 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.ROLLBACK)
-@Logged
 public class AuthRepositoryIT {
 
     @Deployment
@@ -51,9 +50,11 @@ public class AuthRepositoryIT {
     @Inject
     AuthRepository repository;
 
+    private static final Logger LOG = Logger.getLogger(AuthRepositoryIT.class.getName());
+
     @Test
     public void testFindApiCredentialByToken() {
-        APIDomainCredential apiDomainCredential = createFullAPIDomainCredential();
+        APIDomainCredential apiDomainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
 
         APICredential foundApiCredentialByToken = repository.findApiCredentialByToken(apiDomainCredential.getCredential().getApiKey());
         assertNotNull(foundApiCredentialByToken);
@@ -62,7 +63,7 @@ public class AuthRepositoryIT {
 
     @Test
     public void testGetApiDomainCredentials() {
-        APIDomainCredential apiDomainCredential = createFullAPIDomainCredential();
+        APIDomainCredential apiDomainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
 
         List<APIDomainCredential> foundApiCredentials = repository.getApiDomainCredentials(apiDomainCredential.getCredential().getUuid());
         assertEquals(1, foundApiCredentials.size());
@@ -104,27 +105,4 @@ public class AuthRepositoryIT {
         assertEquals(1, managerDomainCredentials.size());
         assertEquals(domainCredential, managerDomainCredentials.get(0));
     }
-
-    private APIDomainCredential createFullAPIDomainCredential() {
-        Manager manager = InstanceHelper.createManager();
-        repository.create(manager);
-
-        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
-        repository.create(credential);
-
-        Domain domain = InstanceHelper.createDomain(manager);
-        repository.create(domain);
-
-        APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
-        repository.create(credapiCredential);
-
-        Role role = InstanceHelper.createRole();
-        repository.create(role);
-
-        APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, role);
-        repository.create(domainCredential);
-
-        return domainCredential;
-    }
-
 }

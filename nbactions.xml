@@ -10,4 +10,14 @@
                 <activatedProfile>test-mysql</activatedProfile>
             </activatedProfiles>
         </action>
+        <action>
+            <actionName>CUSTOM-integration-test H2</actionName>
+            <displayName>integration-test H2</displayName>
+            <goals>
+                <goal>failsafe:integration-test</goal>
+            </goals>
+            <activatedProfiles>
+                <activatedProfile>h2</activatedProfile>
+            </activatedProfiles>
+        </action>
     </actions>

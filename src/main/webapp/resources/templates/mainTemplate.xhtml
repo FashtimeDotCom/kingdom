@@ -22,8 +22,8 @@
                 <ui:insert name="top">
                     <p:panelGrid columns="2" style="position: absolute; bottom: 0; right: 0;">
                         <h:form>
-                            <p:selectOneMenu id="console" value="#{accountBean.selectedDomain}" onchange="submit()"  valueChangeListener="#{accountBean.updateDomain}" style="width:150px">
-                                <f:selectItems value="#{accountBean.domains}" var="domain" itemValue="#{domain}" itemLabel="#{domain}"/>
+                            <p:selectOneMenu id="console" value="#{domainBean.selectedDomain}" onchange="submit()"  valueChangeListener="#{domainBean.updateDomain}" style="width:150px">
+                                <f:selectItems value="#{domainBean.domains}" var="domain" itemValue="#{domain}" itemLabel="#{domain}"/>
                             </p:selectOneMenu>
                         </h:form>
                         <h:form>
@@ -35,22 +35,22 @@
                 </ui:insert>
             </p:layoutUnit>
 
+
             <p:layoutUnit position="west" size="200" minSize="200">
                 <ui:insert name="left">
                     <h:form>  
                         <p:growl id="messages" showDetail="false"/>
 
-                        <p:menu style="width: 170px">
-                            <p:submenu label="Account">
-                                <p:menuitem value="Domains" outcome="/secured/domains" ajax="false" update="messages" icon="ui-icon-disk" />
-                                <p:menuitem value="API Keys"  outcome="/secured/api-keys" ajax="false" icon="ui-icon-arrowrefresh-1-w"/>
+                        <p:menu style="width: 170px" toggleable="true">
+                            <p:submenu label="Domain">
+                                <p:menuitem value="Owned" outcome="/secured/domain/owned" ajax="false" update="messages" icon="ui-icon-disk" />
+                                <p:menuitem value="Joined" outcome="/secured/domain/joined" ajax="false" update="messages" icon="ui-icon-disk" />
                             </p:submenu>
-                            <p:submenu label="Domain actions">
-                                <p:menuitem value="Invitations"  outcome="/secured/invitations" ajax="false" icon="ui-icon-close"/>
+                            <p:submenu label="API key">
+                                <p:menuitem value="List"  outcome="/secured/apikey/list" ajax="false" icon="ui-icon-arrowrefresh-1-w"/> 
                             </p:submenu>
-                            <p:submenu label="Navigations">
-                                <p:menuitem value="External" url="http://www.primefaces.org" icon="ui-icon-home"/>
-                                <p:menuitem value="Internal" icon="ui-icon-star"/>
+                            <p:submenu label="Invitations">
+                                <p:menuitem value="Invitations"  outcome="/secured/invitation/invitations" ajax="false" icon="ui-icon-close"/>
                             </p:submenu>
                         </p:menu>
                     </h:form>
@@ -62,7 +62,7 @@
                     <div class="ui-grid ui-grid-responsive">
                         <div class="ui-grid-row">
                             <div class="ui-grid-col-4"><h:outputText value="#{accountBean.manager.email}" /></div>
-                            <div class="ui-grid-col-4"><h:outputText value="#{accountBean.selectedDomain}" /></div>
+                            <div class="ui-grid-col-4"><h:outputText value="#{domainBean.selectedDomain}" /></div>
                             <div class="ui-grid-col-4">4</div>
                         </div>
                     </div>

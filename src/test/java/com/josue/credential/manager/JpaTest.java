@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager;
 
-import com.josue.credential.manager.account.AccountRepository;
+import com.josue.credential.manager.business.account.AccountRepository;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.liquibase.LiquibaseHelper;

@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.account;
+package com.josue.credential.manager.business.apikey;
 
 import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.business.account.AccountControl;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;

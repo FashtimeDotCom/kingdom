@@ -3,18 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.account;
+package com.josue.credential.manager.business.account;
 
-import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.credential.APIDomainCredential;
-import com.josue.credential.manager.auth.domain.Domain;
-import com.josue.credential.manager.auth.domain.DomainCredential;
+import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.util.Current;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 
 /**
  *
@@ -34,20 +30,6 @@ public class AccountControl {
         return repository.getManagerByCredential(credentialUuid);
     }
 
-    public List<DomainCredential> getJoinedDomains() {
-        Subject subject = SecurityUtils.getSubject();
-        List<DomainCredential> joinedDomains = repository.getJoinedDomainsByCredential(subject.getPrincipal().toString());
-        for (DomainCredential dc : joinedDomains) {
-            //TODO check if is needed to clear Credentials fields before return on REST endpoint
-        }
-        return joinedDomains;
-    }
-
-    public List<Domain> getOwnedDomains() {
-        return repository.getOwnedDomainsByManager(currentManager.getUuid());
-    }
-
-    //Every APICredential should be bound to a Domain, so make no sense return APICredential only
     public List<APIDomainCredential> getAPICredentials() {
         List<APIDomainCredential> apiCredentials = repository.getApiCredentialsByManager(currentManager.getUuid());
         //obfuscate api key
@@ -57,11 +39,7 @@ public class AccountControl {
             String obfuscatedApiKey = "************" + apiKey.substring(apiKey.length() - 5);
             apiCredential.getCredential().setApiKey(obfuscatedApiKey);
         }
-
         return apiCredentials;
-    }
-
-    public AccountControl() {
     }
 
     public ManagerInvitation invite(ManagerInvitation managerInvitation) {

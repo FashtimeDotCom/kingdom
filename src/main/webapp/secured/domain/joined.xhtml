@@ -10,62 +10,10 @@
 
     </h:head>
     <h:body>
-        <ui:composition template="../resources/templates/mainTemplate.xhtml">
+        <ui:composition template="../../resources/templates/mainTemplate.xhtml">
             <ui:define name="content">
 
                 <h2>Domains</h2>
-                <f:view>
-                    <h:form>
-                        <h1><h:outputText value="Owned"/></h1>
-                        <p:dataTable value="#{domainBean.ownedDomains}" var="domain">
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="UUID"/>
-                                </f:facet>
-                                <h:outputText value="#{domain.uuid}"/>
-                            </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="Name"/>
-                                </f:facet>
-                                <h:outputText value="#{domain.name}"/>
-                            </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="Description"/>
-                                </f:facet>
-                                <h:outputText value="#{domain.description}"/>
-                            </p:column>
-                            <p:column> 
-                                <f:facet name="header">
-                                    <h:outputText value="Status"/>
-                                </f:facet>
-                                <h:outputText value="#{domain.status}"/>
-                            </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="DateCreated"/>
-                                </f:facet>
-                                <h:outputText value="#{domain.dateCreated}">
-                                    <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
-                                </h:outputText>
-                            </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <h:outputText value="LastUpdate"/>
-                                </f:facet>
-                                <h:outputText value="#{domain.lastUpdate}">
-                                    <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
-                                </h:outputText>
-                            </p:column>
-                        </p:dataTable>
-                    </h:form>
-                </f:view>
-
-                <br />
-                <p:separator />
-                <br />
-
                 <f:view>
                     <h:form>
                         <h1><h:outputText value="Joined"/></h1>

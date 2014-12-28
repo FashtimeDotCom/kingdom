@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.util;
 
-import com.josue.credential.manager.account.AccountRepository;
+import com.josue.credential.manager.business.account.AccountRepository;
 import com.josue.credential.manager.auth.manager.Manager;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
