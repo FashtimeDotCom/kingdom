@@ -5,8 +5,8 @@
  */
 package com.josue.credential.manager.account;
 
-import com.josue.credential.manager.auth.Domain;
-import com.josue.credential.manager.auth.DomainCredential;
+import com.josue.credential.manager.auth.domain.Domain;
+import com.josue.credential.manager.auth.domain.DomainCredential;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;

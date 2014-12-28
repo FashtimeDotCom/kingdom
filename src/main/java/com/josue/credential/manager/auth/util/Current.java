@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.auth.cdi;
+package com.josue.credential.manager.auth.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

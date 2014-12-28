@@ -5,6 +5,7 @@
  */
 package com.josue.credential.manager.account;
 
+import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.Resource;
 import java.util.Date;
 import java.util.Objects;

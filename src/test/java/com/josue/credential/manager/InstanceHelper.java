@@ -5,15 +5,15 @@
  */
 package com.josue.credential.manager;
 
-import com.josue.credential.manager.account.Manager;
-import com.josue.credential.manager.auth.APICredential;
-import com.josue.credential.manager.auth.APIDomainCredential;
-import com.josue.credential.manager.auth.CredentialStatus;
-import com.josue.credential.manager.auth.Domain;
-import com.josue.credential.manager.auth.DomainStatus;
-import com.josue.credential.manager.auth.ManagerCredential;
-import com.josue.credential.manager.auth.ManagerDomainCredential;
-import com.josue.credential.manager.auth.Role;
+import com.josue.credential.manager.auth.credential.APICredential;
+import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.credential.CredentialStatus;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
+import com.josue.credential.manager.auth.credential.ManagerDomainCredential;
+import com.josue.credential.manager.auth.domain.Domain;
+import com.josue.credential.manager.auth.domain.DomainStatus;
+import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.auth.role.Role;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Calendar;
@@ -71,7 +71,7 @@ public abstract class InstanceHelper {
     //#### Manager ####
     public static Manager createManager() {
         Manager manager = new Manager();
-        manager.setEmail(Long.toHexString(Double.doubleToLongBits(Math.random())) + "@gmail.com");
+        manager.setEmail(Long.toHexString(Double.doubleToLongBits(Math.random())) + "@email.com");
         manager.setFirstName("josue");
         manager.setLastName("Eduardo");
         return manager;

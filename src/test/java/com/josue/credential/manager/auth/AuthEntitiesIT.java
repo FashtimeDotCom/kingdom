@@ -7,9 +7,20 @@ package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.ArquillianTestBase;
 import com.josue.credential.manager.InstanceHelper;
+import com.josue.credential.manager.TestLogger;
 import com.josue.credential.manager.account.AccountRepository;
-import com.josue.credential.manager.account.Manager;
+import com.josue.credential.manager.account.ManagerInvitation;
+import com.josue.credential.manager.account.ManagerInvitationStatus;
+import com.josue.credential.manager.auth.credential.APICredential;
+import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
+import com.josue.credential.manager.auth.credential.ManagerDomainCredential;
+import com.josue.credential.manager.auth.domain.Domain;
+import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.auth.role.Role;
+import java.util.UUID;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -19,6 +30,7 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,7 +40,8 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.ROLLBACK)
-public class AuthPersistenceIT {
+@Interceptors({TestLogger.class})
+public class AuthEntitiesIT {
 
     @Deployment
     @TargetsContainer("wildfly-managed")
@@ -54,6 +67,8 @@ public class AuthPersistenceIT {
     @Test
     public void testDomain() {
         Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
@@ -68,6 +83,8 @@ public class AuthPersistenceIT {
     @Test
     public void testApiCredential() {
         Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
@@ -81,6 +98,8 @@ public class AuthPersistenceIT {
     @Test
     public void testManagerCredential() {
         Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
@@ -91,6 +110,8 @@ public class AuthPersistenceIT {
     @Test
     public void testApiDomainCredential() {
         Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
@@ -113,6 +134,8 @@ public class AuthPersistenceIT {
     @Test
     public void testManagerDomainCredential() {
         Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
@@ -130,5 +153,46 @@ public class AuthPersistenceIT {
 
         ManagerDomainCredential foundDomainCredential = repository.find(ManagerDomainCredential.class, domainCredential.getUuid());
         assertEquals(domainCredential, foundDomainCredential);
+    }
+
+    @Test
+    public void testCreateManager() {
+
+        Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
+        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+        repository.create(credential);
+
+        Manager foundManager = repository.find(Manager.class, manager.getUuid());
+        assertEquals(manager, foundManager);
+    }
+
+    //TODO test invitation with existing manager and different Domains
+    @Test
+    public void testManagerInvitation() {
+
+        Manager authorManager = InstanceHelper.createManager();
+        repository.create(authorManager);
+
+        ManagerCredential credential = InstanceHelper.createManagerCredential(authorManager);
+        repository.create(credential);
+
+        ManagerInvitation invitation = new ManagerInvitation();
+        invitation.setAuthorManager(authorManager);
+        invitation.setTargetEmail("eduardo@gmail.com");
+        invitation.setStatus(ManagerInvitationStatus.CREATED);
+        invitation.setToken(UUID.randomUUID().toString());
+
+        invitation.setValidUntil(InstanceHelper.mysqlMilliSafeTimestamp());
+
+        repository.create(invitation);
+
+        ManagerInvitation foundInvitation = repository.find(ManagerInvitation.class, invitation.getUuid());
+        assertNotNull(invitation.getToken());
+        assertNotNull(invitation.getTargetEmail());
+
+        assertEquals(invitation, foundInvitation);
+
     }
 }

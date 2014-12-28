@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.account;
 
-import com.josue.credential.manager.auth.APIDomainCredential;
+import com.josue.credential.manager.auth.credential.APIDomainCredential;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;

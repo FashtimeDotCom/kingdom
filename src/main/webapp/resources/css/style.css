@@ -13,8 +13,13 @@ and open the template in the editor.
 }
 
 //remove panelgrid border
-.ui-panelgrid td, .ui-panelgrid tr
+.ui-panelgrid tbody, .ui-panelgrid td, .ui-panelgrid tr
 {
    border-style: none !important;
 }
-
+.ui-panelgrid.borderless thead th,
+.ui-panelgrid.borderless tbody,
+.ui-panelgrid.borderless tbody tr,
+.ui-panelgrid.borderless tbody td {
+    border-style: none;
+}

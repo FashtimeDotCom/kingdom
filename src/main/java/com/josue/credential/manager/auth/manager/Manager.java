@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.account;
+package com.josue.credential.manager.auth.manager;
 
 import com.josue.credential.manager.Resource;
 import java.util.Objects;

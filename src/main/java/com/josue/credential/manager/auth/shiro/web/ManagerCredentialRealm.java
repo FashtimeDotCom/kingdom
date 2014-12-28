@@ -5,8 +5,8 @@
  */
 package com.josue.credential.manager.auth.shiro.web;
 
-import com.josue.credential.manager.account.AccountRepository;
-import com.josue.credential.manager.auth.ManagerCredential;
+import com.josue.credential.manager.auth.AuthRepository;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
 import javax.inject.Inject;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -25,7 +25,7 @@ public class ManagerCredentialRealm extends AuthorizingRealm {
 
     //Here we can inject other beans because 'JpaRepository' is CDI aware (see CustomEnvironmentLoaderListener)
     @Inject
-    AccountRepository persistence;
+    AuthRepository persistence;
 
     public ManagerCredentialRealm() {
         setAuthenticationTokenClass(ManagerCredential.class);

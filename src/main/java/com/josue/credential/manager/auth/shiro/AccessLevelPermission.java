@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.shiro;
 
-import com.josue.credential.manager.auth.Role;
+import com.josue.credential.manager.auth.role.Role;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.shiro.authz.Permission;

@@ -10,11 +10,11 @@
         <h:outputStylesheet name="css/default.css" />
         <h:outputStylesheet name="css/cssLayout.css" />
         <h:outputStylesheet name="css/style.css" />
-        
+
         <h:form>
             <h:messages />
             <p:panel id="basic" header="Login" style="width: 400px; position: fixed; top: 50%;  left: 50%;   transform: translate(-50%, -50%);">
-                <p:panelGrid columns="3" layout="grid">
+                <p:panelGrid columns="3" styleClass="borderless" style="margin: 0 auto;">
 
                     <p:outputLabel for="username" value="Username:" />
                     <p:inputText id="username" value="#{loginController.username}"
@@ -25,13 +25,11 @@
                     <p:password id="password" value="#{loginController.password}"
                                 label="Password" required="true"/>
                     <p:message for="password" />
-
-                    <p:outputLabel for="rememberMe" value="Remember Me:" />
-                    <p:selectBooleanCheckbox id="rememberMe"
-                                             value="#{loginController.rememberMe}" />
-
+                    
+                    <h:inputHidden />
                     <p:commandButton action="#{loginController.authenticate()}"
-                                     value="Login" class="btn btn-primary"/>
+                                     value="Login" style="float: right"/>
+                    <h:inputHidden />
                 </p:panelGrid>
             </p:panel>
         </h:form>

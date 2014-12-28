@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.auth.cdi;
+package com.josue.credential.manager.auth.util;
 
 import com.josue.credential.manager.account.AccountRepository;
-import com.josue.credential.manager.account.Manager;
+import com.josue.credential.manager.auth.manager.Manager;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;

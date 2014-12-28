@@ -6,8 +6,8 @@
 package com.josue.credential.manager;
 
 import com.josue.credential.manager.account.AccountRepository;
-import com.josue.credential.manager.account.Manager;
-import com.josue.credential.manager.auth.ManagerCredential;
+import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.liquibase.LiquibaseHelper;
 import java.io.File;
 import javax.inject.Inject;

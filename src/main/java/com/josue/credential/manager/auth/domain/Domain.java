@@ -3,10 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.auth;
+package com.josue.credential.manager.auth.domain;
 
 import com.josue.credential.manager.Resource;
-import com.josue.credential.manager.account.Manager;
+import com.josue.credential.manager.auth.domain.DomainStatus;
+import com.josue.credential.manager.auth.domain.DomainStatus;
+import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.auth.manager.Manager;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

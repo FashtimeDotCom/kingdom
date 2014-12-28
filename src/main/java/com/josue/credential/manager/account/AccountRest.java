@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.account;
 
-import com.josue.credential.manager.auth.Role;
+import com.josue.credential.manager.auth.role.Role;
 import com.josue.credential.manager.auth.shiro.AccessLevelPermission;
 import java.util.logging.Level;
 import java.util.logging.Logger;

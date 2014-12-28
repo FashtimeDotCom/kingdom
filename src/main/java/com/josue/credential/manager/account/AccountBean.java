@@ -5,7 +5,8 @@
  */
 package com.josue.credential.manager.account;
 
-import com.josue.credential.manager.auth.DomainCredential;
+import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.auth.domain.DomainCredential;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

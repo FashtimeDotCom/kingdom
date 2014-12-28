@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.shiro.web;
 
-import com.josue.credential.manager.auth.ManagerCredential;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.RequestScoped;

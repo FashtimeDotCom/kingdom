@@ -5,10 +5,10 @@
  */
 package com.josue.credential.manager.auth.shiro.api;
 
-import com.josue.credential.manager.account.AccountRepository;
-import com.josue.credential.manager.auth.APICredential;
-import com.josue.credential.manager.auth.APIDomainCredential;
-import com.josue.credential.manager.auth.Role;
+import com.josue.credential.manager.auth.AuthRepository;
+import com.josue.credential.manager.auth.credential.APICredential;
+import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.role.Role;
 import com.josue.credential.manager.auth.shiro.AccessLevelPermission;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +34,7 @@ public class APICredentialRealm extends AuthorizingRealm {
 
     //Here we can inject other beans because 'JpaRepository' is CDI aware (see CustomEnvironmentLoaderListener)
     @Inject
-    AccountRepository persistence;
+    AuthRepository persistence;
 
     public APICredentialRealm() {
         setAuthenticationTokenClass(APICredential.class);

@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.auth;
+package com.josue.credential.manager.auth.credential;
 
 /**
  *
- * @author Josue
+ * @author iFood
  */
-public enum DomainStatus {
+public enum CredentialStatus {
 
-    ACTIVE, INACTIVE
+    INACTIVE, ACTIVE, SUSPENDED
 }

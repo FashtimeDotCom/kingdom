@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.shiro.api;
 
-import com.josue.credential.manager.auth.APICredential;
+import com.josue.credential.manager.auth.credential.APICredential;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

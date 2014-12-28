@@ -5,10 +5,11 @@
  */
 package com.josue.credential.manager.account;
 
-import com.josue.credential.manager.auth.APIDomainCredential;
-import com.josue.credential.manager.auth.Domain;
-import com.josue.credential.manager.auth.DomainCredential;
-import com.josue.credential.manager.auth.cdi.Current;
+import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.domain.Domain;
+import com.josue.credential.manager.auth.domain.DomainCredential;
+import com.josue.credential.manager.auth.util.Current;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -17,7 +18,7 @@ import org.apache.shiro.subject.Subject;
 
 /**
  *
- * @author iFood
+ * @author Josue
  */
 @ApplicationScoped
 public class AccountControl {

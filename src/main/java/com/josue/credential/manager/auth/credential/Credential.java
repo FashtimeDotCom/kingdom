@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.auth;
+package com.josue.credential.manager.auth.credential;
 
 import com.josue.credential.manager.Resource;
-import com.josue.credential.manager.account.Manager;
+import com.josue.credential.manager.auth.manager.Manager;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
@@ -24,7 +23,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 public abstract class Credential extends Resource implements AuthenticationToken {
 
     //enforce relationship
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "manager_uuid")
     private Manager manager;
 

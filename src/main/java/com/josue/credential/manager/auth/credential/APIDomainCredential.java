@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.auth;
+package com.josue.credential.manager.auth.credential;
 
+import com.josue.credential.manager.auth.credential.APICredential;
+import com.josue.credential.manager.auth.domain.DomainCredential;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
