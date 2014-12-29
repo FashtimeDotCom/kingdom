@@ -17,7 +17,7 @@
                 <f:view>
                     <h:form>
                         <h1><h:outputText value="Owned"/></h1>
-                        <p:dataTable value="#{domainBean.ownedDomains}" var="domain">
+                        <p:dataTable value="#{domainBean.ownedDomains}" var="domain" tableStyle="width:auto">
                             <p:column>
                                 <f:facet name="header">
                                     <h:outputText value="UUID"/>
@@ -57,6 +57,12 @@
                                 <h:outputText value="#{domain.lastUpdate}">
                                     <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
                                 </h:outputText>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Delete"/>
+                                </f:facet>
+                                <p:commandButton action="#{domainBean.deleteDomain(domain.uuid)}" ajax="false" icon=" ui-icon-closethick"/>
                             </p:column>
                         </p:dataTable>
                     </h:form>

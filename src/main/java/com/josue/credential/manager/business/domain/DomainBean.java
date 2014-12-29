@@ -64,6 +64,11 @@ public class DomainBean implements Serializable {
         return "/secured/domain/owned.xhtml?faces-redirect=true";
     }
 
+    public String deleteDomain(String domainUuid) {
+        control.deleteDomain(domainUuid);
+        return "/secured/domain/owned.xhtml?faces-redirect=true";
+    }
+
     public void changeDomain(ValueChangeEvent event) {
         LOG.log(Level.INFO, "TRYING TO CHANGE TO DOMAIN {0}", event.getNewValue());
         for (String d : domains) {

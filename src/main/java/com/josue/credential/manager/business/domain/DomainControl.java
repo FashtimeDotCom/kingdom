@@ -48,4 +48,12 @@ public class DomainControl {
         repository.create(domain);
         return domain;
     }
+
+    public void deleteDomain(String domainUuid) {
+        Domain foundDomain = repository.find(Domain.class, domainUuid);
+        if (foundDomain != null) {
+            repository.remove(foundDomain);
+        }
+        //TODO exceptions... ?!!!
+    }
 }
