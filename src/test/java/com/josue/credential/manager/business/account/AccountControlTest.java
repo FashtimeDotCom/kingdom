@@ -7,6 +7,7 @@ package com.josue.credential.manager.business.account;
 
 import com.josue.credential.manager.auth.credential.APICredential;
 import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import java.util.Arrays;
 import java.util.List;
@@ -32,33 +33,39 @@ public class AccountControlTest {
     AccountRepository repository;
 
     @Mock
-    Manager currentManager;
+    ManagerCredential currentCredential;
 
+    @Mock
+    Manager manager;
+    
     @InjectMocks
     AccountControl control = new AccountControl();
 
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+        currentCredential.setManager(manager);
     }
 
     @Test
     public void testGetManagerByCredential() {
         //TODO testing nothing
         String credUuid = "123";
-        Manager manager = mock(Manager.class);
+        Manager mockedManager = mock(Manager.class);
 
-        when(repository.getManagerByCredential(credUuid)).thenReturn(manager);
+        when(repository.getManagerByCredential(credUuid)).thenReturn(mockedManager);
         Manager foundManager = control.getManagerByCredential(credUuid);
-        assertNotNull(manager);
-        assertEquals(manager, foundManager);
+        assertNotNull(mockedManager);
+        assertEquals(mockedManager, foundManager);
     }
 
     @Test
     public void testGetAPICredentials() {
         APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
         List<APIDomainCredential> realList = Arrays.asList(apiCredMock, apiCredMock, apiCredMock);
-        when(repository.getApiCredentialsByManager(currentManager.getUuid())).thenReturn(realList);
+        
+        when(currentCredential.getManager()).thenReturn(manager);
+        when(repository.getApiCredentialsByManager(currentCredential.getManager().getUuid())).thenReturn(realList);
 
         APICredential credMock = mock(APICredential.class);
         when(apiCredMock.getCredential()).thenReturn(credMock);

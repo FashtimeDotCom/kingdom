@@ -6,6 +6,7 @@
 package com.josue.credential.manager.business.account;
 
 import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.util.Current;
 import java.util.List;
@@ -24,14 +25,14 @@ public class AccountControl {
 
     @Inject
     @Current
-    Manager currentManager;
+    ManagerCredential currentCredential;
 
     public Manager getManagerByCredential(String credentialUuid) {
         return repository.getManagerByCredential(credentialUuid);
     }
 
     public List<APIDomainCredential> getAPICredentials() {
-        List<APIDomainCredential> apiCredentials = repository.getApiCredentialsByManager(currentManager.getUuid());
+        List<APIDomainCredential> apiCredentials = repository.getApiCredentialsByManager(currentCredential.getManager().getUuid());
         //obfuscate api key
         //TODO improve
         for (APIDomainCredential apiCredential : apiCredentials) {

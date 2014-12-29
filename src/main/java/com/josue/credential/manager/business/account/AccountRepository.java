@@ -37,5 +37,4 @@ public class AccountRepository extends JpaRepository {
         Manager manager = query.getSingleResult();
         return manager;
     }
-
 }

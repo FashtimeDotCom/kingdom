@@ -5,8 +5,8 @@
  */
 package com.josue.credential.manager.auth.util;
 
+import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.business.account.AccountRepository;
-import com.josue.credential.manager.auth.manager.Manager;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
@@ -27,10 +27,10 @@ public class CurrentManager {
     @Produces
     @Current
     @SessionScoped
-    public Manager getCurrentManager() {
+    public ManagerCredential getCurrentManager() {
         Subject subject = SecurityUtils.getSubject();
-        Manager foundManager = repository.getManagerByCredential(subject.getPrincipal().toString());
-        return foundManager;
+        ManagerCredential foundManagerCredential = repository.find(ManagerCredential.class, subject.getPrincipal().toString());
+        return foundManagerCredential;
     }
 
 }
