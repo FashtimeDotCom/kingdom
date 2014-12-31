@@ -7,5 +7,10 @@
     </head>
     <body>
         <h1>Dashboard</h1>
+
+        <form action="${pageContext.request.contextPath}/logout">
+            <input type="submit" value="Logout">
+        </form>
+
     </body>
 </html>
