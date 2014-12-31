@@ -16,7 +16,7 @@
 
         <!-- Angular -->
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-resource.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
@@ -56,7 +56,7 @@
         <div id="sidebar" ng-controller="menuCtrl">
             <a href="#" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>
             <ul>
-                <li class="active"><a href="index.html"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>
+                <li class="active"><a href="<c:url value='#/main' />"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>
                 <li class="submenu">
                     <a href="#"><i class="icon icon-th-list"></i> <span>Form elements</span> <span class="label">3</span></a>
                     <ul>
@@ -65,7 +65,7 @@
                         <li><a href="form-wizard.html">Wizard</a></li>
                     </ul>
                 </li>
-                <li><a href="buttons.html"><i class="icon icon-tint"></i> <span>Buttons &amp; icons</span></a></li>
+                <li><a href="<c:url value='#/buttons' />"><i class="icon icon-tint"></i> <span>Buttons &amp; icons</span></a></li>
                 <li><a href="interface.html"><i class="icon icon-pencil"></i> <span>Interface elements</span></a></li>
                 <li><a href="tables.html"><i class="icon icon-th"></i> <span>Tables</span></a></li>
                 <li><a href="grid.html"><i class="icon icon-th-list"></i> <span>Grid Layout</span></a></li>
@@ -89,7 +89,7 @@
         </div>
 
         <div id="content">
-            <div ng-view></div>
+            <div  ng-view></div>
         </div>
 
 
