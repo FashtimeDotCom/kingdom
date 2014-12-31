@@ -5,7 +5,6 @@
  */
 package com.josue.credential.manager.auth.credential;
 
-import com.josue.credential.manager.auth.credential.Credential;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -37,6 +36,7 @@ public class ManagerCredential extends Credential {
     @NotNull
     private String login;
 
+    //TODO check convert to char[]
     @NotNull
     private String password;
 

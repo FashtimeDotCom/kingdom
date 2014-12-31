@@ -12,6 +12,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -28,12 +29,22 @@ public class ManagerCredentialRealm extends AuthorizingRealm {
     AuthRepository persistence;
 
     public ManagerCredentialRealm() {
-        setAuthenticationTokenClass(ManagerCredential.class);
+        setAuthenticationTokenClass(UsernamePasswordToken.class);
+
     }
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {
-        ManagerCredential token = (ManagerCredential) authToken;
+//org.apache.shiro.web.filter.authc.FormAuthenticationFilter
+        ManagerCredential token;
+        if (authToken instanceof UsernamePasswordToken) {
+            UsernamePasswordToken upt = (UsernamePasswordToken) authToken;
+            token = new ManagerCredential(upt.getUsername(), new String(upt.getPassword()));
+        } else if (authToken instanceof ManagerCredential) {
+            token = (ManagerCredential) authToken;
+        } else {
+            throw new AuthenticationException("Invalid authentication token");
+        }
 
         //Make use of JPA
         ManagerCredential foundApiCredential = persistence.findManagerCredentialByLogin(token.getLogin());
@@ -69,7 +80,7 @@ public class ManagerCredentialRealm extends AuthorizingRealm {
 
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof ManagerCredential;
+        return token instanceof ManagerCredential || token instanceof UsernamePasswordToken;
     }
 
 }
