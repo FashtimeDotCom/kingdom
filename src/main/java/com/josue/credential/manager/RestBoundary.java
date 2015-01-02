@@ -6,6 +6,7 @@
 package com.josue.credential.manager;
 
 import com.josue.credential.manager.auth.domain.Domain;
+import com.josue.credential.manager.rest.ex.RestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
