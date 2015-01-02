@@ -13,8 +13,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <shiro.version>1.2.3</shiro.version>
         <arquillian.version>1.1.3.Final</arquillian.version>
-        <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
-        <sonar.jacoco.itReportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.itReportPath>
+        <sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-it.exec</sonar.jacoco.reportPath>
+        <sonar.jacoco.itReportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.itReportPath>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
@@ -175,6 +175,9 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>report-ut</id>
@@ -182,10 +185,10 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
-<!--                        <configuration>
+                        <configuration>
                             <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
                             <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
-                        </configuration>-->
+                        </configuration>
                     </execution>
                     <!-- UNIT TEST EXECUTIONS END -->
                     
@@ -196,6 +199,9 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/coverage-reports/jacoco-it.exec</destFile>
+                        </configuration>
                     </execution>
 
                     <execution>
@@ -204,21 +210,26 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+                        </configuration>
                     </execution>
                     <!-- INTEGRATION TEST EXECUTIONS END-->
                 </executions>
             </plugin>
             
-<!--            <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
+                    <argLine>${surefireArgLine}</argLine>
                     <systemPropertyVariables>
                         <liquibase.should.run>true</liquibase.should.run>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>-->
+            </plugin>
             
         </plugins>
     </build>
