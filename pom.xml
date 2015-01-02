@@ -155,6 +155,9 @@
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.18</version>
+                <configuration>
+                    <argLine>${argLine}</argLine>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -172,15 +175,17 @@
                 <executions>
                     <!-- UNIT TEST EXECUTIONS -->
                     <execution>
+                        <id>pre-unit-test</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
                             <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+                            <propertyName>surefireArgLine</propertyName>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>report-ut</id>
+                        <id>post-unit-test</id>
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
