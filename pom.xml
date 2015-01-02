@@ -234,7 +234,7 @@
                 <version>2.18.1</version>
                 <configuration>
                     <systemPropertyVariables>
-                        <liquibase.should.run>false</liquibase.should.run>
+                        <liquibase.should.run>true</liquibase.should.run>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
