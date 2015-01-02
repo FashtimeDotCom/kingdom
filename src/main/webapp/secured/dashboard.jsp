@@ -55,20 +55,20 @@
 
         <div id="sidebar" ng-controller="menuCtrl">
             <a href="#" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>
-            <ul>
-                <li ng-class="getClass('/main')"><a href="<c:url value='#/main' />"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>
-                <li class="submenu">
-                    <a href="#"><i class="icon icon-th-list"></i> <span>Form elements</span> <span class="label">3</span></a>
+            <ul> 
+                <li ng-class="getMenuClass('/main')"><a href="<c:url value='#/main' />"><i class="icon icon-home"></i> <span>Dashboard</span></a></li>
+                <li ng-class="getSubMenuClass('/domain')">
+                    <a href="#"><i class="icon icon-th-list"></i> <span>Domain</span></a>
                     <ul>
-                        <li><a href="form-common.html">Common elements</a></li>
-                        <li><a href="form-validation.html">Validation</a></li>
-                        <li><a href="form-wizard.html">Wizard</a></li>
+                        <li><a href="<c:url value='#/domain-create' />">Create</a></li>
+                        <li><a href="<c:url value='#/domain-owned' />">Owned</a></li>
+                        <li><a href="<c:url value='#/domain-joined' />">Joined</a></li>
                     </ul>
                 </li>
-                <li ng-class="getClass('/buttons')"><a href="<c:url value='#/buttons' />"><i class="icon icon-tint"></i> <span>Buttons &amp; icons</span></a></li>
-                <li ng-class="getClass('/interface')"><a href="interface.html"><i class="icon icon-pencil"></i> <span>Interface elements</span></a></li>
-                <li ng-class="getClass('/tables')"><a href="tables.html"><i class="icon icon-th"></i> <span>Tables</span></a></li>
-                <li ng-class="getClass('/grid')"><a href="grid.html"><i class="icon icon-th-list"></i> <span>Grid Layout</span></a></li>
+                <li ng-class="getMenuClass('/buttons')"><a href="<c:url value='#/buttons' />"><i class="icon icon-tint"></i> <span>Buttons &amp; icons</span></a></li>
+                <li ng-class="getMenuClass('/interface')"><a href="interface.html"><i class="icon icon-pencil"></i> <span>Interface elements</span></a></li>
+                <li ng-class="getMenuClass('/tables')"><a href="tables.html"><i class="icon icon-th"></i> <span>Tables</span></a></li>
+                <li ng-class="getMenuClass('/grid')"><a href="grid.html"><i class="icon icon-th-list"></i> <span>Grid Layout</span></a></li>
                 <li class="submenu">
                     <a href="#"><i class="icon icon-file"></i> <span>Sample pages</span> <span class="label">4</span></a>
                     <ul>
@@ -78,10 +78,10 @@
                         <li><a href="gallery.html">Gallery</a></li>
                     </ul>
                 </li>
-                <li ng-class="getClass('/charts')">
+                <li ng-class="getMenuClass('/charts')">
                     <a href="charts.html"><i class="icon icon-signal"></i> <span>Charts &amp; graphs</span></a>
                 </li>
-                <li ng-class="getClass('/widgets')">
+                <li ng-class="getMenuClass('/widgets')">
                     <a href="widgets.html"><i class="icon icon-inbox"></i> <span>Widgets</span></a>
                 </li>
             </ul>

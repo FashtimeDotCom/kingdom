@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.util;
+package com.josue.credential.manager.rest;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -29,6 +29,11 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.josue.credential.manager.business.account.AccountRest.class);
+        resources.add(com.josue.credential.manager.business.domain.DomainCredentialsRest.class);
+        resources.add(com.josue.credential.manager.business.domain.OwnedDomainsRest.class);
+        resources.add(com.josue.credential.manager.rest.CustomJacksonProvider.class);
+        resources.add(com.josue.credential.manager.rest.VersionRest.class);
+        resources.add(com.josue.credential.manager.rest.ex.RestExceptionMapper.class);
     }
 
 }

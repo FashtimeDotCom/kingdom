@@ -7,7 +7,7 @@ package com.josue.credential.manager.auth.shiro.api;
 
 import com.josue.credential.manager.auth.AuthRepository;
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.role.Role;
 import com.josue.credential.manager.auth.shiro.AccessLevelPermission;
 import java.util.HashMap;
@@ -48,7 +48,8 @@ public class APICredentialRealm extends AuthorizingRealm {
         APICredential foundApiCredential = persistence.findApiCredentialByToken(token.getApiKey());
 
         if (foundApiCredential != null) {
-            return new SimpleAuthenticationInfo(foundApiCredential.getUuid(), foundApiCredential.getCredentials(), getName());
+            //Here we put the entire APICredential class, so we can fetch it using Subject subject = SecurityUtils.getSubject();
+            return new SimpleAuthenticationInfo(foundApiCredential, foundApiCredential.getCredentials(), getName());
         }
         throw new AuthenticationException("No credential found for APIKEY: " + token.getApiKey());
     }

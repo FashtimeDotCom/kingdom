@@ -50,7 +50,8 @@ public class ManagerCredentialRealm extends AuthorizingRealm {
         ManagerCredential foundApiCredential = persistence.findManagerCredentialByLogin(token.getLogin());
 
         if (foundApiCredential != null) {
-            return new SimpleAuthenticationInfo(foundApiCredential.getUuid(), foundApiCredential.getCredentials(), getName());
+            //Here we put the entire APICredential class, so we can fetch it using Subject subject = SecurityUtils.getSubject();
+            return new SimpleAuthenticationInfo(foundApiCredential, foundApiCredential.getCredentials(), getName());
         }
         throw new AuthenticationException("No credential found for login: " + token.getLogin());
     }

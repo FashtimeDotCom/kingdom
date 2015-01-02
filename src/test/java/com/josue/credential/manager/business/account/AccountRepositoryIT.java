@@ -7,7 +7,7 @@ package com.josue.credential.manager.business.account;
 
 import com.josue.credential.manager.ArquillianTestBase;
 import com.josue.credential.manager.InstanceHelper;
-import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import java.util.List;

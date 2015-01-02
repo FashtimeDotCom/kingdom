@@ -9,9 +9,8 @@ import com.josue.credential.manager.ArquillianTestBase;
 import com.josue.credential.manager.InstanceHelper;
 import com.josue.credential.manager.auth.credential.Credential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
-import com.josue.credential.manager.auth.credential.ManagerDomainCredential;
 import com.josue.credential.manager.auth.domain.Domain;
-import com.josue.credential.manager.auth.domain.DomainCredential;
+import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.role.Role;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -63,7 +63,7 @@ public class DomainRepositoryIT {
     }
 
     @Test
-    public void testGetJoinedDomainsByCredential() {
+    public void testGetJoinedDomainsByManager() {
         //The main Manager full tree
         ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
         Domain domain = domainCredential.getDomain();
@@ -81,7 +81,7 @@ public class DomainRepositoryIT {
         ManagerDomainCredential invitedDomainCredential = InstanceHelper.createManagerDomainCredential(domain, invitedManagerCredential, simpleRole);
         repository.create(invitedDomainCredential);
 
-        List<DomainCredential> foundDomainCredentials = repository.getJoinedDomainsByCredential(invitedManagerCredential.getUuid());
+        List<ManagerDomainCredential> foundDomainCredentials = repository.getJoinedDomainsByManager(invitedManagerCredential.getManager().getUuid());
         assertEquals(1, foundDomainCredentials.size());
         assertEquals(invitedDomainCredential, foundDomainCredentials.get(0));
 
@@ -95,6 +95,15 @@ public class DomainRepositoryIT {
         List<Domain> ownedDomains = repository.getOwnedDomainsByManager(manager.getUuid());
         assertEquals(1, ownedDomains.size());
         assertEquals(domainCredential.getDomain(), ownedDomains.get(0));
+    }
 
+    @Test
+    public void testCountDomainCredentials(String managerUuid) {
+        fail("Implement me");
+    }
+
+    @Test
+    public void testCountOwnedDomains(String managerUuid) {
+        fail("Implement me");
     }
 }

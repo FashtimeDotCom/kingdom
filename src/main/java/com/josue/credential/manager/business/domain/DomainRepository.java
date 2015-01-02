@@ -7,10 +7,11 @@ package com.josue.credential.manager.business.domain;
 
 import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.domain.Domain;
-import com.josue.credential.manager.auth.domain.DomainCredential;
+import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 /**
@@ -30,10 +31,10 @@ public class DomainRepository extends JpaRepository {
 
     //Control change some data, we dont want to update it on database
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public List<DomainCredential> getJoinedDomainsByCredential(String credentialUuid) {
-        Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", DomainCredential.class);
-        query.setParameter("credentialUuid", credentialUuid);
-        List<DomainCredential> resultList = query.getResultList();
+    public List<ManagerDomainCredential> getJoinedDomainsByManager(String managerUuid) {
+        Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :managerUuid", ManagerDomainCredential.class);
+        query.setParameter("managerUuid", managerUuid);
+        List<ManagerDomainCredential> resultList = query.getResultList();
         return resultList;
     }
 
@@ -43,11 +44,27 @@ public class DomainRepository extends JpaRepository {
         List<Domain> domains = query.getResultList();
         return domains;
     }
-    
+
     public List<String> getDomainUuidByName(String domainName) {
         Query query = em.createQuery("SELECT dom.name FROM Domain dom WHERE dom.name = :domainName", String.class);
         query.setParameter("domainName", domainName);
         List<String> domainsUuids = query.getResultList();
         return domainsUuids;
+    }
+
+    //TODO test-me
+    public Long countDomainCredentials(String managerUuid) {
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(manCred.uuid) FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :credentialUuid", Long.class);
+        query.setParameter("credentialUuid", managerUuid);
+        Long count = query.getSingleResult();
+        return count;
+    }
+
+    //TODO test-me
+    public Long countOwnedDomains(String managerUuid) {
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(domain.uuid) FROM Domain domain WHERE domain.owner.uuid = :managerUuid", Long.class);
+        query.setParameter("credentialUuid", managerUuid);
+        Long count = query.getSingleResult();
+        return count;
     }
 }

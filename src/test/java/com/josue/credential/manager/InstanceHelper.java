@@ -6,10 +6,10 @@
 package com.josue.credential.manager;
 
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.CredentialStatus;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
-import com.josue.credential.manager.auth.credential.ManagerDomainCredential;
+import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.DomainStatus;
 import com.josue.credential.manager.auth.manager.Manager;

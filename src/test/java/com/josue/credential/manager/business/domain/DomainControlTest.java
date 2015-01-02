@@ -7,8 +7,8 @@ package com.josue.credential.manager.business.domain;
 
 import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.auth.domain.Domain;
-import com.josue.credential.manager.auth.domain.DomainCredential;
 import com.josue.credential.manager.auth.domain.DomainStatus;
+import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +35,7 @@ public class DomainControlTest {
 
     @Mock
     ManagerCredential currentCredential;
-    
+
     @Mock
     Manager manager;
 
@@ -60,11 +60,14 @@ public class DomainControlTest {
 
     @Test
     public void testGetJoinedDomains() {
-        List<DomainCredential> domainCredentials = Arrays.asList(Mockito.mock(DomainCredential.class));
+        List<ManagerDomainCredential> domainCredentials = Arrays.asList(Mockito.mock(ManagerDomainCredential.class));
         when(currentCredential.getManager()).thenReturn(manager);
-        when(repository.getJoinedDomainsByCredential(currentCredential.getManager().getUuid())).thenReturn(domainCredentials);
-        
-        List<DomainCredential> joinedDomains = control.getJoinedDomains();
+        when(repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid())).thenReturn(domainCredentials);
+
+        List<ManagerDomainCredential> joinedDomains = control.getJoinedDomains();
+        for (ManagerDomainCredential mdc : domainCredentials) {
+            verify(mdc, times(1)).setCredential(null);
+        }
         assertEquals(domainCredentials, joinedDomains);
     }
 
@@ -73,52 +76,52 @@ public class DomainControlTest {
         Domain domain = new Domain();
         domain.setName("name-123");
         domain.setStatus(DomainStatus.ACTIVE);
-        
+
         when(currentCredential.getManager()).thenReturn(manager);
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
-        
+
         List<String> mockedDomainNames = Mockito.mock(List.class);
         when(repository.getDomainUuidByName(domain.getName())).thenReturn(mockedDomainNames);
         //Domains name doesnt exist
         when(mockedDomainNames.isEmpty()).thenReturn(true);
-        
+
         Domain createdDomain = control.createDomain(domain);
         assertEquals(createdDomain.getOwner(), manager);
         verify(mockedDomainNames, times(1)).isEmpty();
         verify(repository, times(1)).create(domain);
     }
-    
+
     @Test(expected = RuntimeException.class)
     public void testCreateDomainNameAlreadyExists() {
         Domain domain = new Domain();
         domain.setName("name-123");
         domain.setStatus(DomainStatus.ACTIVE);
-        
+
         when(currentCredential.getManager()).thenReturn(manager);
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
-        
+
         List<String> mockedDomainNames = Mockito.mock(List.class);
         when(repository.getDomainUuidByName(domain.getName())).thenReturn(mockedDomainNames);
         //Domains name doesnt exist
         when(mockedDomainNames.isEmpty()).thenReturn(false);
         control.createDomain(domain);
-        fail(); 
+        fail();
     }
 
     @Test
     public void testDeleteDomain() {
         String domainUuid = "domain-123";
         Domain mockedDomain = Mockito.mock(Domain.class);
-        
+
         when(repository.find(Domain.class, domainUuid)).thenReturn(mockedDomain);
         control.deleteDomain(domainUuid);
         verify(repository, times(1)).remove(mockedDomain);
     }
-    
+
     @Test(expected = RuntimeException.class)
     public void testDeleteDomainNotFound() {
         String domainUuid = "domain-123";
-        
+
         when(repository.find(Domain.class, domainUuid)).thenReturn(null);
         control.deleteDomain(domainUuid);
         fail();

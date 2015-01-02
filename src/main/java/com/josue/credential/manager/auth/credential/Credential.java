@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.credential;
 
-import com.josue.credential.manager.Resource;
+import com.josue.credential.manager.rest.Resource;
 import com.josue.credential.manager.auth.manager.Manager;
 import java.util.Objects;
 import javax.persistence.EnumType;

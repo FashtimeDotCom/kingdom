@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.util;
 
-import com.josue.credential.manager.auth.credential.ManagerCredential;
+import com.josue.credential.manager.auth.credential.Credential;
 import com.josue.credential.manager.business.account.AccountRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
@@ -27,10 +27,15 @@ public class CurrentManager {
     @Produces
     @Current
     @SessionScoped
-    public ManagerCredential getCurrentManager() {
+    //TODO WELD-000052: Cannot return null from a non-dependent producer method: Producer for Producer Method
+    public Credential currentCredential() {
         Subject subject = SecurityUtils.getSubject();
-        ManagerCredential foundManagerCredential = repository.find(ManagerCredential.class, subject.getPrincipal().toString());
-        return foundManagerCredential;
+        if (subject != null) {
+            if (subject.getPrincipal() instanceof Credential) {
+                return (Credential) subject.getPrincipal();
+            }
+        }
+        throw new RuntimeException("Could not load credential, check for credential type");
     }
 
 }

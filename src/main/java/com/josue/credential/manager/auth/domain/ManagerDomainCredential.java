@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.auth.credential;
+package com.josue.credential.manager.auth.domain;
 
-import com.josue.credential.manager.auth.domain.DomainCredential;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;

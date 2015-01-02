@@ -56,12 +56,12 @@ public class APICredential extends Credential {
 
     @Override
     public Object getCredentials() {
-        return apiKey; //To change body of generated methods, choose Tools | Templates.
+        return apiKey;
     }
 
     @Override
     public Object getPrincipal() {
-        return apiKey; //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
 }

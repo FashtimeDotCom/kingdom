@@ -7,9 +7,9 @@ package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
-import com.josue.credential.manager.auth.credential.ManagerDomainCredential;
+import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Query;

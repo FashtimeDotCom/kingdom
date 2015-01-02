@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.domain;
 
-import com.josue.credential.manager.Resource;
+import com.josue.credential.manager.rest.Resource;
 import com.josue.credential.manager.auth.domain.DomainStatus;
 import com.josue.credential.manager.auth.domain.DomainStatus;
 import com.josue.credential.manager.auth.manager.Manager;

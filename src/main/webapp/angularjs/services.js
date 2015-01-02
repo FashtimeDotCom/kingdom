@@ -11,6 +11,13 @@ angular.module('myApp.services', ['ngResource'])
                 var Resources = function() {
                     var _private = this;
 
+                     _private.version = $resource('/credential-manager/api/version', {}, {
+                        get: {
+                            method: 'GET',
+                            isArray: false
+                        }
+                    });
+
                     _private.gear = $resource('http://localhost:8080/v1/app/gear:uuid', {}, {
                         query: {
                             url: 'http://localhost:8080/v1/app/gear/all',

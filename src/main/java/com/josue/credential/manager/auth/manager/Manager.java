@@ -5,7 +5,7 @@
  */
 package com.josue.credential.manager.auth.manager;
 
-import com.josue.credential.manager.Resource;
+import com.josue.credential.manager.rest.Resource;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;

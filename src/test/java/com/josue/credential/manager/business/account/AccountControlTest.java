@@ -6,7 +6,7 @@
 package com.josue.credential.manager.business.account;
 
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.credential.APIDomainCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import java.util.Arrays;
