@@ -25,7 +25,6 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -99,11 +98,46 @@ public class DomainRepositoryIT {
 
     @Test
     public void testCountDomainCredentials(String managerUuid) {
-        fail("Implement me");
+        //Domain 1
+        ManagerDomainCredential domainCredential1 = InstanceHelper.createFullManagerDomainCredential(repository);
+        Domain domain1 = domainCredential1.getDomain();
+
+        //Domain 2
+        ManagerDomainCredential domainCredential2 = InstanceHelper.createFullManagerDomainCredential(repository);
+        Domain domain2 = domainCredential2.getDomain();
+
+        //The target manager
+        Manager invitedManager = InstanceHelper.createManager();
+        repository.create(invitedManager);
+        ManagerCredential invitedManagerCredential = InstanceHelper.createManagerCredential(invitedManager);
+        repository.create(invitedManagerCredential);
+
+        //commom role
+        Role simpleRole = InstanceHelper.createRole();
+        repository.create(simpleRole);
+
+        //Assign the new manager to the Domain 1
+        ManagerDomainCredential invitedDomainCredential1 = InstanceHelper.createManagerDomainCredential(domain1, invitedManagerCredential, simpleRole);
+        repository.create(invitedDomainCredential1);
+
+        //Assign the new manager to the Domain 2
+        ManagerDomainCredential invitedDomainCredential2 = InstanceHelper.createManagerDomainCredential(domain2, invitedManagerCredential, simpleRole);
+        repository.create(invitedDomainCredential2);
+
+        Long count = repository.countDomainCredentials(invitedManager.getUuid());
+        assertEquals(new Long(2), count);
     }
 
     @Test
     public void testCountOwnedDomains(String managerUuid) {
-        fail("Implement me");
+        //Domain 1
+        ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
+        Domain domain2 = InstanceHelper.createDomain(domainCredential.getCredential().getManager());
+        repository.create(domain2);
+        Domain domain3 = InstanceHelper.createDomain(domainCredential.getCredential().getManager());
+        repository.create(domain3);
+
+        Long count = repository.countOwnedDomains(domainCredential.getCredential().getManager().getUuid());
+        assertEquals(new Long(3), count);
     }
 }

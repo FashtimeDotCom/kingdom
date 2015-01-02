@@ -37,6 +37,7 @@ public abstract class ArquillianTestBase {
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
                 //                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
+                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/jboss-deployment-structure.xml"))
                 .addAsLibraries(dependecies);
 
         return war;

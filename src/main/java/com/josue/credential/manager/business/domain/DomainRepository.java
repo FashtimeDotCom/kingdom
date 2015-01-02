@@ -52,7 +52,6 @@ public class DomainRepository extends JpaRepository {
         return domainsUuids;
     }
 
-    //TODO test-me
     public Long countDomainCredentials(String managerUuid) {
         TypedQuery<Long> query = em.createQuery("SELECT COUNT(manCred.uuid) FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :credentialUuid", Long.class);
         query.setParameter("credentialUuid", managerUuid);
@@ -60,10 +59,9 @@ public class DomainRepository extends JpaRepository {
         return count;
     }
 
-    //TODO test-me
     public Long countOwnedDomains(String managerUuid) {
         TypedQuery<Long> query = em.createQuery("SELECT COUNT(domain.uuid) FROM Domain domain WHERE domain.owner.uuid = :managerUuid", Long.class);
-        query.setParameter("credentialUuid", managerUuid);
+        query.setParameter("managerUuid", managerUuid);
         Long count = query.getSingleResult();
         return count;
     }
