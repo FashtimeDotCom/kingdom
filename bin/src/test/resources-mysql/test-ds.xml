@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>    
+    <datasource jndi-name="java:jboss/datasources/credential-manager-testDS" pool-name="CredentialTestPool" enabled="true" use-java-context="true">
+        <connection-url>jdbc:mysql://localhost:3306/credential_manager_test</connection-url>
+        <driver>mysql</driver>
+        <security>
+            <user-name>root</user-name>
+            <password>root</password>
+        </security>
+    </datasource>
+</datasources> 
