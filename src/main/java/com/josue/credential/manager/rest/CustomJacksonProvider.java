@@ -5,20 +5,15 @@
  */
 package com.josue.credential.manager.rest;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  *
@@ -27,26 +22,22 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CustomJacksonProvider extends JacksonJsonProvider {
+public class CustomJacksonProvider implements ContextResolver<ObjectMapper> {
 
-    private static final Logger log = Logger.getLogger(CustomJacksonProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(CustomJacksonProvider.class.getName());
 
-    @Override
-    public void writeTo(Object value, Class<?> type, java.lang.reflect.Type genericType,
-            Annotation[] annotations, MediaType mediaType,
-            MultivaluedMap<String, Object> httpHeaders,
-            OutputStream entityStream) throws IOException {
+    private final ObjectMapper mapper;
 
-        log.info("############# CUSTOM JACKSONPROVIDER #############");
-        ObjectMapper mapper = locateMapper(type, mediaType);
-
-        mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+    public CustomJacksonProvider() {
+        LOG.info("********  CUSTOMJACKSONPROVIDER  ***********");
+        mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
-        mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS,
-                false);
-
-        super.writeTo(value, type, genericType, annotations, mediaType,
-                httpHeaders, entityStream);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
+    @Override
+    public ObjectMapper getContext(Class<?> type) {
+        LOG.info("OBJECTMAPPERRESOLVER.GETCONTEXT(...)");
+        return mapper;
+    }
 }

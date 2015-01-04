@@ -38,6 +38,8 @@ public abstract class ArquillianTestBase {
                 //                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsWebInfResource("test-ds.xml") //generic test DS
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
+                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/shiro.ini"))
+                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"))
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/jboss-deployment-structure.xml"))
                 .addAsLibraries(dependecies);
 
