@@ -25,6 +25,8 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -97,7 +99,7 @@ public class DomainRepositoryIT {
     }
 
     @Test
-    public void testCountDomainCredentials(String managerUuid) {
+    public void testCountDomainCredentials() {
         //Domain 1
         ManagerDomainCredential domainCredential1 = InstanceHelper.createFullManagerDomainCredential(repository);
         Domain domain1 = domainCredential1.getDomain();
@@ -129,7 +131,7 @@ public class DomainRepositoryIT {
     }
 
     @Test
-    public void testCountOwnedDomains(String managerUuid) {
+    public void testCountOwnedDomains() {
         //Domain 1
         ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
         Domain domain2 = InstanceHelper.createDomain(domainCredential.getCredential().getManager());
@@ -139,5 +141,31 @@ public class DomainRepositoryIT {
 
         Long count = repository.countOwnedDomains(domainCredential.getCredential().getManager().getUuid());
         assertEquals(new Long(3), count);
+    }
+
+    @Test
+    public void testGetDomainUuidByName() {
+        Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+        ManagerCredential manCred = InstanceHelper.createManagerCredential(manager);
+        repository.create(manCred);
+
+        Domain domain = InstanceHelper.createDomain(manager);
+        repository.create(domain);
+
+        String domainName = domain.getName();
+        String foundUuid = repository.getDomainUuidByName(domainName);
+        assertNotNull(foundUuid);
+        assertEquals(domain.getUuid(), foundUuid);
+
+        String notFoundUuid = repository.getDomainUuidByName("INEXISTENT-NAME");
+        assertNull(notFoundUuid);
+
+        String exatctNameUuid = repository.getDomainUuidByName(domain.getName().substring(0, 2));
+        assertNull(exatctNameUuid);
+
+        exatctNameUuid = repository.getDomainUuidByName(domain.getName().substring(2, domain.getName().length()));
+        assertNull(exatctNameUuid);
+
     }
 }

@@ -8,6 +8,7 @@ package com.josue.credential.manager;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 /**
@@ -60,6 +61,17 @@ public class JpaRepository {
         cq.select(em.getCriteriaBuilder().count(rt));
         javax.persistence.Query q = em.createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
+    }
+
+    /*
+     * Extract the first result from a given query, its useful to avoid exception handling for each query of single result
+     */
+    protected <T> T extractSingleResultFromList(Query query) {
+        List<T> resultList = query.getResultList();
+        if (resultList.isEmpty()) {
+            return null;
+        }
+        return resultList.get(0);
     }
 
 }

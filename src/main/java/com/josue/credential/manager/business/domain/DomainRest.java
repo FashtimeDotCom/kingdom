@@ -52,7 +52,7 @@ public class DomainRest extends RestBoundary<Domain> {
     @GET
     @Path("owned")
     @Produces(value = CONTENT_TYPE)
-    public Response getJoinedDomainByUuid(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
+    public Response getOwnedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) {
         List<Domain> foundDomains = control.getOwnedDomains();
 
@@ -60,15 +60,20 @@ public class DomainRest extends RestBoundary<Domain> {
         return ResponseUtils.buildListResourceResponse(foundDomains, Response.Status.OK, info, totalCount, limit, offset);
     }
 
+    /*
+     *Creates a new Domain
+     */
+    @Override
+    public Response create(Domain domain) {
+        Domain createdDomain = control.createDomain(domain);
+        return ResponseUtils.buildSimpleResponse(createdDomain, Response.Status.OK, info);
+    }
+
 //    @Override
 //    public Response getByUuid(String uuid) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
 //
-//    @Override
-//    public Response create(Domain domain) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
 //
 //    @Override
 //    public Response update(String uuid, Domain domain) {
