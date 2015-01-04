@@ -1,5 +1,7 @@
 package com.josue.credential.manager.rest.ex;
 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -9,6 +11,7 @@ import javax.ws.rs.ext.Provider;
  * This class handle all exceptions for the app, should be added to the resources in ApplicationConfig class
  */
 @Provider
+@Produces(MediaType.APPLICATION_JSON)
 public class RestExceptionMapper implements ExceptionMapper<Exception> {
 
     @Override
@@ -28,10 +31,9 @@ public class RestExceptionMapper implements ExceptionMapper<Exception> {
 
         }
 
-        // TODO remove before prod env
         return Response
-                .status(Status.BAD_REQUEST)
-                .entity(new ExceptionBean(1, Response.Status.NOT_FOUND,
+                .status(Status.INTERNAL_SERVER_ERROR)
+                .entity(new ExceptionBean(1, Response.Status.INTERNAL_SERVER_ERROR,
                                 exception.getMessage())).build();
     }
 }
