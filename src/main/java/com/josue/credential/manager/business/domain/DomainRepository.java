@@ -45,11 +45,11 @@ public class DomainRepository extends JpaRepository {
         return domains;
     }
 
-    public String getDomainUuidByName(String domainName) {
-        Query query = em.createQuery("SELECT dom.uuid FROM Domain dom WHERE dom.name = :domainName", String.class);
+    public Domain getDomainByName(String domainName) {
+        Query query = em.createQuery("SELECT dom FROM Domain dom WHERE dom.name = :domainName", Domain.class);
         query.setParameter("domainName", domainName);
-        String domainsUuid = extractSingleResultFromList(query);
-        return domainsUuid;
+        Domain domain = extractSingleResultFromList(query);
+        return domain;
     }
 
     public Long countDomainCredentials(String managerUuid) {

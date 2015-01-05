@@ -154,18 +154,18 @@ public class DomainRepositoryIT {
         repository.create(domain);
 
         String domainName = domain.getName();
-        String foundUuid = repository.getDomainUuidByName(domainName);
-        assertNotNull(foundUuid);
-        assertEquals(domain.getUuid(), foundUuid);
+        Domain foundDomain = repository.getDomainByName(domainName);
+        assertNotNull(foundDomain);
+        assertEquals(domain, foundDomain);
 
-        String notFoundUuid = repository.getDomainUuidByName("INEXISTENT-NAME");
-        assertNull(notFoundUuid);
+        Domain notFoundDomain = repository.getDomainByName("INEXISTENT-NAME");
+        assertNull(notFoundDomain);
 
-        String exatctNameUuid = repository.getDomainUuidByName(domain.getName().substring(0, 2));
-        assertNull(exatctNameUuid);
+        notFoundDomain = repository.getDomainByName(domain.getName().substring(0, 2));
+        assertNull(notFoundDomain);
 
-        exatctNameUuid = repository.getDomainUuidByName(domain.getName().substring(2, domain.getName().length()));
-        assertNull(exatctNameUuid);
+        notFoundDomain = repository.getDomainByName(domain.getName().substring(2, domain.getName().length()));
+        assertNull(notFoundDomain);
 
     }
 }

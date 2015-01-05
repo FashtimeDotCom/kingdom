@@ -61,7 +61,7 @@ public abstract class RestBoundary<T> {
     @Path("{uuid}")
     @Consumes(value = CONTENT_TYPE)
     @Produces(value = CONTENT_TYPE)
-    public Response update(@PathParam("{uuid}") String uuid, Domain domain) throws RestException {
+    public Response update(@PathParam("uuid") String uuid, Domain domain) throws RestException {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 

@@ -55,12 +55,28 @@ public class RestHelper {
         return webResource;
     }
 
-    public static ClientResponse doRequest(String... paths) {
+    public static ClientResponse doGetRequest(String... paths) {
         WebResource wr = getWebResource();
         for (String path : paths) {
             wr = wr.path(path);
         }
         return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).get(ClientResponse.class);
+    }
+
+    public static ClientResponse doPostRequest(Object resource, String... paths) {
+        WebResource wr = getWebResource();
+        for (String path : paths) {
+            wr = wr.path(path);
+        }
+        return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).post(ClientResponse.class, resource);
+    }
+
+    public static ClientResponse doPutRequest(Object resource, String... paths) {
+        WebResource wr = getWebResource();
+        for (String path : paths) {
+            wr = wr.path(path);
+        }
+        return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).put(ClientResponse.class, resource);
     }
 
 }

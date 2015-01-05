@@ -5,11 +5,8 @@
  */
 package com.josue.credential.manager.auth.domain;
 
+import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.rest.Resource;
-import com.josue.credential.manager.auth.domain.DomainStatus;
-import com.josue.credential.manager.auth.domain.DomainStatus;
-import com.josue.credential.manager.auth.manager.Manager;
-import com.josue.credential.manager.auth.manager.Manager;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,7 +31,6 @@ public class Domain extends Resource {
     @Enumerated(EnumType.STRING)
     private DomainStatus status;
 
-//    //TODO other properties
     @ManyToOne
     @JoinColumn(name = "owner_uuid")
     private Manager owner;
@@ -99,10 +95,7 @@ public class Domain extends Resource {
         if (this.status != other.status) {
             return false;
         }
-        if (!Objects.equals(this.owner, other.owner)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.owner, other.owner);
     }
 
 }

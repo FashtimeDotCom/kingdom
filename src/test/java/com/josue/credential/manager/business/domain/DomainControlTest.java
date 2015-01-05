@@ -10,9 +10,12 @@ import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.DomainStatus;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.rest.ex.RestException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,27 +75,38 @@ public class DomainControlTest {
     }
 
     @Test
-    public void testCreateDomain() {
+    public void testCreateDomain() throws RestException {
         Domain domain = new Domain();
         domain.setName("name-123");
         domain.setStatus(DomainStatus.ACTIVE);
+        //Non creatable fields
+        domain.setLastUpdate(new Date());
+        domain.setDateCreated(new Date());
+        domain.setOwner(new Manager());
 
         when(currentCredential.getManager()).thenReturn(manager);
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
 
-        List<String> mockedDomainNames = Mockito.mock(List.class);
-        when(repository.getDomainUuidByName(domain.getName())).thenReturn(mockedDomainNames);
-        //Domains name doesnt exist
-        when(mockedDomainNames.isEmpty()).thenReturn(true);
+        Domain mockedDomain = null;
+        when(repository.getDomainByName(domain.getName())).thenReturn(mockedDomain);
 
         Domain createdDomain = control.createDomain(domain);
         assertEquals(createdDomain.getOwner(), manager);
-        verify(mockedDomainNames, times(1)).isEmpty();
+        assertNull(domain.getDateCreated());
+        assertNull(domain.getOwner());
+        assertNull(domain.getLastUpdate());
         verify(repository, times(1)).create(domain);
+
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testCreateDomainNameAlreadyExists() {
+    @Test
+    public void testUpdateDomain() throws RestException {
+        fail();
+
+    }
+
+    @Test(expected = RestException.class)
+    public void testCreateDomainNameAlreadyExists() throws RestException {
         Domain domain = new Domain();
         domain.setName("name-123");
         domain.setStatus(DomainStatus.ACTIVE);
@@ -100,16 +114,15 @@ public class DomainControlTest {
         when(currentCredential.getManager()).thenReturn(manager);
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
 
-        List<String> mockedDomainNames = Mockito.mock(List.class);
-        when(repository.getDomainUuidByName(domain.getName())).thenReturn(mockedDomainNames);
-        //Domains name doesnt exist
-        when(mockedDomainNames.isEmpty()).thenReturn(false);
+        Domain mockedDomain = Mockito.mock(Domain.class);
+        when(repository.getDomainByName(domain.getName())).thenReturn(mockedDomain);
+
         control.createDomain(domain);
         fail();
     }
 
     @Test
-    public void testDeleteDomain() {
+    public void testDeleteDomain() throws RestException {
         String domainUuid = "domain-123";
         Domain mockedDomain = Mockito.mock(Domain.class);
 
@@ -119,7 +132,7 @@ public class DomainControlTest {
     }
 
     @Test(expected = RuntimeException.class)
-    public void testDeleteDomainNotFound() {
+    public void testDeleteDomainNotFound() throws RestException {
         String domainUuid = "domain-123";
 
         when(repository.find(Domain.class, domainUuid)).thenReturn(null);

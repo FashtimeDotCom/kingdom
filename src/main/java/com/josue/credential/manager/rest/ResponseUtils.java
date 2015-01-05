@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+//TODO check href creation
 public class ResponseUtils {
 
     public static Response buildListResourceResponse(List<? extends Resource> resources,

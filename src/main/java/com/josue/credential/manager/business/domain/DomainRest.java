@@ -12,6 +12,7 @@ import static com.josue.credential.manager.RestBoundary.DEFAULT_OFFSET;
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.rest.ResponseUtils;
+import com.josue.credential.manager.rest.ex.RestException;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -42,7 +43,7 @@ public class DomainRest extends RestBoundary<Domain> {
     @Path("joined")
     @Produces(value = CONTENT_TYPE)
     public Response listJoinedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
-            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) {
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) throws RestException {
         List<ManagerDomainCredential> foundDomains = control.getJoinedDomains();
 
         long totalCount = control.countDomainCredentials();
@@ -53,7 +54,7 @@ public class DomainRest extends RestBoundary<Domain> {
     @Path("owned")
     @Produces(value = CONTENT_TYPE)
     public Response getOwnedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
-            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) {
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) throws RestException {
         List<Domain> foundDomains = control.getOwnedDomains();
 
         long totalCount = control.countOwnedDomains();
@@ -64,9 +65,18 @@ public class DomainRest extends RestBoundary<Domain> {
      *Creates a new Domain
      */
     @Override
-    public Response create(Domain domain) {
+    public Response create(Domain domain) throws RestException {
         Domain createdDomain = control.createDomain(domain);
-        return ResponseUtils.buildSimpleResponse(createdDomain, Response.Status.OK, info);
+        return ResponseUtils.buildSimpleResponse(createdDomain, Response.Status.CREATED, info);
+    }
+
+    /*
+     Update an owned Domain, this method supports partial update
+     */
+    @Override
+    public Response update(String uuid, Domain domain) throws RestException {
+        Domain updatedDomain = control.updateDomain(uuid, domain);
+        return ResponseUtils.buildSimpleResponse(updatedDomain, Response.Status.OK, info);
     }
 
 //    @Override
@@ -75,8 +85,4 @@ public class DomainRest extends RestBoundary<Domain> {
 //    }
 //
 //
-//    @Override
-//    public Response update(String uuid, Domain domain) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
 }
