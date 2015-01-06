@@ -18,8 +18,8 @@
         
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPath>
-        <sonar.jacoco.itReportPath>${project.build.directory}/coverage-reports/jacoco-it.exec</sonar.jacoco.itReportPath>
+        <sonar.jacoco.reportPath>${project.build.directory}/coverage-reports/jacoco.exec</sonar.jacoco.reportPath>
+        <sonar.jacoco.itReportPath>${project.build.directory}/coverage-reports/jacoco.exec</sonar.jacoco.itReportPath>
         
     </properties>
     
@@ -89,7 +89,6 @@
             <version>0.7.2.201409121644</version>
         </dependency>
         
-        
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
@@ -152,6 +151,7 @@
                 </testResources>
             </build>
         </profile>
+        <!-- TODO check remove ?? -->
         <profile>
             <id>test-h2</id>
             <build>
@@ -166,8 +166,7 @@
             </build>
         </profile>
     </profiles>
-    
-
+ 
     <build>
         <finalName>credential-manager</finalName>
         <plugins>
@@ -179,6 +178,20 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
+            
+            <!-- Unit test -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <argLine>${surefireArgLine}</argLine>
+                    <systemPropertyVariables>
+                        <liquibase.should.run>true</liquibase.should.run>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            
             <!-- Integration tests -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -219,11 +232,10 @@
                             <goal>report</goal>
                         </goals>
                         <configuration>
-                            <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
-                            <outputDirectory>${project.build.directory}/coverage-reports/jacoco-ut</outputDirectory>
+                            <dataFile>${project.build.directory}/coverage-reports/jacoco.exec</dataFile>
+                            <outputDirectory>${project.build.directory}/coverage-reports/jacoco</outputDirectory>
                         </configuration>
                     </execution>
-                    
                     
                     <!-- prepare agent for measuring integration tests -->
                     <execution>
@@ -244,25 +256,12 @@
                             <goal>report-integration</goal>
                         </goals>
                         <configuration>
-                            <dataFile>${project.build.directory}/coverage-reports/jacoco-it.exec</dataFile>
-                            <outputDirectory>${project.build.directory}/coverage-reports/jacoco-it</outputDirectory>
+                            <dataFile>${project.build.directory}/coverage-reports/jacoco.exec</dataFile>
+                            <outputDirectory>${project.build.directory}/coverage-reports/jacoco</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
-                <configuration>
-                    <argLine>${surefireArgLine}</argLine>
-                    <systemPropertyVariables>
-                        <liquibase.should.run>true</liquibase.should.run>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            
         </plugins>
     </build>
 </project>
