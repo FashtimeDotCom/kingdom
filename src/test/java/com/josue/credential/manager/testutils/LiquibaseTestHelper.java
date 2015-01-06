@@ -1,4 +1,4 @@
-package com.josue.credential.manager.liquibase;
+package com.josue.credential.manager.testutils;
 
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -23,6 +23,8 @@ public class LiquibaseTestHelper {
         try {
             CDILiquibaseConfig config = new CDILiquibaseConfig();
             config.setChangeLog("liquibase/changelog.xml");
+            //Drop schema each test iteration
+//            config.setDropFirst(true);
             return config;
         } catch (Exception e) {
             LOG.severe(e.getMessage());

@@ -29,6 +29,14 @@ public abstract class DomainCredential extends Resource {
     @JoinColumn(name = "domain_role_id")
     private Role role;
 
+    @Override
+    protected void copyUpdatebleFields(Resource newData) {
+        if (newData instanceof DomainCredential) {
+            DomainCredential domainCredential = (DomainCredential) newData;
+            role = domainCredential.role == null ? role : domainCredential.role;
+        }
+    }
+
     public Domain getDomain() {
         return domain;
     }

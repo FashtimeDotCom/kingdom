@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager;
+package com.josue.credential.manager.testutils;
 
 import com.josue.credential.manager.liquibase.LiquibaseHelper;
-import com.josue.credential.manager.liquibase.LiquibaseTestHelper;
 import java.io.File;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -26,7 +25,8 @@ public abstract class ArquillianTestBase {
                 .loadPomFromFile("pom.xml")
                 .resolve("org.apache.shiro:shiro-core:1.2.3",
                         "org.apache.shiro:shiro-web:1.2.3",
-                        "org.liquibase:liquibase-cdi:3.1.1")
+                        "org.liquibase:liquibase-cdi:3.1.1",
+                        "com.sun.jersey:jersey-client:1.18.3") // ???... Container also needs the client dependencies
                 .withTransitivity().asFile();
 
         WebArchive war = ShrinkWrap

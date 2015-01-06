@@ -55,6 +55,18 @@ public class Resource implements Serializable {
         return res;
     }
 
+    protected void copyUpdatebleFields(Resource newData) {
+        //Do nothing
+    }
+
+    public void removeNonCreatableFields() {
+        //Simply remove system fields
+        uuid = null;
+        dateCreated = null;
+        href = null;
+        lastUpdate = null;
+    }
+
     public String getUuid() {
         return uuid;
     }
@@ -115,10 +127,6 @@ public class Resource implements Serializable {
         if (!Objects.equals(this.dateCreated, other.dateCreated)) {
             return false;
         }
-        if (!Objects.equals(this.lastUpdate, other.lastUpdate)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.lastUpdate, other.lastUpdate);
     }
-
 }

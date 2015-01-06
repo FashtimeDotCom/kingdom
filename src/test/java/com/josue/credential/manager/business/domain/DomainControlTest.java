@@ -14,8 +14,10 @@ import com.josue.credential.manager.rest.ex.RestException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,7 +95,6 @@ public class DomainControlTest {
         Domain createdDomain = control.createDomain(domain);
         assertEquals(createdDomain.getOwner(), manager);
         assertNull(domain.getDateCreated());
-        assertNull(domain.getOwner());
         assertNull(domain.getLastUpdate());
         verify(repository, times(1)).create(domain);
 
@@ -101,7 +102,43 @@ public class DomainControlTest {
 
     @Test
     public void testUpdateDomain() throws RestException {
-        fail();
+        String domainUuid = "domain-123";
+
+        Domain domain = new Domain();
+        domain.setStatus(DomainStatus.ACTIVE);
+        //Non updatable fields
+        domain.setName("name-123");
+        domain.setLastUpdate(new Date());
+        domain.setDateCreated(new Date());
+        Manager man1 = new Manager();
+        man1.setEmail("man1@email.com");
+        domain.setOwner(man1);
+
+        //Simple stub, so we can track the call of this object
+        Domain actualDomainStub = Mockito.spy(domain);
+
+        Domain userInput = new Domain();
+        userInput.setStatus(DomainStatus.INACTIVE);
+        //Non updatable fields
+        userInput.setName("userInput-name-123");
+        userInput.setLastUpdate(new Date());
+        userInput.setDateCreated(new Date());
+        Manager man2 = new Manager();
+        man1.setEmail("man2@email.com");
+        userInput.setOwner(man2);
+
+        when(currentCredential.getManager()).thenReturn(manager);
+        when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(actualDomainStub);
+        when(repository.edit(actualDomainStub)).thenReturn(actualDomainStub);
+
+        Domain updatedDomain = control.updateDomain(domainUuid, userInput);
+        verify(actualDomainStub, times(1)).copyUpdatebleFields(userInput);
+        verify(repository, times(1)).edit(actualDomainStub);
+        assertEquals(userInput.getStatus(), updatedDomain.getStatus());
+        assertThat(userInput.getName(), not(updatedDomain.getName()));
+        assertThat(userInput.getOwner(), not(updatedDomain.getOwner()));
 
     }
 
@@ -131,13 +168,25 @@ public class DomainControlTest {
         verify(repository, times(1)).remove(mockedDomain);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = RestException.class)
     public void testDeleteDomainNotFound() throws RestException {
         String domainUuid = "domain-123";
 
         when(repository.find(Domain.class, domainUuid)).thenReturn(null);
         control.deleteDomain(domainUuid);
         fail();
+    }
+
+    @Test
+    public void testGetJoinedDomainsByUuid() {
+        String uuid = "123";
+
+        ManagerDomainCredential manDomCred = Mockito.spy(new ManagerDomainCredential());
+        when(repository.find(ManagerDomainCredential.class, uuid)).thenReturn(manDomCred);
+
+        control.getJoinedDomainByUuid(uuid);
+
+        verify(manDomCred, times(1)).setCredential(null);
     }
 
 }

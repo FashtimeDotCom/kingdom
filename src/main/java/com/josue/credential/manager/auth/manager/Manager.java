@@ -34,6 +34,15 @@ public class Manager extends Resource {
     @NotNull
     private String email;
 
+    @Override
+    public void copyUpdatebleFields(Resource newData) {
+        if (newData instanceof Manager) {
+            Manager manager = (Manager) newData;
+            firstName = manager.firstName == null ? firstName : manager.firstName;
+            lastName = manager.lastName == null ? lastName : manager.lastName;
+        }
+    }
+
     public String getFirstName() {
         return firstName;
     }

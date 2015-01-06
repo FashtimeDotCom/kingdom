@@ -6,6 +6,7 @@
 package com.josue.credential.manager.auth.domain;
 
 import com.josue.credential.manager.auth.credential.APICredential;
+import com.josue.credential.manager.rest.Resource;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -28,6 +29,15 @@ public class APIDomainCredential extends DomainCredential {
     @ManyToOne
     @JoinColumn(name = "api_credential_uuid")
     private APICredential credential;
+
+    @Override
+    protected void copyUpdatebleFields(Resource newData) {
+        super.copyUpdatebleFields(newData);
+        if (newData instanceof APIDomainCredential) {
+            APIDomainCredential apiDomainCredential = (APIDomainCredential) newData;
+            name = apiDomainCredential.name == null ? null : apiDomainCredential.name;
+        }
+    }
 
     public String getName() {
         return name;

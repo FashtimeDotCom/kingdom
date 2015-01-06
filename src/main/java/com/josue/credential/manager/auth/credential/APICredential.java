@@ -27,6 +27,11 @@ public class APICredential extends Credential {
     @Column(name = "api_key")
     private String apiKey;
 
+    @Override
+    public void removeNonCreatableFields() {
+        apiKey = null;
+    }
+
     public String getApiKey() {
         return apiKey;
     }

@@ -37,7 +37,6 @@ public class CustomJacksonProvider implements ContextResolver<ObjectMapper> {
 
     @Override
     public ObjectMapper getContext(Class<?> type) {
-        LOG.info("OBJECTMAPPERRESOLVER.GETCONTEXT(...)");
         return mapper;
     }
 }

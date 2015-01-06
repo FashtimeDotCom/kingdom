@@ -5,8 +5,8 @@
  */
 package com.josue.credential.manager.auth.credential;
 
-import com.josue.credential.manager.rest.Resource;
 import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.rest.Resource;
 import java.util.Objects;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -30,6 +30,20 @@ public abstract class Credential extends Resource implements AuthenticationToken
     //Global status
     @Enumerated(EnumType.STRING)
     private CredentialStatus status;
+
+    @Override
+    public void copyUpdatebleFields(Resource newData) {
+        if (newData instanceof Credential) {
+            Credential credential = (Credential) newData;
+            status = credential.status == null ? status : credential.status;
+        }
+    }
+
+    @Override
+    public void removeNonCreatableFields() {
+        super.removeNonCreatableFields();
+        this.manager = null;
+    }
 
     public Manager getManager() {
         return manager;

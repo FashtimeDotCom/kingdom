@@ -35,6 +35,21 @@ public class Domain extends Resource {
     @JoinColumn(name = "owner_uuid")
     private Manager owner;
 
+    @Override
+    public void copyUpdatebleFields(Resource newData) {
+        if (newData instanceof Domain) {
+            Domain domain = (Domain) newData;
+            description = domain.description == null ? description : domain.description;
+            status = domain.status == null ? status : domain.status;
+        }
+    }
+
+    @Override
+    public void removeNonCreatableFields() {
+        super.removeNonCreatableFields();
+        this.owner = null;
+    }
+
     public String getName() {
         return name;
     }

@@ -47,6 +47,15 @@ public class ManagerInvitation extends Resource {
     @Enumerated(EnumType.STRING)
     private ManagerInvitationStatus status;
 
+    @Override
+    public void removeNonCreatableFields() {
+        super.removeNonCreatableFields();
+        this.token = null;
+        this.validUntil = null;
+        this.status = null;
+        this.authorManager = null;
+    }
+
     public String getTargetEmail() {
         return targetEmail;
     }

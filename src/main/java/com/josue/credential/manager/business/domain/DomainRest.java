@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -48,6 +49,14 @@ public class DomainRest extends RestBoundary<Domain> {
 
         long totalCount = control.countDomainCredentials();
         return ResponseUtils.buildListResourceResponse(foundDomains, Response.Status.OK, info, totalCount, limit, offset);
+    }
+
+    @GET
+    @Path("joined/{uuid}")
+    @Produces(value = CONTENT_TYPE)
+    public Response listJoinedDomains(@PathParam("uuid") String uuid) throws RestException {
+        ManagerDomainCredential foundDomains = control.getJoinedDomainByUuid(uuid);
+        return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
     }
 
     @GET

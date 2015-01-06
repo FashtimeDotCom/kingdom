@@ -46,12 +46,12 @@ public class JpaRepository {
         return em.createQuery(cq).getResultList();
     }
 
-    public <T> List<T> findRange(Class<T> clazz, int[] range) {
+    public <T> List<T> findRange(Class<T> clazz, int limit, int offset) {
         javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         cq.select(cq.from(clazz));
         javax.persistence.Query q = em.createQuery(cq);
-        q.setMaxResults(range[1] - range[0] + 1);
-        q.setFirstResult(range[0]);
+        q.setMaxResults(limit);
+        q.setFirstResult(offset);
         return q.getResultList();
     }
 

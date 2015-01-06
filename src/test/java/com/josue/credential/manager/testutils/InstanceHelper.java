@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager;
+package com.josue.credential.manager.testutils;
 
+import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.credential.APICredential;
 import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.CredentialStatus;

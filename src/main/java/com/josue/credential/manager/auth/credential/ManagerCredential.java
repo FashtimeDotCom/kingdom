@@ -5,6 +5,7 @@
  */
 package com.josue.credential.manager.auth.credential;
 
+import com.josue.credential.manager.rest.Resource;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -25,6 +26,13 @@ import javax.validation.constraints.NotNull;
 //http://stackoverflow.com/questions/1733560/making-foreign-keys-unique-in-jpa
 public class ManagerCredential extends Credential {
 
+    @NotNull
+    private String login;
+
+    //TODO check convert to char[]
+    @NotNull
+    private String password;
+
     public ManagerCredential() {
     }
 
@@ -33,14 +41,14 @@ public class ManagerCredential extends Credential {
         this.password = password;
     }
 
-    @NotNull
-    private String login;
+    @Override
+    public void copyUpdatebleFields(Resource newData) {
+        if (newData instanceof ManagerCredential) {
+            ManagerCredential managerCredential = (ManagerCredential) newData;
+            password = managerCredential.password == null ? password : managerCredential.password;
+        }
+    }
 
-    //TODO check convert to char[]
-    @NotNull
-    private String password;
-
-    //*** END ***
     @Override
     public Object getPrincipal() {
         return login;

@@ -5,8 +5,8 @@
  */
 package com.josue.credential.manager.business.domain;
 
-import com.josue.credential.manager.ArquillianTestBase;
-import com.josue.credential.manager.InstanceHelper;
+import com.josue.credential.manager.testutils.ArquillianTestBase;
+import com.josue.credential.manager.testutils.InstanceHelper;
 import com.josue.credential.manager.auth.credential.Credential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.auth.domain.Domain;
