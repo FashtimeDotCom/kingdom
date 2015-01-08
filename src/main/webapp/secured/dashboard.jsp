@@ -19,13 +19,13 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-resource.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        
+
         <script src="<c:url value='/angularjs/app.js' />"></script>
         <script src="<c:url value='/angularjs/services.js' />"></script>
         <script src="<c:url value='/angularjs/controllers.js' />"></script>
 
         <script src="<c:url value='/js/ui-bootstrap-tpls-0.11.0.min.js' />"></script>
-        
+
 
     </head>
 
@@ -39,15 +39,12 @@
         <div id="search">
             <input type="text" placeholder="Search here..."/><button type="submit" class="tip-right" title="Search"><i class="icon-search icon-white"></i></button>
         </div>
-        <div id="user-nav" class="navbar navbar-inverse">
-            <ul class="nav btn-group">
+        <div id="user-nav" class="navbar navbar-inverse" ng-controller="menuBarCtrl">
+            <ul class="nav btn-group" ng-init="getJoinedDomains()">
                 <li class="btn btn-inverse" ><a title="" href="#"><i class="icon icon-user"></i> <span class="text">Profile</span></a></li>
-                <li class="btn btn-inverse dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages" class="dropdown-toggle"><i class="icon icon-envelope"></i> <span class="text">Messages</span> <span class="label label-important">5</span> <b class="caret"></b></a>
+                <li class="btn btn-inverse dropdown" id="menu-messages"><a href="#"  class="dropdown-toggle"><span class="text">{{currentDomain.name}}</span><b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a class="sAdd" title="" href="#">new message</a></li>
-                        <li><a class="sInbox" title="" href="#">inbox</a></li>
-                        <li><a class="sOutbox" title="" href="#">outbox</a></li>
-                        <li><a class="sTrash" title="" href="#">trash</a></li>
+                        <li ng-repeat="joined in joinedDomains"><a class="sAdd" href="#" ng-click="changeDomain(joined)">{{joined.domain.name}}</a></li>
                     </ul>
                 </li>
                 <li class="btn btn-inverse"><a title="" href="#"><i class="icon icon-cog"></i> <span class="text">Settings</span></a></li>
@@ -66,7 +63,7 @@
                         <li><a href="<c:url value='#/domain-joined' />">Joined</a></li>
                     </ul>
                 </li>
-                <li ng-class="getMenuClass('/buttons')"><a href="<c:url value='#/buttons' />"><i class="icon icon-tint"></i> <span>Buttons &amp; icons</span></a></li>
+                <li ng-class="getMenuClass('/apikey')"><a href="<c:url value='#/apikey' />"><i class="icon-lock"></i> <span>API Key</span></a></li>
                 <li ng-class="getMenuClass('/interface')"><a href="interface.html"><i class="icon icon-pencil"></i> <span>Interface elements</span></a></li>
                 <li ng-class="getMenuClass('/tables')"><a href="tables.html"><i class="icon icon-th"></i> <span>Tables</span></a></li>
                 <li ng-class="getMenuClass('/grid')"><a href="grid.html"><i class="icon icon-th-list"></i> <span>Grid Layout</span></a></li>
@@ -96,7 +93,7 @@
 
         <script src="<c:url value='/js/excanvas.min.js' />"></script>
         <script src="<c:url value='/js/jquery.min.js' />"></script>
-        <script src="<c:url value='/js/jquery.ui.custom.js' />"></script>
+        <script src="<c:url value='/js/jquery-ui.custom.min.js' />"></script>
         <script src="<c:url value='/js/bootstrap.min.js' />"></script>
         <script src="<c:url value='/js/jquery.flot.min.js' />"></script>
         <script src="<c:url value='/js/jquery.flot.resize.min.js' />"></script>

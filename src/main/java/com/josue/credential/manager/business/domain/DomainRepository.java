@@ -48,7 +48,8 @@ public class DomainRepository extends JpaRepository {
     public Domain getDomainByName(String domainName) {
         Query query = em.createQuery("SELECT dom FROM Domain dom WHERE dom.name = :domainName", Domain.class);
         query.setParameter("domainName", domainName);
-        Domain domain = extractSingleResultFromList(query);
+        List<Domain> domains = query.getResultList();
+        Domain domain = extractSingleResultFromList(domains);
         return domain;
     }
 

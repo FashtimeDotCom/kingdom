@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.business.account;
+package com.josue.credential.manager.business.credential;
 
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import java.util.Arrays;
 import java.util.List;
@@ -27,19 +27,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
-public class AccountControlTest {
+public class CredentialControlTest {
 
     @Mock
-    AccountRepository repository;
+    CredentialRepository repository;
 
     @Mock
     ManagerCredential currentCredential;
 
     @Mock
     Manager manager;
-    
+
     @InjectMocks
-    AccountControl control = new AccountControl();
+    CredentialControl control = new CredentialControl();
 
     @Before
     public void init() {
@@ -63,7 +63,7 @@ public class AccountControlTest {
     public void testGetAPICredentials() {
         APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
         List<APIDomainCredential> realList = Arrays.asList(apiCredMock, apiCredMock, apiCredMock);
-        
+
         when(currentCredential.getManager()).thenReturn(manager);
         when(repository.getApiCredentialsByManager(currentCredential.getManager().getUuid())).thenReturn(realList);
 
@@ -75,7 +75,7 @@ public class AccountControlTest {
         assertEquals(realList.size(), apiCredentials.size());
         for (APIDomainCredential apicred : apiCredentials) {
             assertNotNull(apicred);
-            
+
             ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
             verify(credMock, times(3)).setApiKey(argument.capture());
             assertTrue(argument.getValue().contains("*******"));

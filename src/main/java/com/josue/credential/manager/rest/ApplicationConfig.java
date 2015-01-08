@@ -28,7 +28,7 @@ public class ApplicationConfig extends Application {
      * out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.josue.credential.manager.business.account.AccountRest.class);
+        resources.add(com.josue.credential.manager.business.credential.CredentialRest.class);
         resources.add(com.josue.credential.manager.business.domain.DomainRest.class);
         resources.add(com.josue.credential.manager.rest.CustomJacksonProvider.class);
         resources.add(com.josue.credential.manager.rest.VersionRest.class);

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.business.account;
+package com.josue.credential.manager.business.credential;
 
 import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.domain.APIDomainCredential;
@@ -19,7 +19,7 @@ import javax.transaction.Transactional;
  * @author Josue
  */
 @ApplicationScoped
-public class AccountRepository extends JpaRepository {
+public class CredentialRepository extends JpaRepository {
 
     //Control change some data, we dont want to update it on database
     @Transactional(Transactional.TxType.REQUIRES_NEW)

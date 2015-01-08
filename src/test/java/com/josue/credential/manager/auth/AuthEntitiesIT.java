@@ -5,18 +5,18 @@
  */
 package com.josue.credential.manager.auth;
 
-import com.josue.credential.manager.testutils.ArquillianTestBase;
-import com.josue.credential.manager.testutils.InstanceHelper;
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
-import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.domain.Domain;
+import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.role.Role;
-import com.josue.credential.manager.business.account.AccountRepository;
 import com.josue.credential.manager.business.account.ManagerInvitation;
 import com.josue.credential.manager.business.account.ManagerInvitationStatus;
+import com.josue.credential.manager.business.credential.CredentialRepository;
+import com.josue.credential.manager.testutils.ArquillianTestBase;
+import com.josue.credential.manager.testutils.InstanceHelper;
 import java.util.UUID;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -54,7 +54,7 @@ public class AuthEntitiesIT {
 
     //Here we can use any JPARepository, since only super class methods are used
     @Inject
-    AccountRepository repository;
+    CredentialRepository repository;
 
     @Test
     public void testRole() {

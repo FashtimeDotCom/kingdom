@@ -13,7 +13,7 @@
     <a href="#" class="current">Grid Layout</a>
 </div>
 <div class="container-fluid">
-    <div ng-controller="AlertDemoCtrl">
+    <div>
         <alert ng-repeat="alert in domainAlerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
         <!--<button class='btn btn-default' ng-click="createAlert()">Add Alert</button>-->
     </div>

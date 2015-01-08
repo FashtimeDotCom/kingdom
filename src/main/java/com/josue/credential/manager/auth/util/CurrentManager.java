@@ -6,7 +6,7 @@
 package com.josue.credential.manager.auth.util;
 
 import com.josue.credential.manager.auth.credential.Credential;
-import com.josue.credential.manager.business.account.AccountRepository;
+import com.josue.credential.manager.business.credential.CredentialRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
@@ -22,7 +22,7 @@ import org.apache.shiro.subject.Subject;
 public class CurrentManager {
 
     @Inject
-    AccountRepository repository;
+    CredentialRepository repository;
 
     @Produces
     @Current

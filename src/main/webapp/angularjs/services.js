@@ -47,38 +47,34 @@ angular.module('myApp.services', ['ngResource'])
                         }
                     });
 
-                    _private.user = $resource('http://localhost:8080/v1/app/employee:uuid', {}, {
-                        query: {
-                            url: 'http://localhost:8080/v1/app/employee/all',
-                            method: 'GET',
-                            isArray: true
-                        },
-                        get: {
+                    _private.apiKey = $resource(app + '/domains', {}, {
+                        queryJoined: {
+                            headers: {'ApiKey': 'tmfkrkileqo65hjl9udm550hip'},
+                            url: app + '/domains/joined',
                             method: 'GET',
                             isArray: false
                         },
-                        update: {method: 'PUT'},
+                        getJoinedByUuid: {
+                            url: app + '/domains/joined/:uuid',
+                            method: 'GET',
+                            isArray: false
+                        },
+                        queryOwned: {
+                            url: app + '/domains/owned',
+                            method: 'GET',
+                            isArray: false
+                        },
+                        update: {
+                            method: 'PUT',
+                            url: app + '/domains/:uuid'
+                        },
                         create: {method: 'POST'},
-                        delete: {method: 'DELETE'}
+                        delete: {
+                            method: 'DELETE',
+                            url: app + '/domains/:uuid'
+                        }
                     });
 
-                    _private.withdrawal = $resource('http://localhost:8080/v1/app/withdrawal:uuid', {}, {
-                        query: {
-                            url: 'http://localhost:8080/v1/app/withdrawal',
-                            method: 'GET',
-                            isArray: true
-                        },
-                        get: {
-                            method: 'GET',
-                            isArray: false
-                        },
-                        update: {method: 'PUT'},
-                        create: {
-                            url: 'http://localhost:8080/v1/app/withdrawal',
-                            method: 'PUT'
-                        },
-                        delete: {method: 'DELETE'}
-                    });
                 };
 
                 return new Resources();

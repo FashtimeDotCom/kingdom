@@ -5,14 +5,13 @@
  */
 package com.josue.credential.manager;
 
+import com.josue.credential.manager.auth.AuthRepository;
 import com.josue.credential.manager.auth.role.Role;
 import com.josue.credential.manager.testutils.ArquillianTestBase;
 import com.josue.credential.manager.testutils.InstanceHelper;
 import com.josue.credential.manager.testutils.Logged;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -43,18 +42,7 @@ public class JpaRepositoryIT {
     EntityManager em;
 
     @Inject
-    Instance<JpaRepository> repositoryBeans;
-
-    /*
-     Resolve any JPARepository, just want to avoid annotations
-     */
-    private JpaRepository resolveJpaRepository() {
-        Iterator<JpaRepository> iterator = repositoryBeans.iterator();
-        while (iterator.hasNext()) {
-            return iterator.next();
-        }
-        return null;
-    }
+    AuthRepository repo;
 
     @Deployment
     @TargetsContainer("wildfly-managed")
@@ -71,7 +59,6 @@ public class JpaRepositoryIT {
 
     @Test
     public void testCreate() {
-        JpaRepository repo = resolveJpaRepository();
 
         Role role = simpleCreate(repo);
 
@@ -81,7 +68,6 @@ public class JpaRepositoryIT {
 
     @Test
     public void testEdit() {
-        JpaRepository repo = resolveJpaRepository();
 
         Role role = simpleCreate(repo);
 
@@ -94,7 +80,6 @@ public class JpaRepositoryIT {
 
     @Test
     public void testRemove() {
-        JpaRepository repo = resolveJpaRepository();
 
         Role role = simpleCreate(repo);
 
@@ -105,7 +90,6 @@ public class JpaRepositoryIT {
 
     @Test
     public void testFind() {
-        JpaRepository repo = resolveJpaRepository();
 
         Role role = simpleCreate(repo);
         Role foundRole = repo.find(Role.class, role.getId());
@@ -114,7 +98,6 @@ public class JpaRepositoryIT {
 
     @Test
     public void testFindAll() {
-        JpaRepository repo = resolveJpaRepository();
 
         Role role1 = InstanceHelper.createRole();
         repo.create(role1);
@@ -129,7 +112,6 @@ public class JpaRepositoryIT {
 
     @Test
     public void testFindRange() {
-        JpaRepository repo = resolveJpaRepository();
         int total = 100;
 
         for (int i = 0; i < total; i++) {
@@ -167,7 +149,6 @@ public class JpaRepositoryIT {
 
     @Test
     public void testCount() {
-        JpaRepository repo = resolveJpaRepository();
         int total = 15;
 
         for (int i = 0; i < total; i++) {
@@ -180,7 +161,6 @@ public class JpaRepositoryIT {
 
     @Test
     public void testExtractSingleResultFromList() {
-        JpaRepository repo = resolveJpaRepository();
         int total = 5;
 
         Role someRole = null;
@@ -189,12 +169,11 @@ public class JpaRepositoryIT {
         }
         assertNotNull(someRole);
 
-        TypedQuery<Role> query = repo.em.createQuery("SELECT ro from Role ro where ro.id = :id", Role.class);
+        TypedQuery<Role> query = em.createQuery("SELECT ro from Role ro where ro.id = :id", Role.class);
         query.setParameter("id", someRole.getId());
-
-        Role foundRole = repo.extractSingleResultFromList(query);
+        List<Role> resultList = query.getResultList();
+        Role foundRole = repo.extractSingleResultFromList(resultList);
         assertEquals(someRole, foundRole);
-
     }
 
 }

@@ -3,19 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.business.account;
+package com.josue.credential.manager.business.credential;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.Path;
 
 /**
  *
  * @author Josue
  */
-@ApplicationScoped
-public class AccountService {
-
-    public void sentInvitation() {
-
-    }
+@Path("credentials")
+public class CredentialRest {
 
 }

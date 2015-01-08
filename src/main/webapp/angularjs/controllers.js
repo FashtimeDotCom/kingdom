@@ -37,7 +37,24 @@ angular.module('myApp.controllers', [])
                 };
 
             }])
+        .controller('menuBarCtrl', ['$scope', '$location', 'Resources', '$rootScope', function ($scope, $location, Resources, $rootScope) {
+                //TODO last login date and last
+                $scope.joinedDomains = [];
 
+                $scope.getJoinedDomains = function () {
+                    Resources.domain.queryJoined(function (response) {
+                        $scope.joinedDomains = response.items;
+                        if ($rootScope.currentDomain == null) {
+                            $rootScope.currentDomain = response.items[0].domain;
+                        }
+                    });
+                };
+
+                $scope.changeDomain = function (joined) {
+                    $rootScope.currentDomain = joined.domain;
+                };
+
+            }])
         .controller('domainCtrl', ['$scope', '$timeout', 'Resources', 'AlertService', '$modal', function ($scope, $timeout, Resources, AlertService, $modal) {
 
                 $scope.domainStatuses = ['ACTIVE', 'INACTIVE'];
@@ -102,12 +119,12 @@ angular.module('myApp.controllers', [])
                         $scope.ownedDomain = {};
                         $scope.ownedDivStep = 1;
 
-                        $scope.createAlert('success','Domain created');
+                        $scope.createAlert('success', 'Domain created');
 
                     },
-                    function(response){
-                        $scope.createAlert('danger', response.data.message);
-                    });
+                            function (response) {
+                                $scope.createAlert('danger', response.data.message);
+                            });
                 };
                 $scope.update = function () {
                     Resources.domain.update({uuid: $scope.ownedDomain.uuid}, $scope.ownedDomain, function (response) {
@@ -115,9 +132,9 @@ angular.module('myApp.controllers', [])
                         $scope.getOwnedDomains();
                         $scope.ownedDomain = {};
                         $scope.ownedDivStep = 1;
-                        
-                        $scope.createAlert('success','Domain updated');
-                    }, function(response){
+
+                        $scope.createAlert('success', 'Domain updated');
+                    }, function (response) {
                         $scope.createAlert('danger', response.data.message);
                     });
                 };
@@ -127,26 +144,26 @@ angular.module('myApp.controllers', [])
                         $scope.getOwnedDomains();
                         $scope.ownedDomain = {};
                         $scope.ownedDivStep = 1;
-                        $scope.createAlert('success','Domain deleted');
+                        $scope.createAlert('success', 'Domain deleted');
                     },
-                    function(response){
-                        $scope.createAlert('danger', response.status + ': ' + response.message);
-                    });
+                            function (response) {
+                                $scope.createAlert('danger', response.status + ': ' + response.message);
+                            });
                 };
- 
+
                 $scope.domainAlerts = [];
 
                 $scope.createAlert = function (type, msg) {
                     var alert = AlertService.addAlert(type, msg);
                     $scope.domainAlerts.push(alert);
-                    $timeout(function (){
+                    $timeout(function () {
                         $scope.domainAlerts.shift();
                     }, 3000);
                 };
                 $scope.closeAlert = function () {
-                   $scope.domainAlerts.shift();
+                    $scope.domainAlerts.shift();
                 };
- 
+
 
                 $scope.open = function (obj) {
 
@@ -180,7 +197,35 @@ angular.module('myApp.controllers', [])
 
 
             }])
-        //Not used
+        .controller('apiKeyCtrl', ['$scope', '$location', 'Resources', '$rootScope', 'AlertService', function ($scope, $location, Resources, $rootScope, AlertService) {
+
+                $scope.domainApiKeys = [];
+
+                $scope.getApiKeyForDomain = function () {
+                    var currentDomainUuid = $rootScope.currentDomain.uuid;
+
+                    Resources.domain.queryJoined(function (response) {
+                        $scope.joinedDomains = response.items;
+                        if ($rootScope.currentDomain == null) {
+                            $rootScope.currentDomain = response.items[0].domain;
+                        }
+                    });
+                };
+
+                $scope.domainAlerts = [];
+
+                $scope.createAlert = function (type, msg) {
+                    var alert = AlertService.addAlert(type, msg);
+                    $scope.domainAlerts.push(alert);
+                    $timeout(function () {
+                        $scope.domainAlerts.shift();
+                    }, 3000);
+                };
+                $scope.closeAlert = function () {
+                    $scope.domainAlerts.shift();
+                };
+
+            }])
         .controller('modalController', ['$scope', '$modal', 'Resources', function ($scope, $modal) {
 
                 $scope.open = function (item) {
@@ -215,24 +260,5 @@ angular.module('myApp.controllers', [])
 
                     });
                 };
-            }])
-        .controller('ModalInstanceCtrl', ['$scope', '$modalInstance', 'Resources', function ($scope, $modalInstance, items) {
-                $scope.items = items;
-                $scope.selected = {
-                    item: $scope.items[0]
-                };
-
-                $scope.ok = function () {
-                    $modalInstance.close($scope.selected.item);
-                };
-
-                $scope.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-
-            }])
-        .controller('AlertDemoCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
-
-
             }]);
 

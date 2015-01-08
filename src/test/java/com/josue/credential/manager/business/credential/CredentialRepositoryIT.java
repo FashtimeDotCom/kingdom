@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.business.account;
+package com.josue.credential.manager.business.credential;
 
+import com.josue.credential.manager.auth.credential.ManagerCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
+import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.testutils.ArquillianTestBase;
 import com.josue.credential.manager.testutils.InstanceHelper;
-import com.josue.credential.manager.auth.domain.APIDomainCredential;
-import com.josue.credential.manager.auth.credential.ManagerCredential;
-import com.josue.credential.manager.auth.manager.Manager;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.ROLLBACK)
-public class AccountRepositoryIT {
+public class CredentialRepositoryIT {
 
     @Deployment
     @TargetsContainer("wildfly-managed")
@@ -40,13 +40,13 @@ public class AccountRepositoryIT {
         return ArquillianTestBase.createDefaultDeployment();
     }
 
-    private static final Logger LOG = Logger.getLogger(AccountRepositoryIT.class.getName());
+    private static final Logger LOG = Logger.getLogger(CredentialRepositoryIT.class.getName());
 
     @PersistenceContext
     EntityManager em;
 
     @Inject
-    AccountRepository repository;
+    CredentialRepository repository;
 
     @Test
     public void testGetApiCredentialsByManager() {

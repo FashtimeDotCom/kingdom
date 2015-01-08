@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.business.account;
+package com.josue.credential.manager.business.credential;
 
 import com.josue.credential.manager.auth.credential.Credential;
 import com.josue.credential.manager.auth.domain.APIDomainCredential;
@@ -18,10 +18,10 @@ import javax.inject.Inject;
  * @author Josue
  */
 @ApplicationScoped
-public class AccountControl {
+public class CredentialControl {
 
     @Inject
-    AccountRepository repository;
+    CredentialRepository repository;
 
     @Inject
     @Current
@@ -43,11 +43,4 @@ public class AccountControl {
         return apiCredentials;
     }
 
-    public ManagerInvitation invite(ManagerInvitation managerInvitation) {
-        return null;
-    }
-
-    public ManagerInvitation confirm(ManagerInvitation managerInvitation) {
-        return null;
-    }
 }
