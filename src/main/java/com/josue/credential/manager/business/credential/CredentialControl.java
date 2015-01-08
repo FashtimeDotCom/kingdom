@@ -5,6 +5,7 @@
  */
 package com.josue.credential.manager.business.credential;
 
+import com.josue.credential.manager.auth.credential.APICredential;
 import com.josue.credential.manager.auth.credential.Credential;
 import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
@@ -31,16 +32,28 @@ public class CredentialControl {
         return repository.getManagerByCredential(credentialUuid);
     }
 
-    public List<APIDomainCredential> getAPICredentials() {
-        List<APIDomainCredential> apiCredentials = repository.getApiCredentialsByManager(currentCredential.getManager().getUuid());
-        //obfuscate api key
-        //TODO improve
-        for (APIDomainCredential apiCredential : apiCredentials) {
-            String apiKey = apiCredential.getCredential().getApiKey();
-            String obfuscatedApiKey = "************" + apiKey.substring(apiKey.length() - 5);
-            apiCredential.getCredential().setApiKey(obfuscatedApiKey);
+    public List<APIDomainCredential> getApiCredentialsByManagerDomain(String domainUuid) {
+        List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentialsByManagerDomain(currentCredential.getManager().getUuid(), domainUuid);
+        for (APIDomainCredential apiDomCredential : apiDomainCredentials) {
+            obfuscateKeys(apiDomCredential.getCredential());
         }
-        return apiCredentials;
+        return apiDomainCredentials;
+    }
+
+    public List<APIDomainCredential> getAPICredentials() {
+        List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentialsByManager(currentCredential.getManager().getUuid());
+        for (APIDomainCredential apiDomCredential : apiDomainCredentials) {
+            obfuscateKeys(apiDomCredential.getCredential());
+        }
+        return apiDomainCredentials;
+    }
+
+    //This method should not executed inside the same transaction of ANY repository
+    //TODO improve
+    private void obfuscateKeys(APICredential apiCredential) {
+        String apiKey = apiCredential.getApiKey();
+        String obfuscatedApiKey = "************" + apiKey.substring(apiKey.length() - 5);
+        apiCredential.setApiKey(obfuscatedApiKey);
     }
 
 }

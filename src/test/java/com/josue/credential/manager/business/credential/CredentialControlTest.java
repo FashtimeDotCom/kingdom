@@ -60,6 +60,31 @@ public class CredentialControlTest {
     }
 
     @Test
+    public void testGetApiCredentialsByManagerDomain() {
+        APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
+        List<APIDomainCredential> realList = Arrays.asList(apiCredMock, apiCredMock, apiCredMock);
+
+        String domainUuid = "uuid-123";
+
+        when(currentCredential.getManager()).thenReturn(manager);
+        when(repository.getApiCredentialsByManagerDomain(currentCredential.getManager().getUuid(), domainUuid)).thenReturn(realList);
+
+        APICredential credMock = mock(APICredential.class);
+        when(apiCredMock.getCredential()).thenReturn(credMock);
+        when(credMock.getApiKey()).thenReturn(UUID.randomUUID().toString());
+
+        List<APIDomainCredential> apiCredentials = control.getApiCredentialsByManagerDomain(domainUuid);
+        assertEquals(realList.size(), apiCredentials.size());
+        for (APIDomainCredential apicred : apiCredentials) {
+            assertNotNull(apicred);
+
+            ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+            verify(credMock, times(3)).setApiKey(argument.capture());
+            assertTrue(argument.getValue().contains("*******"));
+        }
+    }
+
+    @Test
     public void testGetAPICredentials() {
         APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
         List<APIDomainCredential> realList = Arrays.asList(apiCredMock, apiCredMock, apiCredMock);
