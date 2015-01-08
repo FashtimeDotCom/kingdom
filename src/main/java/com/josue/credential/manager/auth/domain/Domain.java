@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -28,8 +29,9 @@ public class Domain extends Resource {
     private String name;
     private String description;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    private DomainStatus status;
+    private DomainStatus status = DomainStatus.ACTIVE;
 
     @ManyToOne
     @JoinColumn(name = "owner_uuid")

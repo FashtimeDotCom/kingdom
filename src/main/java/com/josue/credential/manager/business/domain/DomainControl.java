@@ -7,6 +7,7 @@ package com.josue.credential.manager.business.domain;
 
 import com.josue.credential.manager.auth.credential.Credential;
 import com.josue.credential.manager.auth.domain.Domain;
+import com.josue.credential.manager.auth.domain.DomainStatus;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.util.Current;
@@ -52,11 +53,12 @@ public class DomainControl {
     public Domain createDomain(Domain domain) throws RestException {
         //removes not allowed user input
         domain.removeNonCreatableFields();
+        domain.setStatus(DomainStatus.ACTIVE);
         Manager actualManager = repository.find(Manager.class, currentCredential.getManager().getUuid());
         Domain foundDomain = repository.getDomainByName(domain.getName());
         if (foundDomain != null) {
             //do throw exception
-            throw new RestException(Domain.class, foundDomain.getUuid(), "Domain already exists with name '" + domain.getName() + "'", Response.Status.OK);
+            throw new RestException(Domain.class, foundDomain.getUuid(), "Domain already exists with name '" + domain.getName() + "'", Response.Status.BAD_REQUEST);
         }
         domain.setOwner(actualManager);
         repository.create(domain);
@@ -76,7 +78,7 @@ public class DomainControl {
     }
 
     public void deleteDomain(String domainUuid) throws RestException {
-        //TODO improve business logic...
+        //TODO improve business logic:... deactivate all docs and clean everything
         Domain foundDomain = repository.find(Domain.class, domainUuid);
         if (foundDomain == null) {
             //TODO exceptions... ?!!!

@@ -33,6 +33,7 @@ public class RestExceptionMapper implements ExceptionMapper<Exception> {
 
         return Response
                 .status(Status.INTERNAL_SERVER_ERROR)
+                .type(MediaType.APPLICATION_JSON)
                 .entity(new ExceptionBean(1, Response.Status.INTERNAL_SERVER_ERROR,
                                 exception.getMessage())).build();
     }

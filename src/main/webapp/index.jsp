@@ -14,6 +14,8 @@
         <script src="angularjs/app.js"></script>
         <script src="angularjs/controllers.js"></script>
         <script src="angularjs/services.js"></script>
+        
+         <script src="<c:url value='/js/ui-bootstrap-tpls-0.11.0.min.js' />"></script>
 
     </head>
     <body ng-app="myApp" ng-controller="mainCtrl">

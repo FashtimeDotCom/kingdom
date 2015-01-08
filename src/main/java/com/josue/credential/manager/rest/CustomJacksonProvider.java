@@ -29,7 +29,7 @@ public class CustomJacksonProvider implements ContextResolver<ObjectMapper> {
     private final ObjectMapper mapper;
 
     public CustomJacksonProvider() {
-        LOG.info("********  CUSTOMJACKSONPROVIDER  ***********");
+        LOG.info("***********  CUSTOMJACKSONPROVIDER  ***********");
         mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);

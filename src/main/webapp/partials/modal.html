@@ -1,0 +1,38 @@
+<div ng-controller="modalController">
+    <div class="modal-header">
+        <h3 class="modal-title">{{joinedDomain.domain.name}}</h3>
+    </div>
+
+
+    <div class="modal-body">
+
+
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>UUID <i class="fa fa-tag"></i></th>
+                    <th>Domain <i class="fa fa-sort"></i></th>
+                    <th>Role Name<i class="fa fa-sort"></i></th>
+                    <th>Role Level<i class="fa fa-sort"></i></th>
+                    <th>Owner Name <i class="fa fa-sort"></i></th>
+                    <th>Owner Email <i class="fa fa-sort"></i></th>
+                    <th>Joined Date <i class="fa fa-sort"></i></th>
+                </tr>
+            </thead>
+            <tbody> 
+                <tr> 
+                    <td>{{joinedDomain.uuid}}</td>
+                    <td>{{joinedDomain.domain.name}}</td>
+                    <td>{{joinedDomain.role.name}}</td>
+                    <td>{{joinedDomain.role.level}}</td>
+                    <td>{{joinedDomain.domain.owner.firstName}} {{joinedDomain.domain.owner.lastName}}</td>
+                    <td>{{joinedDomain.domain.owner.email}}</td>
+                    <td>{{joinedDomain.dateCreated}}</td>
+                </tr>
+            </tbody>
+        </table>		
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+    </div>
+</div>

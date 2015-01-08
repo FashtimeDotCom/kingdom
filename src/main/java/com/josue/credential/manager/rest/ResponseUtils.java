@@ -20,6 +20,10 @@ public class ResponseUtils {
     public static Response buildSimpleResponse(Resource resource,
             Response.Status status, UriInfo uriInfo) {
 
+        if (resource == null) {
+            return Response.status(status).build();
+        }
+
         URI uri;
 
         // pagination

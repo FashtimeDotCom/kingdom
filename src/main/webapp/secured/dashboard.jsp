@@ -19,11 +19,13 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-resource.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
+        
         <script src="<c:url value='/angularjs/app.js' />"></script>
         <script src="<c:url value='/angularjs/services.js' />"></script>
         <script src="<c:url value='/angularjs/controllers.js' />"></script>
 
+        <script src="<c:url value='/js/ui-bootstrap-tpls-0.11.0.min.js' />"></script>
+        
 
     </head>
 
@@ -60,7 +62,6 @@
                 <li ng-class="getSubMenuClass('/domain')">
                     <a href="#"><i class="icon icon-th-list"></i> <span>Domain</span></a>
                     <ul>
-                        <li><a href="<c:url value='#/domain-create' />">Create</a></li>
                         <li><a href="<c:url value='#/domain-owned' />">Owned</a></li>
                         <li><a href="<c:url value='#/domain-joined' />">Joined</a></li>
                     </ul>
