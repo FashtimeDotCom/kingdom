@@ -30,6 +30,16 @@ public class CredentialRepository extends JpaRepository {
         return resultList;
     }
 
+    //Control change some data, we dont want to update it on database
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public List<APIDomainCredential> getApiCredentialsByManagerDomain(String managerUuid, String domainUuid) {
+        Query query = em.createQuery("SELECT apiDomCred FROM APIDomainCredential apiDomCred WHERE apiDomCred.credential.manager.uuid = :managerUuid AND apiDomCred.domain.uuid = :domainUuid", APIDomainCredential.class);
+        query.setParameter("managerUuid", managerUuid);
+        query.setParameter("domainUuid", domainUuid);
+        List<APIDomainCredential> resultList = query.getResultList();
+        return resultList;
+    }
+
     @Transactional(Transactional.TxType.REQUIRED)
     public Manager getManagerByCredential(String credentialUuid) {
         TypedQuery<Manager> query = em.createQuery("SELECT cred.manager FROM ManagerCredential cred WHERE cred.uuid = :credentialUuid", Manager.class);
