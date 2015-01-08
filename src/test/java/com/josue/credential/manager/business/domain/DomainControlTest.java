@@ -10,6 +10,7 @@ import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.DomainStatus;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.rest.ex.ResourceNotFoundException;
 import com.josue.credential.manager.rest.ex.RestException;
 import java.util.Arrays;
 import java.util.Date;
@@ -140,6 +141,19 @@ public class DomainControlTest {
         assertThat(userInput.getName(), not(updatedDomain.getName()));
         assertThat(userInput.getOwner(), not(updatedDomain.getOwner()));
 
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testUpdateDomainNotFound() throws RestException {
+
+        Domain domain = Mockito.mock(Domain.class);
+        String domainUuid = "uuid-123";
+
+        when(currentCredential.getManager()).thenReturn(manager);
+        when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
+        when(repository.find(Domain.class, domainUuid)).thenReturn(null);
+        control.updateDomain(domainUuid, domain);
+        fail("ResourceNotFoundException should be thrown");
     }
 
     @Test(expected = RestException.class)
