@@ -29,6 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 /**
  *
@@ -39,11 +40,11 @@ public class DomainControlTest {
     @Mock
     DomainRepository repository;
 
-    @Mock
-    ManagerCredential currentCredential;
+    @Spy
+    ManagerCredential currentCredential = new ManagerCredential();
 
-    @Mock
-    Manager manager;
+    @Spy
+    Manager manager = new Manager();
 
     @InjectMocks
     DomainControl control = new DomainControl();
@@ -51,12 +52,13 @@ public class DomainControlTest {
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+        currentCredential.setManager(manager);
     }
 
     @Test//TODO implement logic
     public void testGetOwnedDomains() {
         List<Domain> mockedDomains = Arrays.asList(Mockito.mock(Domain.class));
-        when(currentCredential.getManager()).thenReturn(manager);
+        
         when(repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid())).thenReturn(mockedDomains);
 
         List<Domain> ownedDomains = control.getOwnedDomains();
@@ -67,7 +69,6 @@ public class DomainControlTest {
     @Test
     public void testGetJoinedDomains() {
         List<ManagerDomainCredential> domainCredentials = Arrays.asList(Mockito.mock(ManagerDomainCredential.class));
-        when(currentCredential.getManager()).thenReturn(manager);
         when(repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid())).thenReturn(domainCredentials);
 
         List<ManagerDomainCredential> joinedDomains = control.getJoinedDomains();
@@ -87,7 +88,6 @@ public class DomainControlTest {
         domain.setDateCreated(new Date());
         domain.setOwner(new Manager());
 
-        when(currentCredential.getManager()).thenReturn(manager);
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
 
         Domain mockedDomain = null;
@@ -128,7 +128,6 @@ public class DomainControlTest {
         man1.setEmail("man2@email.com");
         userInput.setOwner(man2);
 
-        when(currentCredential.getManager()).thenReturn(manager);
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
 
         when(repository.find(Domain.class, domainUuid)).thenReturn(actualDomainStub);
@@ -149,7 +148,6 @@ public class DomainControlTest {
         Domain domain = Mockito.mock(Domain.class);
         String domainUuid = "uuid-123";
 
-        when(currentCredential.getManager()).thenReturn(manager);
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
         when(repository.find(Domain.class, domainUuid)).thenReturn(null);
         control.updateDomain(domainUuid, domain);
@@ -162,7 +160,6 @@ public class DomainControlTest {
         domain.setName("name-123");
         domain.setStatus(DomainStatus.ACTIVE);
 
-        when(currentCredential.getManager()).thenReturn(manager);
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
 
         Domain mockedDomain = Mockito.mock(Domain.class);
@@ -201,6 +198,18 @@ public class DomainControlTest {
         control.getJoinedDomainByUuid(uuid);
 
         verify(manDomCred, times(1)).setCredential(null);
+    }
+
+    @Test
+    public void testCountDomainCredentials() {
+        control.countDomainCredentials();
+        verify(repository, times(1)).countDomainCredentials(currentCredential.getManager().getUuid());
+    }
+
+    @Test
+    public void testCountOwnedDomains() {
+        control.countDomainCredentials();
+        verify(repository, times(1)).countOwnedDomains(currentCredential.getManager().getUuid());
     }
 
 }
