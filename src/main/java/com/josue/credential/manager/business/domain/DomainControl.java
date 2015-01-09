@@ -11,6 +11,8 @@ import com.josue.credential.manager.auth.domain.DomainStatus;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.util.Current;
+import com.josue.credential.manager.business.ListResourceUtil;
+import com.josue.credential.manager.rest.ListResource;
 import com.josue.credential.manager.rest.ex.ResourceNotFoundException;
 import com.josue.credential.manager.rest.ex.RestException;
 import java.util.List;
@@ -32,16 +34,19 @@ public class DomainControl {
     @Current
     Credential currentCredential;
 
-    public List<Domain> getOwnedDomains() {
-        return repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid());
+    public ListResource<Domain> getOwnedDomains(Integer limit, Long offset) {
+        long totalCount = repository.countOwnedDomains(currentCredential.getManager().getUuid());
+        List<Domain> ownedDomains = repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid());
+        return ListResourceUtil.buildListResource(ownedDomains, totalCount, limit, offset);
     }
 
-    public List<ManagerDomainCredential> getJoinedDomains() {
+    public ListResource<ManagerDomainCredential> getJoinedDomains(Integer limit, Long offset) {
         List<ManagerDomainCredential> joinedDomains = repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid());
         for (ManagerDomainCredential dc : joinedDomains) {
             dc.setCredential(null);
         }
-        return joinedDomains;
+        long totalCount = repository.countDomainCredentials(currentCredential.getManager().getUuid());
+        return ListResourceUtil.buildListResource(joinedDomains, totalCount, limit, offset);
     }
 
     public ManagerDomainCredential getJoinedDomainByUuid(String uuid) {
@@ -85,13 +90,5 @@ public class DomainControl {
             throw new ResourceNotFoundException(Domain.class, domainUuid);
         }
         repository.remove(foundDomain);
-    }
-
-    public long countDomainCredentials() {
-        return repository.countDomainCredentials(currentCredential.getManager().getUuid());
-    }
-
-    public long countOwnedDomains() {
-        return repository.countOwnedDomains(currentCredential.getManager().getUuid());
     }
 }

@@ -7,9 +7,9 @@ package com.josue.credential.manager.business.domain;
 
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
+import com.josue.credential.manager.rest.ListResource;
 import com.josue.credential.manager.rest.ResponseUtils;
 import com.josue.credential.manager.rest.ex.RestException;
-import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -49,10 +49,9 @@ public class DomainRest {
     @Produces(value = CONTENT_TYPE)
     public Response listJoinedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) throws RestException {
-        List<ManagerDomainCredential> foundDomains = control.getJoinedDomains();
+        ListResource<ManagerDomainCredential> foundDomains = control.getJoinedDomains(limit, offset);
 
-        long totalCount = control.countDomainCredentials();
-        return ResponseUtils.buildListResourceResponse(foundDomains, Response.Status.OK, info, totalCount, limit, offset);
+        return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
     }
 
     @GET
@@ -68,10 +67,9 @@ public class DomainRest {
     @Produces(value = CONTENT_TYPE)
     public Response getOwnedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) throws RestException {
-        List<Domain> foundDomains = control.getOwnedDomains();
+        ListResource<Domain> foundDomains = control.getOwnedDomains(limit, offset);
 
-        long totalCount = control.countOwnedDomains();
-        return ResponseUtils.buildListResourceResponse(foundDomains, Response.Status.OK, info, totalCount, limit, offset);
+        return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
     }
 
     @GET
@@ -79,10 +77,9 @@ public class DomainRest {
     @Produces(value = CONTENT_TYPE)
     public Response getOwnedDomainByUuid(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) throws RestException {
-        List<Domain> foundDomains = control.getOwnedDomains();
+        ListResource<Domain> foundDomains = control.getOwnedDomains(limit, offset);
 
-        long totalCount = control.countOwnedDomains();
-        return ResponseUtils.buildListResourceResponse(foundDomains, Response.Status.OK, info, totalCount, limit, offset);
+        return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
     }
 
     @POST

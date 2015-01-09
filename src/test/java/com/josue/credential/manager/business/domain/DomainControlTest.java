@@ -10,6 +10,7 @@ import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.DomainStatus;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.rest.ListResource;
 import com.josue.credential.manager.rest.ex.ResourceNotFoundException;
 import com.josue.credential.manager.rest.ex.RestException;
 import java.util.Arrays;
@@ -58,11 +59,11 @@ public class DomainControlTest {
     @Test//TODO implement logic
     public void testGetOwnedDomains() {
         List<Domain> mockedDomains = Arrays.asList(Mockito.mock(Domain.class));
-        
+
         when(repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid())).thenReturn(mockedDomains);
 
-        List<Domain> ownedDomains = control.getOwnedDomains();
-        assertEquals(mockedDomains.size(), ownedDomains.size());
+        ListResource<Domain> ownedDomains = control.getOwnedDomains(100, 10L);
+        assertEquals(mockedDomains.size(), ownedDomains.getItems().size());
         verify(repository, times(1)).getOwnedDomainsByManager(currentCredential.getManager().getUuid());
     }
 
@@ -71,11 +72,11 @@ public class DomainControlTest {
         List<ManagerDomainCredential> domainCredentials = Arrays.asList(Mockito.mock(ManagerDomainCredential.class));
         when(repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid())).thenReturn(domainCredentials);
 
-        List<ManagerDomainCredential> joinedDomains = control.getJoinedDomains();
+        ListResource<ManagerDomainCredential> joinedDomains = control.getJoinedDomains(100, 10L);
         for (ManagerDomainCredential mdc : domainCredentials) {
             verify(mdc, times(1)).setCredential(null);
         }
-        assertEquals(domainCredentials, joinedDomains);
+        assertEquals(domainCredentials, joinedDomains.getItems());
     }
 
     @Test
@@ -199,17 +200,4 @@ public class DomainControlTest {
 
         verify(manDomCred, times(1)).setCredential(null);
     }
-
-    @Test
-    public void testCountDomainCredentials() {
-        control.countDomainCredentials();
-        verify(repository, times(1)).countDomainCredentials(currentCredential.getManager().getUuid());
-    }
-
-    @Test
-    public void testCountOwnedDomains() {
-        control.countDomainCredentials();
-        verify(repository, times(1)).countOwnedDomains(currentCredential.getManager().getUuid());
-    }
-
 }

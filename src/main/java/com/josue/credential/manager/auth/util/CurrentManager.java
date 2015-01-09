@@ -27,7 +27,6 @@ public class CurrentManager {
     @Produces
     @Current
     @SessionScoped
-    //TODO WELD-000052: Cannot return null from a non-dependent producer method: Producer for Producer Method
     public Credential currentCredential() {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null) {
