@@ -38,6 +38,9 @@ import org.mockito.Spy;
  */
 public class DomainControlTest {
 
+    private static final Integer DEFAULT_LIMIT = 100;
+    private static final Integer DEFAULT_OFFSET = 0;
+
     @Mock
     DomainRepository repository;
 
@@ -60,19 +63,20 @@ public class DomainControlTest {
     public void testGetOwnedDomains() {
         List<Domain> mockedDomains = Arrays.asList(Mockito.mock(Domain.class));
 
-        when(repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid())).thenReturn(mockedDomains);
-
-        ListResource<Domain> ownedDomains = control.getOwnedDomains(100, 10L);
+        when(repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(mockedDomains);
+        ListResource<Domain> ownedDomains = control.getOwnedDomains(DEFAULT_LIMIT, DEFAULT_OFFSET);
+        verify(repository, times(1)).getOwnedDomainsByManager(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(mockedDomains.size(), ownedDomains.getItems().size());
-        verify(repository, times(1)).getOwnedDomainsByManager(currentCredential.getManager().getUuid());
     }
 
     @Test
     public void testGetJoinedDomains() {
         List<ManagerDomainCredential> domainCredentials = Arrays.asList(Mockito.mock(ManagerDomainCredential.class));
-        when(repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid())).thenReturn(domainCredentials);
+        when(repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(domainCredentials);
 
-        ListResource<ManagerDomainCredential> joinedDomains = control.getJoinedDomains(100, 10L);
+        ListResource<ManagerDomainCredential> joinedDomains = control.getJoinedDomains(DEFAULT_LIMIT, DEFAULT_OFFSET);
+        verify(repository, times(1)).getJoinedDomainsByManager(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+
         for (ManagerDomainCredential mdc : domainCredentials) {
             verify(mdc, times(1)).setCredential(null);
         }
@@ -196,7 +200,7 @@ public class DomainControlTest {
         ManagerDomainCredential manDomCred = Mockito.spy(new ManagerDomainCredential());
         when(repository.find(ManagerDomainCredential.class, uuid)).thenReturn(manDomCred);
 
-        control.getJoinedDomainByUuid(uuid);
+        control.getJoinedDomain(uuid);
 
         verify(manDomCred, times(1)).setCredential(null);
     }

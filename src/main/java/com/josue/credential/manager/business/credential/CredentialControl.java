@@ -10,6 +10,8 @@ import com.josue.credential.manager.auth.credential.Credential;
 import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.util.Current;
+import com.josue.credential.manager.business.ListResourceUtil;
+import com.josue.credential.manager.rest.ListResource;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -29,23 +31,26 @@ public class CredentialControl {
     Credential currentCredential;
 
     public Manager getManagerByCredential(String credentialUuid) {
-        return repository.getManagerByCredential(credentialUuid);
+        return repository.getManager(credentialUuid);
     }
 
-    public List<APIDomainCredential> getApiCredentialsByManagerDomain(String domainUuid) {
-        List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentialsByManagerDomain(currentCredential.getManager().getUuid(), domainUuid);
+    public ListResource<APIDomainCredential> getAPICredentials(String domainUuid, Integer limit, Integer offset) {
+        List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentials(currentCredential.getManager().getUuid(), domainUuid, limit, offset);
         for (APIDomainCredential apiDomCredential : apiDomainCredentials) {
             obfuscateKeys(apiDomCredential.getCredential());
         }
-        return apiDomainCredentials;
+
+        long totalCount = repository.countAPICredential(currentCredential.getManager().getUuid(), currentCredential.getManager().getUuid());
+        return ListResourceUtil.buildListResource(apiDomainCredentials, totalCount, limit, offset);
     }
 
-    public List<APIDomainCredential> getAPICredentials() {
-        List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentialsByManager(currentCredential.getManager().getUuid());
+    public ListResource<APIDomainCredential> getAPICredentials(Integer limit, Integer offset) {
+        List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentials(currentCredential.getManager().getUuid(), limit, offset);
         for (APIDomainCredential apiDomCredential : apiDomainCredentials) {
             obfuscateKeys(apiDomCredential.getCredential());
         }
-        return apiDomainCredentials;
+        long totalCount = repository.countAPICredential(currentCredential.getManager().getUuid(), currentCredential.getManager().getUuid());
+        return ListResourceUtil.buildListResource(apiDomainCredentials, totalCount, limit, offset);
     }
 
     //This method should not executed inside the same transaction of ANY repository

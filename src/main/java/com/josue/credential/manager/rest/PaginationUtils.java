@@ -13,7 +13,7 @@ public class PaginationUtils {
         }
     }
 
-    PaginationUtils(int limit, int offset) {
+    public PaginationUtils(int limit, int offset) {
         this(limit, new Long(offset));
     }
 

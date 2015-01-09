@@ -31,16 +31,17 @@ public class DomainRepository extends JpaRepository {
 
     //Control change some data, we dont want to update it on database
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public List<ManagerDomainCredential> getJoinedDomainsByManager(String managerUuid) {
+    public List<ManagerDomainCredential> getJoinedDomainsByManager(String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :managerUuid", ManagerDomainCredential.class);
         query.setParameter("managerUuid", managerUuid);
         List<ManagerDomainCredential> resultList = query.getResultList();
         return resultList;
     }
 
-    public List<Domain> getOwnedDomainsByManager(String managerUuid) {
+    public List<Domain> getOwnedDomainsByManager(String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT domain FROM Domain domain WHERE domain.owner.uuid = :managerUuid", Domain.class);
         query.setParameter("managerUuid", managerUuid);
+        query.setMaxResults(limit).setFirstResult(offset);
         List<Domain> domains = query.getResultList();
         return domains;
     }

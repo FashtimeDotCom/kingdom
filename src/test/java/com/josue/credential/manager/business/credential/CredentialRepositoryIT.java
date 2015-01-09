@@ -32,6 +32,9 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.ROLLBACK)
 public class CredentialRepositoryIT {
 
+    private static final Integer DEFAULT_LIMIT = 100;
+    private static final Integer DEFAULT_OFFSET = 0;
+
     @Deployment
     @TargetsContainer("wildfly-managed")
     public static WebArchive createDeployment() {
@@ -50,7 +53,7 @@ public class CredentialRepositoryIT {
     public void testGetApiCredentialsByManager() {
         APIDomainCredential domainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
         Manager manager = domainCredential.getCredential().getManager();
-        List<APIDomainCredential> foundDomainCredentials = repository.getApiCredentialsByManager(manager.getUuid());
+        List<APIDomainCredential> foundDomainCredentials = repository.getApiCredentials(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundDomainCredentials.size());
         assertEquals(domainCredential, foundDomainCredentials.get(0));
 
@@ -82,12 +85,12 @@ public class CredentialRepositoryIT {
         APIDomainCredential apiDomainCred3 = InstanceHelper.createAPIDomainCredential(domain2, apiCred3, simpleRole);
         repository.create(apiDomainCred3);
 
-        List<APIDomainCredential> foundDomainCredentials = repository.getApiCredentialsByManagerDomain(manager.getUuid(), domain1.getUuid());
+        List<APIDomainCredential> foundDomainCredentials = repository.getApiCredentials(manager.getUuid(), domain1.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundDomainCredentials.size());
         assertEquals(domainCredential, foundDomainCredentials.get(0));
 
         //APIs credentials for Domain2
-        List<APIDomainCredential> foundDomainCredentialsForDomain2 = repository.getApiCredentialsByManagerDomain(manager.getUuid(), domain2.getUuid());
+        List<APIDomainCredential> foundDomainCredentialsForDomain2 = repository.getApiCredentials(manager.getUuid(), domain2.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(3, foundDomainCredentialsForDomain2.size());
     }
 
@@ -99,9 +102,32 @@ public class CredentialRepositoryIT {
         ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
         repository.create(credential);
 
-        Manager foundManager = repository.getManagerByCredential(credential.getUuid());
+        Manager foundManager = repository.getManager(credential.getUuid());
         assertNotNull(foundManager);
         assertEquals(manager, foundManager);
+    }
+
+    @Test
+    public void testCountAPICredential() {
+        APIDomainCredential domainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
+
+        Manager manager = domainCredential.getCredential().getManager();
+        Domain domain1 = domainCredential.getDomain();
+
+        Role simpleRole = domainCredential.getRole();
+
+        APICredential apiCredential1 = InstanceHelper.createAPICredential(manager);
+        repository.create(apiCredential1);
+        APICredential apiCredential2 = InstanceHelper.createAPICredential(manager);
+        repository.create(apiCredential2);
+
+        APIDomainCredential apiDomainCredential2 = InstanceHelper.createAPIDomainCredential(domain1, apiCredential1, simpleRole);
+        repository.create(apiDomainCredential2);
+        APIDomainCredential apiDomainCredential3 = InstanceHelper.createAPIDomainCredential(domain1, apiCredential2, simpleRole);
+        repository.create(apiDomainCredential3);
+
+        long count = repository.countAPICredential(domain1.getUuid(), manager.getUuid());
+        assertEquals(3, count);
     }
 
 }

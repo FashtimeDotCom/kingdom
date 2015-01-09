@@ -34,14 +34,14 @@ public class DomainControl {
     @Current
     Credential currentCredential;
 
-    public ListResource<Domain> getOwnedDomains(Integer limit, Long offset) {
+    public ListResource<Domain> getOwnedDomains(Integer limit, Integer offset) {
         long totalCount = repository.countOwnedDomains(currentCredential.getManager().getUuid());
-        List<Domain> ownedDomains = repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid());
+        List<Domain> ownedDomains = repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid(), limit, offset);
         return ListResourceUtil.buildListResource(ownedDomains, totalCount, limit, offset);
     }
 
-    public ListResource<ManagerDomainCredential> getJoinedDomains(Integer limit, Long offset) {
-        List<ManagerDomainCredential> joinedDomains = repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid());
+    public ListResource<ManagerDomainCredential> getJoinedDomains(Integer limit, Integer offset) {
+        List<ManagerDomainCredential> joinedDomains = repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid(), limit, offset);
         for (ManagerDomainCredential dc : joinedDomains) {
             dc.setCredential(null);
         }
@@ -49,8 +49,8 @@ public class DomainControl {
         return ListResourceUtil.buildListResource(joinedDomains, totalCount, limit, offset);
     }
 
-    public ManagerDomainCredential getJoinedDomainByUuid(String uuid) {
-        ManagerDomainCredential joinedDomain = repository.find(ManagerDomainCredential.class, uuid);
+    public ManagerDomainCredential getJoinedDomain(String manDomCredUuid) {
+        ManagerDomainCredential joinedDomain = repository.find(ManagerDomainCredential.class, manDomCredUuid);
         joinedDomain.setCredential(null);
         return joinedDomain;
     }

@@ -48,7 +48,7 @@ public class DomainRest {
     @Path("joined")
     @Produces(value = CONTENT_TYPE)
     public Response listJoinedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
-            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) throws RestException {
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
         ListResource<ManagerDomainCredential> foundDomains = control.getJoinedDomains(limit, offset);
 
         return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
@@ -57,8 +57,8 @@ public class DomainRest {
     @GET
     @Path("joined/{uuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response listJoinedDomains(@PathParam("uuid") String uuid) throws RestException {
-        ManagerDomainCredential foundDomains = control.getJoinedDomainByUuid(uuid);
+    public Response listJoinedDomainByUuid(@PathParam("uuid") String uuid) throws RestException {
+        ManagerDomainCredential foundDomains = control.getJoinedDomain(uuid);
         return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
     }
 
@@ -66,7 +66,7 @@ public class DomainRest {
     @Path("owned")
     @Produces(value = CONTENT_TYPE)
     public Response getOwnedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
-            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) throws RestException {
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
         ListResource<Domain> foundDomains = control.getOwnedDomains(limit, offset);
 
         return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
@@ -76,7 +76,7 @@ public class DomainRest {
     @Path("owned/{uuid}")
     @Produces(value = CONTENT_TYPE)
     public Response getOwnedDomainByUuid(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
-            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Long offset) throws RestException {
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
         ListResource<Domain> foundDomains = control.getOwnedDomains(limit, offset);
 
         return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);

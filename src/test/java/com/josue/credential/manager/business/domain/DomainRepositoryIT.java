@@ -5,14 +5,14 @@
  */
 package com.josue.credential.manager.business.domain;
 
-import com.josue.credential.manager.testutils.ArquillianTestBase;
-import com.josue.credential.manager.testutils.InstanceHelper;
 import com.josue.credential.manager.auth.credential.Credential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.role.Role;
+import com.josue.credential.manager.testutils.ArquillianTestBase;
+import com.josue.credential.manager.testutils.InstanceHelper;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -38,11 +38,8 @@ import org.junit.runner.RunWith;
 @Transactional(TransactionMode.ROLLBACK)
 public class DomainRepositoryIT {
 
-    @Deployment
-    @TargetsContainer("wildfly-managed")
-    public static WebArchive createDeployment() {
-        return ArquillianTestBase.createDefaultDeployment();
-    }
+    private static final Integer DEFAULT_LIMIT = 100;
+    private static final Integer DEFAULT_OFFSET = 0;
 
     private static final Logger LOG = Logger.getLogger(DomainRepositoryIT.class.getName());
 
@@ -51,6 +48,12 @@ public class DomainRepositoryIT {
 
     @Inject
     DomainRepository repository;
+
+    @Deployment
+    @TargetsContainer("wildfly-managed")
+    public static WebArchive createDeployment() {
+        return ArquillianTestBase.createDefaultDeployment();
+    }
 
     @Test
     public void testGetDomainsByCredential() {
@@ -82,7 +85,7 @@ public class DomainRepositoryIT {
         ManagerDomainCredential invitedDomainCredential = InstanceHelper.createManagerDomainCredential(domain, invitedManagerCredential, simpleRole);
         repository.create(invitedDomainCredential);
 
-        List<ManagerDomainCredential> foundDomainCredentials = repository.getJoinedDomainsByManager(invitedManagerCredential.getManager().getUuid());
+        List<ManagerDomainCredential> foundDomainCredentials = repository.getJoinedDomainsByManager(invitedManagerCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundDomainCredentials.size());
         assertEquals(invitedDomainCredential, foundDomainCredentials.get(0));
 
@@ -93,7 +96,7 @@ public class DomainRepositoryIT {
         ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
         Manager manager = domainCredential.getCredential().getManager();
 
-        List<Domain> ownedDomains = repository.getOwnedDomainsByManager(manager.getUuid());
+        List<Domain> ownedDomains = repository.getOwnedDomainsByManager(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, ownedDomains.size());
         assertEquals(domainCredential.getDomain(), ownedDomains.get(0));
     }
