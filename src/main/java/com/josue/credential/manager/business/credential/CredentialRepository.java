@@ -21,7 +21,7 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 public class CredentialRepository extends JpaRepository {
 
-    //Control change some data, we dont want to update it on database
+    //Control changes some data, we dont want to update it on database
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public List<APIDomainCredential> getApiCredentials(String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT apiDomCred FROM APIDomainCredential apiDomCred WHERE apiDomCred.credential.manager.uuid = :managerUuid", APIDomainCredential.class);
@@ -30,7 +30,7 @@ public class CredentialRepository extends JpaRepository {
         return resultList;
     }
 
-    //Control change some data, we dont want to update it on database
+    //Control changes some data, we dont want to update it on database
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public List<APIDomainCredential> getApiCredentials(String managerUuid, String domainUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT apiDomCred FROM APIDomainCredential apiDomCred WHERE apiDomCred.credential.manager.uuid = :managerUuid AND apiDomCred.domain.uuid = :domainUuid", APIDomainCredential.class);
@@ -39,6 +39,17 @@ public class CredentialRepository extends JpaRepository {
         query.setMaxResults(limit).setFirstResult(offset);
         List<APIDomainCredential> resultList = query.getResultList();
         return resultList;
+    }
+
+    //Control changes some data, we dont want to update it on database
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public APIDomainCredential getApiCredential(String managerUuid, String domainUuid, String apiKeyUuid) {
+        Query query = em.createQuery("SELECT apiDomCred FROM APIDomainCredential apiDomCred WHERE apiDomCred.credential.manager.uuid = :managerUuid AND apiDomCred.domain.uuid = :domainUuid AND apiDomCred.credential.uuid = :apiKeyUuid", APIDomainCredential.class);
+        query.setParameter("managerUuid", managerUuid);
+        query.setParameter("domainUuid", domainUuid);
+        query.setParameter("apiKeyUuid", apiKeyUuid);
+        List<APIDomainCredential> resultList = query.getResultList();
+        return extractSingleResultFromList(resultList);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

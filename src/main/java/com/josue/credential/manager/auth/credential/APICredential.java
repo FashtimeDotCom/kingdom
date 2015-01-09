@@ -66,7 +66,7 @@ public class APICredential extends Credential {
 
     @Override
     public Object getPrincipal() {
-        return this;
+        return apiKey;
     }
 
 }

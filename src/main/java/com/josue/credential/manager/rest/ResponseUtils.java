@@ -7,6 +7,10 @@ import javax.ws.rs.core.UriInfo;
 //TODO check href creation
 public class ResponseUtils {
 
+    public static final String CONTENT_TYPE = "application/json;charset=utf-8";
+    public static final String DEFAULT_LIMIT = "50";
+    public static final String DEFAULT_OFFSET = "0";
+
     public static Response buildSimpleResponse(Resource resource,
             Response.Status status, UriInfo uriInfo) {
 

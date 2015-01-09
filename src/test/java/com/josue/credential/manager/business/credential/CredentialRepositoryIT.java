@@ -95,6 +95,19 @@ public class CredentialRepositoryIT {
     }
 
     @Test
+    public void testGetApiCredential() {
+        APIDomainCredential apiDomCred = InstanceHelper.createFullAPIDomainCredential(repository);
+
+        Manager mannager = apiDomCred.getCredential().getManager();
+        APICredential apiCredential = apiDomCred.getCredential();
+        Domain domain = apiDomCred.getDomain();
+
+        APIDomainCredential foundapiDomCred = repository.getApiCredential(mannager.getUuid(), domain.getUuid(), apiCredential.getUuid());
+        assertNotNull(foundapiDomCred);
+        assertEquals(apiDomCred, foundapiDomCred);
+    }
+
+    @Test
     public void testGetManagerByCredential() {
         Manager manager = InstanceHelper.createManager();
         repository.create(manager);

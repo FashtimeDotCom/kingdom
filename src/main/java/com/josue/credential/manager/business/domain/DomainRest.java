@@ -7,8 +7,12 @@ package com.josue.credential.manager.business.domain;
 
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
+import com.josue.credential.manager.business.credential.CredentialRest;
 import com.josue.credential.manager.rest.ListResource;
 import com.josue.credential.manager.rest.ResponseUtils;
+import static com.josue.credential.manager.rest.ResponseUtils.CONTENT_TYPE;
+import static com.josue.credential.manager.rest.ResponseUtils.DEFAULT_LIMIT;
+import static com.josue.credential.manager.rest.ResponseUtils.DEFAULT_OFFSET;
 import com.josue.credential.manager.rest.ex.RestException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -33,10 +37,6 @@ import javax.ws.rs.core.UriInfo;
 @Path("domains")
 @ApplicationScoped
 public class DomainRest {
-
-    private static final String CONTENT_TYPE = "application/json;charset=utf-8";
-    private static final String DEFAULT_LIMIT = "50";
-    private static final String DEFAULT_OFFSET = "0";
 
     @Inject
     DomainControl control;
@@ -109,6 +109,15 @@ public class DomainRest {
     public Response delete(@PathParam("uuid") String uuid) throws RestException {
         control.deleteDomain(uuid);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.NO_CONTENT, info);
+    }
+
+    //##### SUB RESOURCE LOCATORS #####
+    @Inject
+    CredentialRest credentialLocator;
+
+    @Path("{domainUuid}")
+    public CredentialRest credential(@PathParam("domainUuid") String uuid) throws RestException {
+        return credentialLocator;
     }
 
 }

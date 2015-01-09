@@ -5,6 +5,7 @@
  */
 package com.josue.credential.manager.business.account;
 
+import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.rest.Resource;
 import java.util.Date;
@@ -32,9 +33,15 @@ public class ManagerInvitation extends Resource {
     @Column(name = "target_email")
     String targetEmail;
 
+    @NotNull
     @OneToOne(targetEntity = Manager.class)
     @JoinColumn(name = "author_manager_uuid")
     private Resource authorManager;
+
+    @NotNull
+    @OneToOne(targetEntity = Domain.class)
+    @JoinColumn(name = "domain_uuid")
+    private Resource domain;
 
     @NotNull
     private String token;
@@ -96,14 +103,23 @@ public class ManagerInvitation extends Resource {
         this.status = status;
     }
 
+    public Resource getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Resource domain) {
+        this.domain = domain;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.targetEmail);
-        hash = 97 * hash + Objects.hashCode(this.authorManager);
-        hash = 97 * hash + Objects.hashCode(this.token);
-        hash = 97 * hash + Objects.hashCode(this.validUntil);
-        hash = 97 * hash + Objects.hashCode(this.status);
+        hash = 67 * hash + Objects.hashCode(this.targetEmail);
+        hash = 67 * hash + Objects.hashCode(this.authorManager);
+        hash = 67 * hash + Objects.hashCode(this.domain);
+        hash = 67 * hash + Objects.hashCode(this.token);
+        hash = 67 * hash + Objects.hashCode(this.validUntil);
+        hash = 67 * hash + Objects.hashCode(this.status);
         return hash;
     }
 
@@ -122,16 +138,16 @@ public class ManagerInvitation extends Resource {
         if (!Objects.equals(this.authorManager, other.authorManager)) {
             return false;
         }
+        if (!Objects.equals(this.domain, other.domain)) {
+            return false;
+        }
         if (!Objects.equals(this.token, other.token)) {
             return false;
         }
         if (!Objects.equals(this.validUntil, other.validUntil)) {
             return false;
         }
-        if (this.status != other.status) {
-            return false;
-        }
-        return true;
+        return this.status == other.status;
     }
 
 }

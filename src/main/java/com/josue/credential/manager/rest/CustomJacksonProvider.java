@@ -5,7 +5,9 @@
  */
 package com.josue.credential.manager.rest;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
@@ -33,6 +35,9 @@ public class CustomJacksonProvider implements ContextResolver<ObjectMapper> {
         mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        //Field Access... ref: http://stackoverflow.com/questions/7105745/how-to-specify-jackson-to-only-use-fields-preferably-globally
+        mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
     }
 
     @Override

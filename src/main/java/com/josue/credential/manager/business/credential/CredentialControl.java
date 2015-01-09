@@ -38,12 +38,16 @@ public class CredentialControl {
         List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentials(currentCredential.getManager().getUuid(), domainUuid, limit, offset);
         for (APIDomainCredential apiDomCredential : apiDomainCredentials) {
             obfuscateKeys(apiDomCredential.getCredential());
+            //Optional.. removing non usable fields
+            apiDomCredential.getDomain().setOwner(null);
+            apiDomCredential.getCredential().setManager(null);
         }
 
         long totalCount = repository.countAPICredential(currentCredential.getManager().getUuid(), currentCredential.getManager().getUuid());
         return ListResourceUtil.buildListResource(apiDomainCredentials, totalCount, limit, offset);
     }
 
+    //Not used yet, return all credential for all Domains
     public ListResource<APIDomainCredential> getAPICredentials(Integer limit, Integer offset) {
         List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentials(currentCredential.getManager().getUuid(), limit, offset);
         for (APIDomainCredential apiDomCredential : apiDomainCredentials) {
@@ -51,6 +55,12 @@ public class CredentialControl {
         }
         long totalCount = repository.countAPICredential(currentCredential.getManager().getUuid(), currentCredential.getManager().getUuid());
         return ListResourceUtil.buildListResource(apiDomainCredentials, totalCount, limit, offset);
+    }
+
+    public APIDomainCredential getAPICredential(String domainUuid, String apiKeyUuid) {
+        APIDomainCredential apiDomainCredentials = repository.getApiCredential(currentCredential.getManager().getUuid(), domainUuid, apiKeyUuid);
+        obfuscateKeys(apiDomainCredentials.getCredential());
+        return apiDomainCredentials;
     }
 
     //This method should not executed inside the same transaction of ANY repository

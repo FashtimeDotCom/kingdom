@@ -95,10 +95,7 @@ public class ManagerCredential extends Credential {
         if (!Objects.equals(this.login, other.login)) {
             return false;
         }
-        if (!Objects.equals(this.password, other.password)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.password, other.password);
     }
 
 }

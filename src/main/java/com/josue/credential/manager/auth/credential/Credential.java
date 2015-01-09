@@ -81,10 +81,7 @@ public abstract class Credential extends Resource implements AuthenticationToken
         if (!Objects.equals(this.manager, other.manager)) {
             return false;
         }
-        if (this.status != other.status) {
-            return false;
-        }
-        return true;
+        return this.status == other.status;
     }
 
 }

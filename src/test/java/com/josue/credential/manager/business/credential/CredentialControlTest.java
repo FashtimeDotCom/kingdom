@@ -27,6 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 public class CredentialControlTest {
 
@@ -36,11 +37,11 @@ public class CredentialControlTest {
     @Mock
     CredentialRepository repository;
 
-    @Mock
-    ManagerCredential currentCredential;
+    @Spy
+    ManagerCredential currentCredential = new ManagerCredential();
 
-    @Mock
-    Manager manager;
+    @Spy
+    Manager manager = new Manager();
 
     @InjectMocks
     CredentialControl control = new CredentialControl();
@@ -70,7 +71,6 @@ public class CredentialControlTest {
 
         String domainUuid = "uuid-123";
 
-        when(currentCredential.getManager()).thenReturn(manager);
         when(repository.getApiCredentials(currentCredential.getManager().getUuid(), domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
 
         APICredential credMock = mock(APICredential.class);
@@ -94,7 +94,6 @@ public class CredentialControlTest {
         APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
         List<APIDomainCredential> realList = Arrays.asList(apiCredMock, apiCredMock, apiCredMock);
 
-        when(currentCredential.getManager()).thenReturn(manager);
         when(repository.getApiCredentials(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
 
         APICredential credMock = mock(APICredential.class);
@@ -111,5 +110,27 @@ public class CredentialControlTest {
             verify(credMock, times(3)).setApiKey(argument.capture());
             assertTrue(argument.getValue().contains("*******"));
         }
+    }
+
+    @Test
+    public void testGetAPICredential() {
+        String apiKeyUuid = "apikey-uuid-123";
+        String domainUuid = "domain-uuid-123";
+        APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
+
+        when(repository.getApiCredential(currentCredential.getManager().getUuid(), domainUuid, apiKeyUuid)).thenReturn(apiCredMock);
+
+        APICredential credMock = mock(APICredential.class);
+        when(apiCredMock.getCredential()).thenReturn(credMock);
+        when(credMock.getApiKey()).thenReturn(UUID.randomUUID().toString());
+
+        APIDomainCredential apiCredential = control.getAPICredential(domainUuid, apiKeyUuid);
+        verify(repository, times(1)).getApiCredential(manager.getUuid(), domainUuid, apiKeyUuid);
+
+        assertNotNull(apiCredential);
+
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(credMock, times(1)).setApiKey(argument.capture());
+        assertTrue(argument.getValue().contains("*******"));
     }
 }

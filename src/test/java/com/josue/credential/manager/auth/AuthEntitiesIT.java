@@ -180,11 +180,15 @@ public class AuthEntitiesIT {
         ManagerCredential credential = InstanceHelper.createManagerCredential(authorManager);
         repository.create(credential);
 
+        Domain domain = InstanceHelper.createDomain(authorManager);
+        repository.create(domain);
+
         ManagerInvitation invitation = new ManagerInvitation();
         invitation.setAuthorManager(authorManager);
         invitation.setTargetEmail("eduardo@gmail.com");
         invitation.setStatus(ManagerInvitationStatus.CREATED);
         invitation.setToken(UUID.randomUUID().toString());
+        invitation.setDomain(domain);
 
         invitation.setValidUntil(InstanceHelper.mysqlMilliSafeTimestamp());
 
