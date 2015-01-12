@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 /*
  * A Manager can have multiple APICredentials, but only one Credential... see Credential class
@@ -24,6 +25,7 @@ public class APICredential extends Credential {
         this.apiKey = apiKey;
     }
 
+    @NotNull
     @Column(name = "api_key")
     private String apiKey;
 

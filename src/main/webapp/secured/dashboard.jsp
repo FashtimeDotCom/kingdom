@@ -18,6 +18,8 @@
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-resource.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-resource.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-cookies.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
         <script src="<c:url value='/angularjs/app.js' />"></script>
@@ -40,9 +42,9 @@
             <input type="text" placeholder="Search here..."/><button type="submit" class="tip-right" title="Search"><i class="icon-search icon-white"></i></button>
         </div>
         <div id="user-nav" class="navbar navbar-inverse" ng-controller="menuBarCtrl">
-            <ul class="nav btn-group" ng-init="getJoinedDomains()">
-                <li class="btn btn-inverse" ><a title="" href="#"><i class="icon icon-user"></i> <span class="text">Profile</span></a></li>
-                <li class="btn btn-inverse dropdown" id="menu-messages"><a href="#"  class="dropdown-toggle"><span class="text">{{currentDomain.name}}</span><b class="caret"></b></a>
+            <ul class="nav btn-group" ng-init="init()">
+                <li class="btn btn-inverse" ><a title="" href="#"><i class="icon icon-user"></i> <span class="text">{{currentAccount.manager.firstName}}</span></a></li>
+                <li class="btn btn-inverse dropdown" id="menu-messages"  ng-click="getJoinedDomains(true)"><a href="#"  class="dropdown-toggle"><span class="text">{{currentDomain.domain.name}}</span><b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li ng-repeat="joined in joinedDomains"><a class="sAdd" href="#" ng-click="changeDomain(joined)">{{joined.domain.name}}</a></li>
                     </ul>

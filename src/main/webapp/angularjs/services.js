@@ -19,9 +19,15 @@ angular.module('myApp.services', ['ngResource'])
                         }
                     });
 
+                    _private.account = $resource(app + '/account', {}, {
+                        get: {
+                            method: 'GET',
+                            isArray: false
+                        }
+                    });
+
                     _private.domain = $resource(app + '/domains', {}, {
                         queryJoined: {
-                            headers: {'ApiKey': 'tmfkrkileqo65hjl9udm550hip'},
                             url: app + '/domains/joined',
                             method: 'GET',
                             isArray: false
@@ -47,32 +53,26 @@ angular.module('myApp.services', ['ngResource'])
                         }
                     });
 
-                    _private.apiKey = $resource(app + '/domains', {}, {
-                        queryJoined: {
-                            headers: {'ApiKey': 'tmfkrkileqo65hjl9udm550hip'},
-                            url: app + '/domains/joined',
+                    _private.apiKey = $resource(app + '/domains/:domainUuid/credentials/apikeys/:uuid', {}, {
+                        query: {
                             method: 'GET',
                             isArray: false
                         },
-                        getJoinedByUuid: {
-                            url: app + '/domains/joined/:uuid',
+                        get: {
                             method: 'GET',
                             isArray: false
                         },
-                        queryOwned: {
-                            url: app + '/domains/owned',
-                            method: 'GET',
-                            isArray: false
-                        },
-                        update: {
-                            method: 'PUT',
-                            url: app + '/domains/:uuid'
-                        },
+                        update: {method: 'PUT'},
                         create: {method: 'POST'},
-                        delete: {
-                            method: 'DELETE',
-                            url: app + '/domains/:uuid'
+                        delete: {method: 'DELETE'}
+                    });
+
+                    _private.role = $resource(app + '/domains/:domainUuid/roles', {}, {
+                        query: {
+                            method: 'GET',
+                            isArray: true
                         }
+                        //TODO how to create new Roles for system ?
                     });
 
                 };
@@ -141,5 +141,44 @@ angular.module('myApp.services', ['ngResource'])
                     return {type: type, msg: msg};
                 };
 
+            }])
+        .service('DomainService', ['Resources', '$cookieStore', function (Resources, $cookieStore) {
+
+                var cookieKey = 'currentDomain';
+
+                this.getCurrentDomain = function () {
+                    var currentDomain = $cookieStore.get(cookieKey);
+                    if (currentDomain == null) {
+                        Resources.domain.queryJoined(function (response) {
+                            $cookieStore.put(cookieKey, response.items[0]);
+                            currentDomain = $cookieStore.get(cookieKey);
+                        });
+                    }
+                    return currentDomain;
+                };
+
+                this.changeDomain = function (domain) {
+                    $cookieStore.put(cookieKey, domain);
+                };
+            }])
+        //Not used... because async, check how to
+        .service('AccountService', ['Resources', '$cookieStore', function (Resources, $cookieStore) {
+
+                var cookieKey = 'currentAccount';
+
+                this.getCurrentAccount = function () {
+                    var currentAccount = $cookieStore.get(cookieKey);
+                    if (currentAccount == null) {
+                        Resources.account.get(function (response) {
+                            $cookieStore.put(cookieKey, response);
+                            currentAccount = $cookieStore.get(cookieKey);
+                            return currentAccount;
+                        });
+                    }
+                };
+                
+                this.initAccount = function () {
+                    $cookieStore.remove(cookieKey);
+                };
             }]);
 

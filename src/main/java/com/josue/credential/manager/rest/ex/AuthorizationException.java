@@ -5,6 +5,7 @@
  */
 package com.josue.credential.manager.rest.ex;
 
+import com.josue.credential.manager.auth.role.Role;
 import javax.ws.rs.core.Response;
 
 /**
@@ -16,6 +17,10 @@ public class AuthorizationException extends RestException {
     public AuthorizationException() {
         super(null, "", String.format(
                 "Access denied for this resource"), Response.Status.FORBIDDEN);
+    }
+
+    public AuthorizationException(Role role) {
+        super(null, "", String.format("Requires role {0}", role.getName()), Response.Status.BAD_REQUEST);
     }
 
 }

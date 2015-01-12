@@ -33,6 +33,8 @@ public abstract class DomainCredential extends Resource {
     protected void copyUpdatebleFields(Resource newData) {
         if (newData instanceof DomainCredential) {
             DomainCredential domainCredential = (DomainCredential) newData;
+            domain.copyUpdatebleFields(domainCredential.domain);
+
             role = domainCredential.role == null ? role : domainCredential.role;
         }
     }

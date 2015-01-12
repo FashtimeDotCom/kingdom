@@ -7,7 +7,9 @@ package com.josue.credential.manager.auth.shiro.api;
 
 import com.josue.credential.manager.auth.AuthRepository;
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.domain.APIDomainCredential;
+import com.josue.credential.manager.auth.credential.Credential;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
+import com.josue.credential.manager.auth.domain.DomainCredential;
 import com.josue.credential.manager.auth.role.Role;
 import com.josue.credential.manager.auth.shiro.AccessLevelPermission;
 import java.util.HashMap;
@@ -53,18 +55,38 @@ public class APICredentialRealm extends AuthorizingRealm {
         }
         throw new AuthenticationException("No credential found for APIKEY: " + token.getApiKey());
     }
+    /*
+     This method actually validate the TWO available credentials:
+     APICredential type: When is purelly restful, and
+     ManagerCredential type: When user is already logged in and whe need a Permissin check for a rest action based on ManagerCredentials
+     */
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         //TODO check if can reuse the fetched entity, and if its safe
-        String principalUuid = (String) getAvailablePrincipal(principals);
 
-        //TODO improve this... should not fetch the entire entity to use the Role
-        List<APIDomainCredential> managerCredentials = persistence.getApiDomainCredentials(principalUuid);
+        Credential credential;
+        List<DomainCredential> domainCredentials;
+        Object availablePrincipal = getAvailablePrincipal(principals);
+
+        if (availablePrincipal instanceof APICredential) {
+
+            credential = (APICredential) getAvailablePrincipal(principals);
+            domainCredentials = persistence.getApiDomainCredentials(credential.getUuid());
+
+        } /*
+         Returns AuthorizationInfo for ManagerCredential based Permission Check
+         */ else if (availablePrincipal instanceof ManagerCredential) {
+            credential = (ManagerCredential) getAvailablePrincipal(principals);
+            domainCredentials = persistence.getManagerDomainCredentials(credential.getUuid());
+        } else {
+            throw new AuthenticationException("Illegal Credential type");
+        }
+
         Map<Object, Role> roles = new HashMap<>();
-        for (APIDomainCredential adc : managerCredentials) {
-            roles.put(adc.getDomain().getUuid(), adc.getRole());
+        for (DomainCredential domainCredential : domainCredentials) {
+            roles.put(domainCredential.getDomain().getUuid(), domainCredential.getRole());
         }
 
 //        String fetchedDomainName = "uuid-doc-123-TODO-check-if-OK";

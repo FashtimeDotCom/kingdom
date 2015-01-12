@@ -8,6 +8,7 @@ package com.josue.credential.manager.business.domain;
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.business.credential.CredentialRest;
+import com.josue.credential.manager.business.role.RoleRest;
 import com.josue.credential.manager.rest.ListResource;
 import com.josue.credential.manager.rest.ResponseUtils;
 import static com.josue.credential.manager.rest.ResponseUtils.CONTENT_TYPE;
@@ -115,9 +116,16 @@ public class DomainRest {
     @Inject
     CredentialRest credentialLocator;
 
-    @Path("{domainUuid}")
-    public CredentialRest credential(@PathParam("domainUuid") String uuid) throws RestException {
+    @Inject
+    RoleRest roleLocator;
+
+    @Path("{domainUuid}/credentials")
+    public CredentialRest credentials() throws RestException {
         return credentialLocator;
     }
 
+    @Path("{domainUuid}/roles")
+    public RoleRest roles() throws RestException {
+        return roleLocator;
+    }
 }

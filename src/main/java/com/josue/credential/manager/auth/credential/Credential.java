@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
@@ -23,6 +24,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 public abstract class Credential extends Resource implements AuthenticationToken {
 
     //enforce relationship
+    @NotNull
     @OneToOne
     @JoinColumn(name = "manager_uuid")
     private Manager manager;
@@ -36,6 +38,7 @@ public abstract class Credential extends Resource implements AuthenticationToken
         if (newData instanceof Credential) {
             Credential credential = (Credential) newData;
             status = credential.status == null ? status : credential.status;
+            manager.copyUpdatebleFields(credential.manager);
         }
     }
 

@@ -139,6 +139,9 @@ public class CredentialRepositoryIT {
         APIDomainCredential apiDomainCredential3 = InstanceHelper.createAPIDomainCredential(domain1, apiCredential2, simpleRole);
         repository.create(apiDomainCredential3);
 
+        long countByManager = repository.countAPICredential(manager.getUuid());
+        assertEquals(3, countByManager);
+
         long count = repository.countAPICredential(domain1.getUuid(), manager.getUuid());
         assertEquals(3, count);
     }

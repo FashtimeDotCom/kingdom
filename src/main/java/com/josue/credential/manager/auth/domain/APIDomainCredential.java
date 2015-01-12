@@ -31,11 +31,12 @@ public class APIDomainCredential extends DomainCredential {
     private APICredential credential;
 
     @Override
-    protected void copyUpdatebleFields(Resource newData) {
+    public void copyUpdatebleFields(Resource newData) {
         super.copyUpdatebleFields(newData);
         if (newData instanceof APIDomainCredential) {
             APIDomainCredential apiDomainCredential = (APIDomainCredential) newData;
             name = apiDomainCredential.name == null ? null : apiDomainCredential.name;
+            credential.copyUpdatebleFields(apiDomainCredential.credential);
         }
     }
 

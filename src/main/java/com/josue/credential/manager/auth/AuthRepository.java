@@ -7,9 +7,8 @@ package com.josue.credential.manager.auth;
 
 import com.josue.credential.manager.JpaRepository;
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
-import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
+import com.josue.credential.manager.auth.domain.DomainCredential;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Query;
@@ -31,10 +30,10 @@ public class AuthRepository extends JpaRepository {
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public List<APIDomainCredential> getApiDomainCredentials(String credentialUuid) {
-        Query query = em.createQuery("SELECT apiCred FROM APIDomainCredential apiCred WHERE apiCred.credential.uuid = :credentialUuid", APIDomainCredential.class);
+    public List<DomainCredential> getApiDomainCredentials(String credentialUuid) {
+        Query query = em.createQuery("SELECT apiCred FROM APIDomainCredential apiCred WHERE apiCred.credential.uuid = :credentialUuid", DomainCredential.class);
         query.setParameter("credentialUuid", credentialUuid);
-        List<APIDomainCredential> resultList = query.getResultList();
+        List<DomainCredential> resultList = query.getResultList();
         return resultList;
     }
 
@@ -47,10 +46,10 @@ public class AuthRepository extends JpaRepository {
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public List<ManagerDomainCredential> getManagerDomainCredentials(String credentialUuid) {
-        Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", ManagerDomainCredential.class);
+    public List<DomainCredential> getManagerDomainCredentials(String credentialUuid) {
+        Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", DomainCredential.class);
         query.setParameter("credentialUuid", credentialUuid);
-        List<ManagerDomainCredential> resultList = query.getResultList();
+        List<DomainCredential> resultList = query.getResultList();
         return resultList;
     }
 }

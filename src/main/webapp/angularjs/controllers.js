@@ -3,12 +3,16 @@
 /* Controllers */
 
 angular.module('myApp.controllers', [])
-        .controller('mainCtrl', ['$scope', 'Resources', 'ModalService', function ($scope, Resources, ModalService) {
+        .controller('mainCtrl', ['$scope', 'Resources', 'ModalService', 'DomainService', 'AccountService', function ($scope, Resources, ModalService, DomainService, AccountService) {
                 $scope.sample = 'Josue';
 
-                angular.element(document).ready(function () {
+                $scope.currentDomain = {};
 
-                });
+                $scope.init = function () {
+                    $scope.currentDomain = DomainService.getCurrentDomain();
+
+
+                };
 
                 $scope.version = function () {
                     Resources.version.get(function (response) {
@@ -37,21 +41,34 @@ angular.module('myApp.controllers', [])
                 };
 
             }])
-        .controller('menuBarCtrl', ['$scope', '$location', 'Resources', '$rootScope', function ($scope, $location, Resources, $rootScope) {
+        .controller('menuBarCtrl', ['$scope', 'Resources', 'DomainService', 'AlertService', 'AccountService', function ($scope, Resources, DomainService, AlertService, AccountService) {
                 //TODO last login date and last
                 $scope.joinedDomains = [];
+                $scope.currentDomain = null;
 
-                $scope.getJoinedDomains = function () {
-                    Resources.domain.queryJoined(function (response) {
-                        $scope.joinedDomains = response.items;
-                        if ($rootScope.currentDomain == null) {
-                            $rootScope.currentDomain = response.items[0].domain;
-                        }
-                    });
+                $scope.currentAccount = null;
+
+                $scope.init = function () {
+                    $scope.getJoinedDomains(false); //lazy loading
+                    $scope.currentDomain = DomainService.getCurrentDomain();
+
+                    AccountService.initAccount();
+                    $scope.currentAccount = Resources.account.get();
+                    console.log('Current Account: ' + $scope.currentAccount);
+                };
+
+                $scope.getJoinedDomains = function (forceFetch) {
+                    //Lazy loading, to avoid load every page reload (using cookies here)
+                    if (forceFetch || DomainService.getCurrentDomain() == null) {
+                        Resources.domain.queryJoined(function (response) {
+                            $scope.joinedDomains = response.items;
+                        });
+                    }
                 };
 
                 $scope.changeDomain = function (joined) {
-                    $rootScope.currentDomain = joined.domain;
+                    DomainService.changeDomain(joined);
+                    $scope.currentDomain = DomainService.getCurrentDomain();
                 };
 
             }])
@@ -165,12 +182,13 @@ angular.module('myApp.controllers', [])
                 };
 
 
-                $scope.open = function (obj) {
+                $scope.openDialog = function (obj) {
 
                     var modalInstance = $modal.open({
                         templateUrl: '../partials/delete-modal.html',
                         controller: function ($scope, $modalInstance, ownedDomain) {
                             $scope.ownedDomain = ownedDomain;
+                            $scope.bodyMessage = 'Are you sure you wanto to delete Domain ' + $scope.ownedDomain.name + ' ?';
 
                             $scope.ok = function () {
                                 $modalInstance.close($scope.ownedDomain);
@@ -181,6 +199,9 @@ angular.module('myApp.controllers', [])
                             };
                         },
                         resolve: {
+                            bodyMessage: function () {
+                                return obj;
+                            },
                             ownedDomain: function () {
                                 return obj;
                             }
@@ -197,32 +218,158 @@ angular.module('myApp.controllers', [])
 
 
             }])
-        .controller('apiKeyCtrl', ['$scope', '$location', 'Resources', '$rootScope', 'AlertService', function ($scope, $location, Resources, $rootScope, AlertService) {
+        .controller('apiKeyCtrl', ['$scope', '$location', 'Resources', '$rootScope', 'AlertService', 'DomainService', '$modal', '$timeout', function ($scope, $location, Resources, $rootScope, AlertService, DomainService, $modal, $timeout) {
+
+                $scope.apiKeyStatuses = ['ACTIVE', 'INACTIVE'];
 
                 $scope.domainApiKeys = [];
+                $scope.selectedApiKey = {};
+                $scope.createdCredential = null;
 
-                $scope.getApiKeyForDomain = function () {
-                    var currentDomainUuid = $rootScope.currentDomain.uuid;
+                $scope.currentDomain = null;
 
-                    Resources.domain.queryJoined(function (response) {
-                        $scope.joinedDomains = response.items;
-                        if ($rootScope.currentDomain == null) {
-                            $rootScope.currentDomain = response.items[0].domain;
-                        }
+                $scope.init = function () {
+                    $scope.currentDomain = DomainService.getCurrentDomain();
+                    Resources.apiKey.query({domainUuid: $scope.currentDomain.domain.uuid}, function (response) {
+                        $scope.domainApiKeys = response.items;
                     });
                 };
 
-                $scope.domainAlerts = [];
+                $scope.list = function () {
+                    if ($scope.currentDomain == null) {
+                        $scope.currentDomain = DomainService.getCurrentDomain();
+                    }
+                    Resources.apiKey.query({domainUuid: $scope.currentDomain.domain.uuid}, function (response) {
+                        $scope.domainApiKeys = response.items;
+                    });
+                };
 
+                $scope.create = function () {
+                    if ($scope.currentDomain == null) {
+                        $scope.currentDomain = DomainService.getCurrentDomain();
+                    }
+                    $scope.selectedApiKey = {name: $scope.selectedApiKey.name, credential: {}, role: $scope.selectedApiKey.role};
+
+                    Resources.apiKey.create({domainUuid: $scope.currentDomain.domain.uuid}, $scope.selectedApiKey, function (response) {
+                        $scope.list();
+                        $scope.selectedApiKey = {};
+
+                        $scope.createAlert('success', 'Domain created');
+
+                        $scope.createdCredential = response;
+                        $scope.apiKeyStep = 4;
+
+                    },
+                            function (response) {
+                                $scope.createAlert('danger', response.data.message);
+                            });
+                };
+                $scope.dismiss = function () {
+                    $scope.createdCredential = null;
+                    $scope.apiKeyStep = 1;
+                };
+
+
+                $scope.update = function () {
+                    if ($scope.currentDomain == null) {
+                        $scope.currentDomain = DomainService.getCurrentDomain();
+                    }
+                    $scope.selectedApiKey.domain = null;
+                    
+                    var  apiKeyToUpdate = {name : $scope.selectedApiKey.name, credential: {status: $scope.selectedApiKey.credential.status}, role: $scope.selectedApiKey.role};
+                    
+                    Resources.apiKey.update({domainUuid: $scope.currentDomain.domain.uuid, uuid: $scope.selectedApiKey.uuid}, apiKeyToUpdate, function (response) {
+                        $scope.list();
+                        $scope.selectedApiKey = {};
+                        $scope.apiKeyStep = 1;
+
+                        $scope.createAlert('success', 'API Key updated');
+                    }, function (response) {
+                        $scope.createAlert('danger', response.data.message);
+                    });
+                };
+                $scope.delete = function (uuid) {
+                    if ($scope.currentDomain == null) {
+                        $scope.currentDomain = DomainService.getCurrentDomain();
+                    }
+                    Resources.apiKey.delete({domainUuid: $scope.currentDomain.domain.uuid, uuid: uuid}, function (response) {
+                        $scope.list();
+                        $scope.selectedApiKey = {};
+                        $scope.ownedDivStep = 1;
+                        $scope.createAlert('success', 'Domain deleted');
+                    },
+                            function (response) {
+                                $scope.createAlert('danger', response.status + ': ' + response.message);
+                            });
+                };
+
+
+                $scope.apiKeyStep = 1; // default step
+                $scope.showApiKeyList = function () {
+                    $scope.apiKeyStep = 1;
+                };
+                $scope.showApiKeyCreateForm = function () {
+                    $scope.selectedApiKey = {};
+                    $scope.apiKeyStep = 2;
+                };
+                $scope.showApiKeyUpdateForm = function (apiKey) {
+                    $scope.selectedApiKey = apiKey;
+                    $scope.apiKeyStep = 3;
+                };
+
+                $scope.apiKeyAlerts = [];
                 $scope.createAlert = function (type, msg) {
                     var alert = AlertService.addAlert(type, msg);
-                    $scope.domainAlerts.push(alert);
+                    $scope.apiKeyAlerts.push(alert);
                     $timeout(function () {
-                        $scope.domainAlerts.shift();
+                        $scope.apiKeyAlerts.shift();
                     }, 3000);
                 };
                 $scope.closeAlert = function () {
-                    $scope.domainAlerts.shift();
+                    $scope.apiKeyAlerts.shift();
+                };
+
+
+                $scope.systemRoles = [];
+                Resources.role.query({domainUuid: DomainService.getCurrentDomain().domain.uuid}, function (response) {
+                    console.log(response);
+                    $scope.systemRoles = response;
+                }, function (response) {
+                    alert(response.status + " - " + response.message);
+                });
+
+                $scope.openDialog = function (obj) {
+
+                    var modalInstance = $modal.open({
+                        templateUrl: '../partials/delete-modal.html',
+                        controller: function ($scope, $modalInstance, selectedApiKey) {
+                            $scope.selectedApiKey = selectedApiKey;
+                            $scope.bodyMessage = 'Are you sure you wanto to delete API Key ' + $scope.selectedApiKey.name + ' ?';
+
+                            $scope.ok = function () {
+                                $modalInstance.close($scope.selectedApiKey);
+                            };
+
+                            $scope.cancel = function () {
+                                $modalInstance.dismiss('cancel');
+                            };
+                        },
+                        resolve: {
+                            bodyMessage: function () {
+                                return obj;
+                            },
+                            selectedApiKey: function () {
+                                return obj;
+                            }
+                        }
+                    });
+                    //When OK
+                    modalInstance.result.then(function (selectedApiKey) {
+                        console.log('User really want to delete...' + selectedApiKey.name);
+                        $scope.delete(selectedApiKey.uuid);
+                    }, function () { //when dismiss
+
+                    });
                 };
 
             }])

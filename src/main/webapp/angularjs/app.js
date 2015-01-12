@@ -5,6 +5,7 @@
 angular.module('myApp', [
     'ui.bootstrap',
     'ngRoute',
+    'ngCookies',
 //  'myApp.filters',
 //  'myApp.directives',
     'myApp.services',

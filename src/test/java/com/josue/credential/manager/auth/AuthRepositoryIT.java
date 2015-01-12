@@ -5,15 +5,16 @@
  */
 package com.josue.credential.manager.auth;
 
-import com.josue.credential.manager.testutils.ArquillianTestBase;
-import com.josue.credential.manager.testutils.InstanceHelper;
 import com.josue.credential.manager.auth.credential.APICredential;
-import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.credential.ManagerCredential;
-import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
+import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.domain.Domain;
+import com.josue.credential.manager.auth.domain.DomainCredential;
+import com.josue.credential.manager.auth.domain.ManagerDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import com.josue.credential.manager.auth.role.Role;
+import com.josue.credential.manager.testutils.ArquillianTestBase;
+import com.josue.credential.manager.testutils.InstanceHelper;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -65,9 +66,9 @@ public class AuthRepositoryIT {
     public void testGetApiDomainCredentials() {
         APIDomainCredential apiDomainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
 
-        List<APIDomainCredential> foundApiCredentials = repository.getApiDomainCredentials(apiDomainCredential.getCredential().getUuid());
+        List<DomainCredential> foundApiCredentials = repository.getApiDomainCredentials(apiDomainCredential.getCredential().getUuid());
         assertEquals(1, foundApiCredentials.size());
-        for (APIDomainCredential domainCred : foundApiCredentials) {
+        for (DomainCredential domainCred : foundApiCredentials) {
             assertEquals(apiDomainCredential, domainCred);
         }
     }
@@ -101,7 +102,7 @@ public class AuthRepositoryIT {
         ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, role);
         repository.create(domainCredential);
 
-        List<ManagerDomainCredential> managerDomainCredentials = repository.getManagerDomainCredentials(credential.getUuid());
+        List<DomainCredential> managerDomainCredentials = repository.getManagerDomainCredentials(credential.getUuid());
         assertEquals(1, managerDomainCredentials.size());
         assertEquals(domainCredential, managerDomainCredentials.get(0));
     }
