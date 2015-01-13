@@ -66,6 +66,21 @@ angular.module('myApp.services', ['ngResource'])
                         create: {method: 'POST'},
                         delete: {method: 'DELETE'}
                     });
+                    
+                    _private.account = $resource(app + '/account', {}, {
+                        passwordRecovery: {
+                            url: app + '/account/recover',
+                            method: 'GET',
+                            isArray: false
+                        },
+                        get: {
+                            method: 'GET',
+                            isArray: false
+                        },
+                        update: {method: 'PUT'},
+                        create: {method: 'POST'},
+                        delete: {method: 'DELETE'}
+                    });
 
                     _private.role = $resource(app + '/domains/:domainUuid/roles', {}, {
                         query: {

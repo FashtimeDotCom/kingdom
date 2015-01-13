@@ -33,6 +33,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.josue.credential.manager.business.account.AccountRest.class);
         resources.add(com.josue.credential.manager.business.credential.CredentialRest.class);
         resources.add(com.josue.credential.manager.business.domain.DomainRest.class);
+        resources.add(com.josue.credential.manager.business.role.RoleRest.class);
         resources.add(com.josue.credential.manager.rest.CustomJacksonProvider.class);
         resources.add(com.josue.credential.manager.rest.VersionRest.class);
         resources.add(com.josue.credential.manager.rest.ex.RestExceptionMapper.class);

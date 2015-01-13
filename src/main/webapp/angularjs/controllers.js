@@ -275,9 +275,9 @@ angular.module('myApp.controllers', [])
                         $scope.currentDomain = DomainService.getCurrentDomain();
                     }
                     $scope.selectedApiKey.domain = null;
-                    
-                    var  apiKeyToUpdate = {name : $scope.selectedApiKey.name, credential: {status: $scope.selectedApiKey.credential.status}, role: $scope.selectedApiKey.role};
-                    
+
+                    var apiKeyToUpdate = {name: $scope.selectedApiKey.name, credential: {status: $scope.selectedApiKey.credential.status}, role: $scope.selectedApiKey.role};
+
                     Resources.apiKey.update({domainUuid: $scope.currentDomain.domain.uuid, uuid: $scope.selectedApiKey.uuid}, apiKeyToUpdate, function (response) {
                         $scope.list();
                         $scope.selectedApiKey = {};
@@ -407,5 +407,16 @@ angular.module('myApp.controllers', [])
 
                     });
                 };
+            }])
+        .controller('accountCtrl', ['$scope', '$timeout', 'Resources', 'AlertService', '$modal', function ($scope, $timeout, Resources, AlertService, $modal) {
+
+                $scope.email = null;
+
+                $scope.recoverPassword = function(){
+                    Resources.account.passwordRecovery({email: $scope.email}, function(response){
+                        
+                    });
+                };
+
             }]);
 

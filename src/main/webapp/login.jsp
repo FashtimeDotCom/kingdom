@@ -11,6 +11,27 @@
         <link rel="stylesheet" href="<c:url value='/css/bootstrap.min.css' />" />
         <link rel="stylesheet" href="<c:url value='/css/bootstrap-responsive.min.css' />" />
         <link rel="stylesheet" href="<c:url value='/css/unicorn.login.css' />" />
+        
+        <link rel="stylesheet" href="<c:url value='/css/bootstrap.min.css' />" />
+        <link rel="stylesheet" href="<c:url value='/css/bootstrap-responsive.min.css' />" />
+        <link rel="stylesheet" href="<c:url value='/css/fullcalendar.css' />" />	
+        <link rel="stylesheet" href="<c:url value='/css/unicorn.main.css' />" />
+        <link rel="stylesheet" href="<c:url value='/css/unicorn.grey.css' />" class="skin-color" />
+
+        <!-- Angular -->
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-resource.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-resource.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-cookies.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+        <script src="<c:url value='/angularjs/app.js' />"></script>
+        <script src="<c:url value='/angularjs/services.js' />"></script>
+        <script src="<c:url value='/angularjs/controllers.js' />"></script>
+
+        <script src="<c:url value='/js/ui-bootstrap-tpls-0.11.0.min.js' />"></script>
+        
     </head>
 
 
@@ -42,18 +63,18 @@
                 </div>
             </form>
 
-
-            <form id="recoverform" action="#" class="form-vertical">
+            
+            <form ng-app="myApp" ng-controller="accountCtrl" id="recoverform" ng-submit="recoverPassword()" class="form-vertical" >
                 <p>Enter your e-mail address below and we will send you instructions how to recover a password.</p>
                 <div class="control-group">
                     <div class="controls">
                         <div class="input-prepend">
-                            <span class="add-on"><i class="icon-envelope"></i></span><input type="text" placeholder="E-mail address" />
+                            <span class="add-on"><i class="icon-envelope"></i></span><input type="text" placeholder="E-mail address" ng-model="email"/>
                         </div>
                     </div>
                 </div>
                 <div class="form-actions">
-                    <span class="pull-left"><a href="#" class="flip-link" id="to-login">&lt; Back to login</a></span>
+                    <span class="pull-left"><a href="#" class="flip-link" id="to-login">Back to login</a></span>
                     <span class="pull-right"><input type="submit" class="btn btn-inverse" value="Recover" /></span>
                 </div>
             </form>

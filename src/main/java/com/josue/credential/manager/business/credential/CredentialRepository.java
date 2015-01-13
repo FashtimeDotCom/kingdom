@@ -6,6 +6,7 @@
 package com.josue.credential.manager.business.credential;
 
 import com.josue.credential.manager.JpaRepository;
+import com.josue.credential.manager.auth.credential.ManagerCredential;
 import com.josue.credential.manager.auth.domain.APIDomainCredential;
 import com.josue.credential.manager.auth.manager.Manager;
 import java.util.List;
@@ -56,8 +57,8 @@ public class CredentialRepository extends JpaRepository {
     public Manager getManager(String credentialUuid) {
         TypedQuery<Manager> query = em.createQuery("SELECT cred.manager FROM ManagerCredential cred WHERE cred.uuid = :credentialUuid", Manager.class);
         query.setParameter("credentialUuid", credentialUuid);
-        Manager manager = query.getSingleResult();
-        return manager;
+        List<Manager> resultList = query.getResultList();
+        return extractSingleResultFromList(resultList);
     }
 
     @Transactional(Transactional.TxType.SUPPORTS)
@@ -75,5 +76,13 @@ public class CredentialRepository extends JpaRepository {
         query.setParameter("managerUuid", managerUuid);
         //We can safely execute this query using getFirstResult
         return (long) query.getSingleResult();
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public ManagerCredential getManagerCredentialByManager(String managerUuid) {
+        TypedQuery<ManagerCredential> query = em.createQuery("SELECT cred FROM ManagerCredential cred WHERE cred.manager.uuid = :managerUuid", ManagerCredential.class);
+        query.setParameter("managerUuid", managerUuid);
+        List<ManagerCredential> managerList = query.getResultList();
+        return extractSingleResultFromList(managerList);
     }
 }
