@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.josue</groupId>
-    <artifactId>credential-manager</artifactId>
+    <artifactId>kingdom</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>credential-manager</name>
+    <name>kingdom</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -168,7 +168,7 @@
     </profiles>
  
     <build>
-        <finalName>credential-manager</finalName>
+        <finalName>kingdom</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
