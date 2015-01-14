@@ -66,7 +66,7 @@
                     </ul>
                 </li>
                 <li ng-class="getMenuClass('/apikey')"><a href="<c:url value='#/apikey' />"><i class="icon-lock"></i> <span>API Key</span></a></li>
-                <li ng-class="getMenuClass('/interface')"><a href="interface.html"><i class="icon icon-pencil"></i> <span>Interface elements</span></a></li>
+                <li ng-class="getMenuClass('/invitation')"><a href="<c:url value='#/invitation' />"><i class="icon icon-pencil"></i> <span>Invitation</span></a></li>
                 <li ng-class="getMenuClass('/tables')"><a href="tables.html"><i class="icon icon-th"></i> <span>Tables</span></a></li>
                 <li ng-class="getMenuClass('/grid')"><a href="grid.html"><i class="icon icon-th-list"></i> <span>Grid Layout</span></a></li>
                 <li class="submenu">

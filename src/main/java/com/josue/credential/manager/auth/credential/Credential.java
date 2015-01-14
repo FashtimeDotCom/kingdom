@@ -45,7 +45,7 @@ public abstract class Credential extends Resource implements AuthenticationToken
     @Override
     public void removeNonCreatableFields() {
         super.removeNonCreatableFields();
-        this.manager = null;
+//        this.manager = null;
     }
 
     public Manager getManager() {

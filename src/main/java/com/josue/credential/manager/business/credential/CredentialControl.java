@@ -84,7 +84,7 @@ public class CredentialControl {
             throw new ResourceNotFoundException(APICredential.class, credentialUuid);
         }
 
-        Role foundRole = roleRepository.findRoleByName(domainCredential.getRole().getName());
+        Role foundRole = roleRepository.findRole(domainCredential.getRole().getName());
         if (foundRole == null) {
             throw new InvalidResourceArgException(APICredential.class, "Role name", domainCredential.getRole().getName());
         }
@@ -104,7 +104,7 @@ public class CredentialControl {
     public APIDomainCredential createAPICredential(String domainUuid, APIDomainCredential domainCredential) throws RestException {
 
         domainCredential.removeNonCreatableFields();
-        Role foundRole = roleRepository.findRoleByName(domainCredential.getRole().getName());
+        Role foundRole = roleRepository.findRole(domainCredential.getRole().getName());
         if (foundRole == null) {
             throw new InvalidResourceArgException(APICredential.class, "Role name", domainCredential.getRole().getName());
         }

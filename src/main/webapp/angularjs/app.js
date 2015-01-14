@@ -7,7 +7,7 @@ angular.module('myApp', [
     'ngRoute',
     'ngCookies',
 //  'myApp.filters',
-//  'myApp.directives',
+//    'myApp.directives',
     'myApp.services',
     'myApp.controllers'
 ]).
@@ -17,8 +17,8 @@ angular.module('myApp', [
 
                         .when('/domain-joined', {templateUrl: '../partials/domain/domain-joined.html', controller: 'domainCtrl'})
                         .when('/domain-owned', {templateUrl: '../partials/domain/domain-owned.html', controller: 'domainCtrl'})
-
                         .when('/apikey', {templateUrl: '../partials/apiKey/apikey.html', controller: 'apiKeyCtrl'})
+                        .when('/invitation', {templateUrl: '../partials/invitation/invitation.html', controller: 'invitationCtrl'})
 
                         .otherwise({redirectTo: '/main'});
             }]);

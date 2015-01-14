@@ -412,10 +412,134 @@ angular.module('myApp.controllers', [])
 
                 $scope.email = null;
 
-                $scope.recoverPassword = function(){
-                    Resources.account.passwordRecovery({email: $scope.email}, function(response){
-                        
+                $scope.recoverPassword = function () {
+                    Resources.account.passwordRecovery({email: $scope.email}, function (response) {
+
                     });
+                };
+
+            }])
+        .controller('invitationCtrl', ['$scope', '$timeout', 'Resources', 'AlertService', '$modal', 'DomainService', function ($scope, $timeout, Resources, AlertService, $modal, DomainService) {
+
+                $scope.invitations = [];
+                $scope.invitation = {};
+
+                $scope.signupCredential = {};
+                $scope.passwordConfirm = '';
+                
+
+                $scope.list = function () {
+                    Resources.invitation.query(function (response) {
+                        $scope.invitations = response.items;
+                    });
+                };
+
+                $scope.create = function () {
+                    var inv = {targetEmail: $scope.invitation.targetEmail,
+                        domain: {uuid: $scope.invitation.domain.uuid},
+                        role: {id: $scope.invitation.role.id}};
+
+                    Resources.invitation.create(inv, function (response) {
+                        $scope.list();
+                        $scope.invitation = {};
+
+                        $scope.createdInvitation = response;
+                        $scope.invitationStep = 1;
+
+                        $scope.createAlert('success', 'Domain created');
+
+                    },
+                            function (response) {
+                                $scope.createAlert('danger', response.data.message);
+                            });
+                };
+
+                $scope.systemRoles = [];
+                Resources.role.queryAll(function (response) {
+                    $scope.systemRoles = response;
+                }, function (response) {
+                    alert(response.status + " - " + response.message);
+                });
+
+                $scope.ownedDomains = [];
+                Resources.domain.queryOwned(function (response) {
+                    $scope.ownedDomains = response.items;
+                }, function (response) {
+                    alert(response.status + " - " + response.message);
+                });
+
+
+                $scope.invitationsAlerts = [];
+                $scope.createAlert = function (type, msg) {
+                    var alert = AlertService.addAlert(type, msg);
+                    $scope.invitationsAlerts.push(alert);
+                    $timeout(function () {
+                        $scope.invitationsAlerts.shift();
+                    }, 3000);
+                };
+                $scope.closeAlert = function () {
+                    $scope.invitationsAlerts.shift();
+                };
+
+                $scope.invitationStep = 1; // default step
+                $scope.showInvitationsList = function () {
+                    $scope.invitationStep = 1;
+                };
+                $scope.showInvitationForm = function () {
+                    $scope.invitation = {};
+                    $scope.invitationStep = 2;
+                };
+
+            }])
+        .controller('signupCtrl', ['$scope', '$timeout', 'Resources', 'AlertService', '$modal', 'DomainService', '$window', function ($scope, $timeout, Resources, AlertService, $modal, DomainService, $window) {
+
+                $scope.signupCredential = {};
+                $scope.passwordConfirm = '';
+                
+                $scope.signup = function (token) {
+                    //TODO password validation
+                    if($scope.signupCredential.password != $scope.passwordConfirm){
+                        $scope.createAlert('danger', 'Passwords doesnt match');
+                        return;
+                    }
+                    
+                     Resources.account.create({token: token},$scope.signupCredential, function (response) {
+                        $scope.signupCredential = {};
+
+                      $window.location.href = 'login.jsp';
+
+                    },
+                            function (response) {
+                                $scope.createAlert('danger', response.data.message);
+                            });
+                    
+                };
+
+                $scope.list = function () {
+                    Resources.invitation.query(function (response) {
+                        $scope.invitations = response.items;
+                    });
+                };
+  
+                $scope.signupAlerts = [];
+                $scope.createAlert = function (type, msg) {
+                    var alert = AlertService.addAlert(type, msg);
+                    $scope.signupAlerts.push(alert);
+                    $timeout(function () {
+                        $scope.signupAlerts.shift();
+                    }, 3000);
+                };
+                $scope.closeAlert = function () {
+                    $scope.signupAlerts.shift();
+                };
+
+                $scope.invitationStep = 1; // default step
+                $scope.showInvitationsList = function () {
+                    $scope.invitationStep = 1;
+                };
+                $scope.showInvitationForm = function () {
+                    $scope.invitation = {};
+                    $scope.invitationStep = 2;
                 };
 
             }]);

@@ -79,11 +79,32 @@ angular.module('myApp.services', ['ngResource'])
                         },
                         update: {method: 'PUT'},
                         create: {method: 'POST'},
+                        //TODO remove
+                        delete: {method: 'DELETE'}
+                    });
+                    
+                    _private.invitation = $resource(app + '/invitations', {}, {
+                         query: {
+                            method: 'GET',
+                            isArray: false
+                        },
+                        get: {
+                            method: 'GET',
+                            isArray: false
+                        },
+                        update: {method: 'PUT'},
+                        create: {method: 'POST'},
+                        //TODO remove
                         delete: {method: 'DELETE'}
                     });
 
                     _private.role = $resource(app + '/domains/:domainUuid/roles', {}, {
                         query: {
+                            method: 'GET',
+                            isArray: true
+                        },
+                        queryAll: {
+                            url: app + '/roles',
                             method: 'GET',
                             isArray: true
                         }

@@ -19,8 +19,8 @@ body {
     margin: 0;
 }
 
-#logo, #loginbox {
-    width: 400px;
+#logo, #signupbox {
+    width: 360px;
     margin-left: auto;
     margin-right: auto;
     position: relative;
@@ -33,8 +33,9 @@ body {
     margin: 0 auto;
     display: block;
 }
-#loginbox {
-    height: 196px;
+
+#signupbox {
+    height: 425px;
     background: #ffffff;
     box-shadow: 0 0 4px #000000;
     border-radius: 7px;
@@ -43,40 +44,40 @@ body {
     position: relative;   
 }
 
-#loginbox form{
+#signupbox form{
 	width:100%;
 	height:100%;
 	position:absolute;
 	top:0;
 	left:0;
 }
-#loginbox p {
+#signupbox p {
     margin-top: 20px;
     padding: 0 20px;
 }
 
-#loginbox .form-actions {
+#signupbox .form-actions {
 	padding: 14px 20px 15px;
 }
-#loginbox .form-actions .pull-left {
+#signupbox .form-actions .pull-left {
 	margin-top: 2px;
 }
 
-#loginbox form#loginform {
+#signupbox form#loginform {
 	z-index: 200;
 }
 
-#loginbox form#recoverform {
+#signupbox form#recoverform {
 	z-index: 100;
 	opacity: 0;
     display:none;
 }
 
-#loginbox form#recoverform .form-actions {
+#signupbox form#recoverform .form-actions {
     margin-top: 27px;
 }
 
-#loginbox form#recoverform .control-group {
+#signupbox form#recoverform .control-group {
 	margin: 23px 0;
 }
 
@@ -85,7 +86,7 @@ body {
 }
 
 @media (max-width: 480px){
-    #logo, #loginbox {
+    #logo, #signupbox {
         width: 80%; 
     }    
 }

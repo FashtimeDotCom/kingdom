@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.credential.manager.business.account;
+package com.josue.credential.manager.business.invitation;
 
 import com.josue.credential.manager.auth.domain.Domain;
 import com.josue.credential.manager.auth.manager.Manager;
+import com.josue.credential.manager.auth.role.Role;
 import com.josue.credential.manager.rest.Resource;
 import java.util.Date;
 import java.util.Objects;
@@ -27,11 +28,13 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "manager_invitation")
+//TODO change to Invitation
 public class ManagerInvitation extends Resource {
 
     @NotNull
     @Column(name = "target_email")
-    String targetEmail;
+    //TODO create validator
+    private String targetEmail;
 
     @NotNull
     @OneToOne(targetEntity = Manager.class)
@@ -42,6 +45,10 @@ public class ManagerInvitation extends Resource {
     @OneToOne(targetEntity = Domain.class)
     @JoinColumn(name = "domain_uuid")
     private Resource domain;
+
+    @OneToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     @NotNull
     private String token;
@@ -61,6 +68,20 @@ public class ManagerInvitation extends Resource {
         this.validUntil = null;
         this.status = null;
         this.authorManager = null;
+        if (authorManager != null) {
+            authorManager.removeNonCreatableFields();
+        }
+        if (domain != null) {
+            domain.removeNonCreatableFields();
+        }
+    }
+
+    @Override
+    public void copyUpdatebleFields(Resource newData) {
+        if (newData instanceof ManagerInvitation) {
+            ManagerInvitation invitation = (ManagerInvitation) newData;
+            status = status != null ? invitation.status : status;
+        }
     }
 
     public String getTargetEmail() {
@@ -77,6 +98,22 @@ public class ManagerInvitation extends Resource {
 
     public void setAuthorManager(Resource authorManager) {
         this.authorManager = authorManager;
+    }
+
+    public Resource getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Resource domain) {
+        this.domain = domain;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getToken() {
@@ -103,23 +140,16 @@ public class ManagerInvitation extends Resource {
         this.status = status;
     }
 
-    public Resource getDomain() {
-        return domain;
-    }
-
-    public void setDomain(Resource domain) {
-        this.domain = domain;
-    }
-
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.targetEmail);
-        hash = 67 * hash + Objects.hashCode(this.authorManager);
-        hash = 67 * hash + Objects.hashCode(this.domain);
-        hash = 67 * hash + Objects.hashCode(this.token);
-        hash = 67 * hash + Objects.hashCode(this.validUntil);
-        hash = 67 * hash + Objects.hashCode(this.status);
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.targetEmail);
+        hash = 37 * hash + Objects.hashCode(this.authorManager);
+        hash = 37 * hash + Objects.hashCode(this.domain);
+        hash = 37 * hash + Objects.hashCode(this.role);
+        hash = 37 * hash + Objects.hashCode(this.token);
+        hash = 37 * hash + Objects.hashCode(this.validUntil);
+        hash = 37 * hash + Objects.hashCode(this.status);
         return hash;
     }
 
@@ -141,13 +171,19 @@ public class ManagerInvitation extends Resource {
         if (!Objects.equals(this.domain, other.domain)) {
             return false;
         }
+        if (!Objects.equals(this.role, other.role)) {
+            return false;
+        }
         if (!Objects.equals(this.token, other.token)) {
             return false;
         }
         if (!Objects.equals(this.validUntil, other.validUntil)) {
             return false;
         }
-        return this.status == other.status;
+        if (this.status != other.status) {
+            return false;
+        }
+        return true;
     }
 
 }

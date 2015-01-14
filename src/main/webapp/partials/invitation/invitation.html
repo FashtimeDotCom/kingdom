@@ -1,0 +1,104 @@
+
+<div id="content-header">
+    <h1>Invitation</h1>
+    <div class="btn-group">
+        <a class="btn btn-large tip-bottom" title="Manage Files"><i class="icon-file"></i></a>
+        <a class="btn btn-large tip-bottom" title="Manage Users"><i class="icon-user"></i></a>
+        <a class="btn btn-large tip-bottom" title="Manage Comments"><i class="icon-comment"></i><span class="label label-important">5</span></a>
+        <a class="btn btn-large tip-bottom" title="Manage Orders"><i class="icon-shopping-cart"></i></a>
+    </div>
+</div>
+<div id="breadcrumb">
+    <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a>
+    <a href="#" class="current">Invitation</a>
+</div>
+<div class="container-fluid">
+
+    <div class="row-fluid" ng-show="invitationStep == 1">
+        <div class="span12">
+             <br />
+            <button class="btn btn-success" ng-click="showInvitationForm()">Invite</button>
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="icon-th"></i>
+                    </span>
+                    <h5>Invitation</h5>
+                </div>
+                <span ng-init="invitations = list()"></span>
+                <div class="widget-content nopadding">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Email<i class="fa fa-sort"></i></th>
+                                <th>Date<i class="fa fa-sort"></i></th>
+                                <th>Role<i class="fa fa-sort"></i></th>
+                                <th>Domain<i class="fa fa-sort"></i></th>
+                                <th>Status <i class="fa fa-sort"></i></th>
+                                <th>Action <i class="fa fa-sort"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="invitation in invitations">
+                                <td>{{invitation.targetEmail}}</td>
+                                <td>{{invitation.dateCreated}}</td>
+                                <td>{{invitation.role.name}}</td>
+                                <td>{{invitation.domain.name}}</td>
+                                <td>{{invitation.status}}</td>
+                                <td style="text-align: center">
+                                    <a href="" class="tip-top" ng-click="showOwnedDomainUpdateForm(domain)" data-original-title="Resend"><i class="icon-repeat"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>								
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row-fluid" ng-show="invitationStep == 2">
+        <div class="span8">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="icon-align-justify"></i>									
+                    </span>
+                    <h5>Invitation</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <form class="form-horizontal"  ng-submit="create()">
+                        <div class="control-group">
+                            <label class="control-label">Email</label>
+                            <div class="controls">
+                                <input type="text" ng-model="invitation.targetEmail"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Domain</label>
+                            <div class="controls">
+                                <select ng-options="domain as domain.name for domain in ownedDomains track by domain.uuid " ng-model="invitation.domain">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Role</label>
+                            <div class="controls">
+                                <select ng-options="role as role.name for role in systemRoles track by role.id " ng-model="invitation.role">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-success">Invite</button>
+                            <button type="button" class="btn" ng-click="showOwnedDomainsList()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>						
+        </div>
+    </div>
+
+
+
+</div>
+

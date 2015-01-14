@@ -32,6 +32,7 @@ public class APICredential extends Credential {
     @Override
     public void removeNonCreatableFields() {
         apiKey = null;
+        super.setManager(null);
     }
 
     public String getApiKey() {

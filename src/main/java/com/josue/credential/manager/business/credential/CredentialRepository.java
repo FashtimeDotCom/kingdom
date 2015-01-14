@@ -85,4 +85,13 @@ public class CredentialRepository extends JpaRepository {
         List<ManagerCredential> managerList = query.getResultList();
         return extractSingleResultFromList(managerList);
     }
+
+    @Transactional(Transactional.TxType.SUPPORTS)
+    public String getManagerCredentialByLogin(String login) {
+        Query query = em.createQuery("SELECT manCred.login FROM ManagerCredential manCred WHERE manCred.login = :login", String.class);
+        query.setParameter("login", login);
+        //We can safely execute this query using getFirstResult
+        List<String> resultList = query.getResultList();
+        return extractSingleResultFromList(resultList);
+    }
 }

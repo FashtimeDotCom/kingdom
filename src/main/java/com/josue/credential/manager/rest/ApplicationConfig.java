@@ -19,8 +19,6 @@ public class ApplicationConfig extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
         addRestResourceClasses(resources);
-//        resources.add(com.josue.credential.manager.business.role.RoleRest.class);
-//        resources.add(com.josue.credential.manager.business.credential.CredentialRest.class);
         return resources;
     }
 
@@ -33,7 +31,9 @@ public class ApplicationConfig extends Application {
         resources.add(com.josue.credential.manager.business.account.AccountRest.class);
         resources.add(com.josue.credential.manager.business.credential.CredentialRest.class);
         resources.add(com.josue.credential.manager.business.domain.DomainRest.class);
+        resources.add(com.josue.credential.manager.business.invitation.InvitationRest.class);
         resources.add(com.josue.credential.manager.business.role.RoleRest.class);
+        resources.add(com.josue.credential.manager.business.role.RoleSubRest.class);
         resources.add(com.josue.credential.manager.rest.CustomJacksonProvider.class);
         resources.add(com.josue.credential.manager.rest.VersionRest.class);
         resources.add(com.josue.credential.manager.rest.ex.RestExceptionMapper.class);
