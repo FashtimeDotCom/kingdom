@@ -1,12 +1,10 @@
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.credential.CredentialRepository;
+import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.APICredential;
-import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.account.entity.Manager;
-import com.josue.kingdom.domain.entity.Role;
+import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
@@ -54,7 +52,7 @@ public class CredentialRepositoryIT {
     public void testGetApiCredentialsByManager() {
         APIDomainCredential domainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
         Manager manager = domainCredential.getCredential().getManager();
-        List<APIDomainCredential> foundDomainCredentials = repository.getApiCredentials(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<APIDomainCredential> foundDomainCredentials = repository.getAPICredentials(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundDomainCredentials.size());
         assertEquals(domainCredential, foundDomainCredentials.get(0));
 
@@ -70,7 +68,7 @@ public class CredentialRepositoryIT {
         Domain domain2 = InstanceHelper.createDomain(manager);
         repository.create(domain2);
 
-        Role simpleRole = domainCredential.getRole();
+        DomainRole simpleRole = domainCredential.getRole();
 
         APICredential apiCred1 = InstanceHelper.createAPICredential(manager);
         repository.create(apiCred1);
@@ -86,12 +84,12 @@ public class CredentialRepositoryIT {
         APIDomainCredential apiDomainCred3 = InstanceHelper.createAPIDomainCredential(domain2, apiCred3, simpleRole);
         repository.create(apiDomainCred3);
 
-        List<APIDomainCredential> foundDomainCredentials = repository.getApiCredentials(manager.getUuid(), domain1.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<APIDomainCredential> foundDomainCredentials = repository.getAPICredentials(manager.getUuid(), domain1.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundDomainCredentials.size());
         assertEquals(domainCredential, foundDomainCredentials.get(0));
 
         //APIs credentials for Domain2
-        List<APIDomainCredential> foundDomainCredentialsForDomain2 = repository.getApiCredentials(manager.getUuid(), domain2.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<APIDomainCredential> foundDomainCredentialsForDomain2 = repository.getAPICredentials(manager.getUuid(), domain2.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(3, foundDomainCredentialsForDomain2.size());
     }
 
@@ -103,24 +101,24 @@ public class CredentialRepositoryIT {
         APICredential apiCredential = apiDomCred.getCredential();
         Domain domain = apiDomCred.getDomain();
 
-        APIDomainCredential foundapiDomCred = repository.getApiCredential(mannager.getUuid(), domain.getUuid(), apiCredential.getUuid());
+        APIDomainCredential foundapiDomCred = repository.getAPICredential(mannager.getUuid(), domain.getUuid(), apiCredential.getUuid());
         assertNotNull(foundapiDomCred);
         assertEquals(apiDomCred, foundapiDomCred);
     }
 
-    @Test
-    public void testGetManagerByCredential() {
-        Manager manager = InstanceHelper.createManager();
-        repository.create(manager);
-
-        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
-        repository.create(credential);
-
-        Manager foundManager = repository.getManager(credential.getUuid());
-        assertNotNull(foundManager);
-        assertEquals(manager, foundManager);
-    }
-
+//    @Test
+//    //TODO move to correct test class
+//    public void testGetManagerByCredential() {
+//        Manager manager = InstanceHelper.createManager();
+//        repository.create(manager);
+//
+//        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
+//        repository.create(credential);
+//
+//        Manager foundManager = repository.getManager(credential.getUuid());
+//        assertNotNull(foundManager);
+//        assertEquals(manager, foundManager);
+//    }
     @Test
     public void testCountAPICredential() {
         APIDomainCredential domainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
@@ -128,7 +126,7 @@ public class CredentialRepositoryIT {
         Manager manager = domainCredential.getCredential().getManager();
         Domain domain1 = domainCredential.getDomain();
 
-        Role simpleRole = domainCredential.getRole();
+        DomainRole simpleRole = domainCredential.getRole();
 
         APICredential apiCredential1 = InstanceHelper.createAPICredential(manager);
         repository.create(apiCredential1);

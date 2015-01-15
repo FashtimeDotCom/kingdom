@@ -5,9 +5,9 @@
  */
 package com.josue.kingdom.domain;
 
+import com.josue.kingdom.credential.APICredentialSubResource;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
-import com.josue.kingdom.credential.CredentialRest;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
@@ -36,7 +36,7 @@ import javax.ws.rs.core.UriInfo;
  */
 @Path("domains")
 @ApplicationScoped
-public class DomainRest {
+public class DomainResource {
 
     @Inject
     DomainControl control;
@@ -113,18 +113,18 @@ public class DomainRest {
 
     //##### SUB RESOURCE LOCATORS #####
     @Inject
-    CredentialRest credentialLocator;
+    APICredentialSubResource credentialLocator;
 
     @Inject
-    RoleSubRest roleLocator;
+    DomainRoleSubResource roleLocator;
 
-    @Path("{domainUuid}/credentials")
-    public CredentialRest credentials() throws RestException {
+    @Path("{domainUuid}/apikeys")
+    public APICredentialSubResource credentials() throws RestException {
         return credentialLocator;
     }
 
     @Path("{domainUuid}/roles")
-    public RoleSubRest roles() throws RestException {
+    public DomainRoleSubResource roles() throws RestException {
         return roleLocator;
     }
 }

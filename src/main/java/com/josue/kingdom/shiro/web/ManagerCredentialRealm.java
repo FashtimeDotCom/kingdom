@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom.shiro.web;
 
-import com.josue.kingdom.account.AuthRepository;
+import com.josue.kingdom.credential.AuthRepository;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import javax.inject.Inject;
 import org.apache.shiro.authc.AuthenticationException;
@@ -47,7 +47,7 @@ public class ManagerCredentialRealm extends AuthorizingRealm {
         }
 
         //Make use of JPA
-        ManagerCredential foundApiCredential = persistence.findManagerCredentialByLogin(token.getLogin());
+        ManagerCredential foundApiCredential = persistence.getManagerCredentialByLogin(token.getLogin());
 
         if (foundApiCredential != null) {
             //Here we put the entire APICredential class, so we can fetch it using Subject subject = SecurityUtils.getSubject();

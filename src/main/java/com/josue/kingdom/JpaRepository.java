@@ -8,6 +8,9 @@ package com.josue.kingdom;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -27,11 +30,11 @@ public class JpaRepository {
         em.persist(entity);
     }
 
-    public <T> T edit(T entity) {
+    public <T> T update(T entity) {
         return em.merge(entity);
     }
 
-    public <T> void remove(T entity) {
+    public <T> void delete(T entity) {
         em.remove(em.merge(entity));
     }
 
@@ -40,26 +43,26 @@ public class JpaRepository {
     }
 
     public <T> List<T> findAll(Class<T> clazz) {
-        javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         cq.select(cq.from(clazz));
         return em.createQuery(cq).getResultList();
     }
 
     public <T> List<T> findRange(Class<T> clazz, int limit, int offset) {
-        javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         cq.select(cq.from(clazz));
-        javax.persistence.Query q = em.createQuery(cq);
+        Query q = em.createQuery(cq);
         q.setMaxResults(limit);
         q.setFirstResult(offset);
         return q.getResultList();
     }
 
-    public <T> int count(Class<T> clazz) {
-        javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-        javax.persistence.criteria.Root<T> rt = cq.from(clazz);
+    public <T> long count(Class<T> clazz) {
+        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+        Root<T> rt = cq.from(clazz);
         cq.select(em.getCriteriaBuilder().count(rt));
-        javax.persistence.Query q = em.createQuery(cq);
-        return ((Long) q.getSingleResult()).intValue();
+        Query q = em.createQuery(cq);
+        return (long) q.getSingleResult();
     }
 
     /*

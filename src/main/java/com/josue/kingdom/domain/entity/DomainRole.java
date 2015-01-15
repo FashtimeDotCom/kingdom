@@ -5,12 +5,9 @@
  */
 package com.josue.kingdom.domain.entity;
 
-import java.io.Serializable;
+import com.josue.kingdom.rest.Resource;
 import java.util.Objects;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -19,31 +16,32 @@ import javax.persistence.UniqueConstraint;
  * @author Josue
  */
 @Entity
-@Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = "level"))
+@Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {"level", "domain_uuid"}))
 //TODO extend from Resource
-public class Role implements Serializable {
+public class DomainRole extends Resource {
 
-    public Role() {
+    public DomainRole() {
     }
 
-    public Role(int level) {
+    public DomainRole(int level) {
         this.level = level;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
 
     private int level;
     private String name;
     private String description;
+    private Domain domain;
 
-    public int getId() {
-        return id;
-    }
+    @Override
+    protected void copyUpdatebleFields(Resource newData) {
+        if (newData instanceof DomainRole) {
+            DomainRole role = (DomainRole) newData;
 
-    protected void setId(int id) {
-        this.id = id;
+            name = role.name == null ? name : role.name;
+            description = role.description == null ? description : role.description;
+
+            domain.copyUpdatebleFields(role.domain);
+        }
     }
 
     public int getLevel() {
@@ -70,13 +68,21 @@ public class Role implements Serializable {
         this.description = description;
     }
 
+    public Domain getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Domain domain) {
+        this.domain = domain;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 83 * hash + this.id;
-        hash = 83 * hash + this.level;
-        hash = 83 * hash + Objects.hashCode(this.name);
-        hash = 83 * hash + Objects.hashCode(this.description);
+        int hash = 3;
+        hash = 47 * hash + this.level;
+        hash = 47 * hash + Objects.hashCode(this.name);
+        hash = 47 * hash + Objects.hashCode(this.description);
+        hash = 47 * hash + Objects.hashCode(this.domain);
         return hash;
     }
 
@@ -88,17 +94,20 @@ public class Role implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Role other = (Role) obj;
-        if (this.id != other.id) {
-            return false;
-        }
+        final DomainRole other = (DomainRole) obj;
         if (this.level != other.level) {
             return false;
         }
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        return Objects.equals(this.description, other.description);
+        if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
+        if (!Objects.equals(this.domain, other.domain)) {
+            return false;
+        }
+        return true;
     }
 
 }

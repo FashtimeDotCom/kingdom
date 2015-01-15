@@ -5,9 +5,8 @@
  */
 package com.josue.kingdom;
 
-import com.josue.kingdom.JpaRepository;
-import com.josue.kingdom.account.AuthRepository;
-import com.josue.kingdom.domain.entity.Role;
+import com.josue.kingdom.credential.AuthRepository;
+import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import com.josue.kingdom.testutils.Logged;
@@ -51,61 +50,61 @@ public class JpaRepositoryIT {
         return ArquillianTestBase.createDefaultDeployment();
     }
 
-    private Role simpleCreate(JpaRepository repo) {
-        Role role = InstanceHelper.createRole();
+    private DomainRole simpleCreate(JpaRepository repo) {
+        DomainRole role = InstanceHelper.createRole();
         repo.create(role);
-        assertNotNull(role.getId());
+        assertNotNull(role.getUuid());
         return role;
     }
 
     @Test
     public void testCreate() {
 
-        Role role = simpleCreate(repo);
+        DomainRole role = simpleCreate(repo);
 
-        Role foundRole = repo.find(Role.class, role.getId());
+        DomainRole foundRole = repo.find(DomainRole.class, role.getUuid());
         assertNotNull(foundRole);
     }
 
     @Test
-    public void testEdit() {
+    public void testUpdate() {
 
-        Role role = simpleCreate(repo);
+        DomainRole role = simpleCreate(repo);
 
         //Fail prone, if the random methos generate an existing Role.level
         //For this test purpose its enough
         role.setLevel(new Random().nextInt(Integer.MAX_VALUE) + 1);
-        Role editedEntity = repo.edit(role);
-        assertEquals(role.getId(), editedEntity.getId());
+        DomainRole editedEntity = repo.update(role);
+        assertEquals(role.getUuid(), editedEntity.getUuid());
     }
 
     @Test
-    public void testRemove() {
+    public void testDelete() {
 
-        Role role = simpleCreate(repo);
+        DomainRole role = simpleCreate(repo);
 
-        repo.remove(role);
-        Role foundRole = repo.find(Role.class, role.getId());
+        repo.delete(role);
+        DomainRole foundRole = repo.find(DomainRole.class, role.getUuid());
         assertNull(foundRole);
     }
 
     @Test
     public void testFind() {
 
-        Role role = simpleCreate(repo);
-        Role foundRole = repo.find(Role.class, role.getId());
+        DomainRole role = simpleCreate(repo);
+        DomainRole foundRole = repo.find(DomainRole.class, role.getUuid());
         assertEquals(role, foundRole);
     }
 
     @Test
     public void testFindAll() {
 
-        Role role1 = InstanceHelper.createRole();
+        DomainRole role1 = InstanceHelper.createRole();
         repo.create(role1);
-        Role role2 = InstanceHelper.createRole();
+        DomainRole role2 = InstanceHelper.createRole();
         repo.create(role2);
 
-        List<Role> foundRoles = repo.findAll(Role.class);
+        List<DomainRole> foundRoles = repo.findAll(DomainRole.class);
         assertTrue(foundRoles.size() >= 2);
         assertTrue(foundRoles.contains(role1));
         assertTrue(foundRoles.contains(role2));
@@ -123,27 +122,27 @@ public class JpaRepositoryIT {
         // because the test environment pre-load some data
         int limit = 50;
         int offset = 50;
-        List<Role> foundRoles1 = repo.findRange(Role.class, limit, offset);
+        List<DomainRole> foundRoles1 = repo.findRange(DomainRole.class, limit, offset);
         assertTrue(foundRoles1.size() >= 50);
 
         limit = 100;
         offset = 50;
-        List<Role> foundRoles2 = repo.findRange(Role.class, limit, offset);
+        List<DomainRole> foundRoles2 = repo.findRange(DomainRole.class, limit, offset);
         assertTrue(foundRoles2.size() >= 50);
 
         limit = 100;
         offset = 0;
-        List<Role> foundRoles3 = repo.findRange(Role.class, limit, offset);
+        List<DomainRole> foundRoles3 = repo.findRange(DomainRole.class, limit, offset);
         assertTrue(foundRoles3.size() >= limit);
 
         limit = 1;
         offset = 99;
-        List<Role> foundRoles4 = repo.findRange(Role.class, limit, offset);
+        List<DomainRole> foundRoles4 = repo.findRange(DomainRole.class, limit, offset);
         assertTrue(foundRoles4.size() >= limit);
 
         limit = 10;
         offset = 95;
-        List<Role> foundRoles5 = repo.findRange(Role.class, limit, offset);
+        List<DomainRole> foundRoles5 = repo.findRange(DomainRole.class, limit, offset);
         assertTrue(foundRoles5.size() >= 5);
 
     }
@@ -156,7 +155,7 @@ public class JpaRepositoryIT {
             simpleCreate(repo);
         }
 
-        int count = repo.count(Role.class);
+        Long count = repo.count(DomainRole.class);
         assertTrue(count >= total);
     }
 
@@ -164,16 +163,16 @@ public class JpaRepositoryIT {
     public void testExtractSingleResultFromList() {
         int total = 5;
 
-        Role someRole = null;
+        DomainRole someRole = null;
         for (int i = 0; i < total; i++) {
             someRole = simpleCreate(repo);
         }
         assertNotNull(someRole);
 
-        TypedQuery<Role> query = em.createQuery("SELECT ro from Role ro where ro.id = :id", Role.class);
-        query.setParameter("id", someRole.getId());
-        List<Role> resultList = query.getResultList();
-        Role foundRole = repo.extractSingleResultFromList(resultList);
+        TypedQuery<DomainRole> query = em.createQuery("SELECT ro from Role ro where ro.uuid = :uuid", DomainRole.class);
+        query.setParameter("uuid", someRole.getUuid());
+        List<DomainRole> resultList = query.getResultList();
+        DomainRole foundRole = repo.extractSingleResultFromList(resultList);
         assertEquals(someRole, foundRole);
     }
 

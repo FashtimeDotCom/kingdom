@@ -7,7 +7,7 @@ package com.josue.kingdom.invitation.entity;
 
 import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.Role;
+import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.rest.Resource;
 import java.util.Date;
 import java.util.Objects;
@@ -48,7 +48,7 @@ public class Invitation extends Resource {
 
     @OneToOne
     @JoinColumn(name = "role_id")
-    private Role role;
+    private DomainRole role;
 
     @NotNull
     private String token;
@@ -108,11 +108,11 @@ public class Invitation extends Resource {
         this.domain = domain;
     }
 
-    public Role getRole() {
+    public DomainRole getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(DomainRole role) {
         this.role = role;
     }
 

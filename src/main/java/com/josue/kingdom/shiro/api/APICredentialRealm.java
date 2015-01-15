@@ -5,12 +5,12 @@
  */
 package com.josue.kingdom.shiro.api;
 
-import com.josue.kingdom.account.AuthRepository;
+import com.josue.kingdom.credential.AuthRepository;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.DomainCredential;
-import com.josue.kingdom.domain.entity.Role;
+import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.shiro.AccessLevelPermission;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +47,7 @@ public class APICredentialRealm extends AuthorizingRealm {
         APICredential token = (APICredential) authToken;
 
         //Make use of JPA
-        APICredential foundApiCredential = persistence.findApiCredentialByToken(token.getApiKey());
+        APICredential foundApiCredential = persistence.getAPICredentialByToken(token.getApiKey());
 
         if (foundApiCredential != null) {
             //Here we put the entire APICredential class, so we can fetch it using Subject subject = SecurityUtils.getSubject();
@@ -73,7 +73,7 @@ public class APICredentialRealm extends AuthorizingRealm {
         if (availablePrincipal instanceof APICredential) {
 
             credential = (APICredential) getAvailablePrincipal(principals);
-            domainCredentials = persistence.getApiDomainCredentials(credential.getUuid());
+            domainCredentials = persistence.getAPIDomainCredentials(credential.getUuid());
 
         } /*
          Returns AuthorizationInfo for ManagerCredential based Permission Check
@@ -84,7 +84,7 @@ public class APICredentialRealm extends AuthorizingRealm {
             throw new AuthenticationException("Illegal Credential type");
         }
 
-        Map<Object, Role> roles = new HashMap<>();
+        Map<Object, DomainRole> roles = new HashMap<>();
         for (DomainCredential domainCredential : domainCredentials) {
             roles.put(domainCredential.getDomain().getUuid(), domainCredential.getRole());
         }

@@ -138,11 +138,11 @@ public class DomainControlTest {
         when(repository.find(Manager.class, currentCredential.getManager().getUuid())).thenReturn(manager);
 
         when(repository.find(Domain.class, domainUuid)).thenReturn(actualDomainStub);
-        when(repository.edit(actualDomainStub)).thenReturn(actualDomainStub);
+        when(repository.update(actualDomainStub)).thenReturn(actualDomainStub);
 
         Domain updatedDomain = control.updateDomain(domainUuid, userInput);
         verify(actualDomainStub, times(1)).copyUpdatebleFields(userInput);
-        verify(repository, times(1)).edit(actualDomainStub);
+        verify(repository, times(1)).update(actualDomainStub);
         assertEquals(userInput.getStatus(), updatedDomain.getStatus());
         assertThat(userInput.getName(), not(updatedDomain.getName()));
         assertThat(userInput.getOwner(), not(updatedDomain.getOwner()));
@@ -183,7 +183,7 @@ public class DomainControlTest {
 
         when(repository.find(Domain.class, domainUuid)).thenReturn(mockedDomain);
         control.deleteDomain(domainUuid);
-        verify(repository, times(1)).remove(mockedDomain);
+        verify(repository, times(1)).delete(mockedDomain);
     }
 
     @Test(expected = RestException.class)

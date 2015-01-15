@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.account;
+package com.josue.kingdom.credential;
 
 import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.credential.entity.APICredential;
@@ -19,18 +19,19 @@ import javax.transaction.Transactional;
  *
  * @author Josue
  */
+//Authentication specific Repository
 @ApplicationScoped
 public class AuthRepository extends JpaRepository {
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public APICredential findApiCredentialByToken(String token) {
+    public APICredential getAPICredentialByToken(String token) {
         TypedQuery<APICredential> query = em.createQuery("SELECT cred FROM APICredential cred WHERE cred.apiKey = :token", APICredential.class);
         query.setParameter("token", token);
         return query.getResultList().get(0);
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public List<DomainCredential> getApiDomainCredentials(String credentialUuid) {
+    public List<DomainCredential> getAPIDomainCredentials(String credentialUuid) {
         Query query = em.createQuery("SELECT apiCred FROM APIDomainCredential apiCred WHERE apiCred.credential.uuid = :credentialUuid", DomainCredential.class);
         query.setParameter("credentialUuid", credentialUuid);
         List<DomainCredential> resultList = query.getResultList();
@@ -39,7 +40,7 @@ public class AuthRepository extends JpaRepository {
 
     //******* Manager credential ********
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public ManagerCredential findManagerCredentialByLogin(String login) {
+    public ManagerCredential getManagerCredentialByLogin(String login) {
         TypedQuery<ManagerCredential> query = em.createQuery("SELECT cred FROM ManagerCredential cred WHERE cred.login = :login", ManagerCredential.class);
         query.setParameter("login", login);
         return query.getResultList().get(0);

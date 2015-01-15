@@ -32,10 +32,10 @@ import javax.ws.rs.core.UriInfo;
  * @author Josue
  *
  * This class is a subresource locator, that always have to bel called from
- * DomainRest or any other ROOT endpoint
+ * DomainResource or any other ROOT endpoint
  */
 @ApplicationScoped
-public class CredentialRest {
+public class APICredentialSubResource {
 
     @Inject
     CredentialControl control;
@@ -43,15 +43,7 @@ public class CredentialRest {
     @Context
     UriInfo info;
 
-    /**
-     *
-     * @param domainUuid: The parent Domain UUID
-     * @param limit
-     * @param offset
-     * @return Response
-     */
     @GET
-    @Path("apikeys")
     @Produces(value = CONTENT_TYPE)
     public Response getAPICredentials(@PathParam("domainUuid") String domainUuid,
             @QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
@@ -61,7 +53,6 @@ public class CredentialRest {
     }
 
     @POST
-    @Path("apikeys")
     @Produces(value = CONTENT_TYPE)
     public Response createAPICredential(@PathParam("domainUuid") String domainUuid, APIDomainCredential apiDomCred) throws RestException {
         APIDomainCredential apiCredential = control.createAPICredential(domainUuid, apiDomCred);
@@ -69,7 +60,7 @@ public class CredentialRest {
     }
 
     @PUT
-    @Path("apikeys/{uuid}")
+    @Path("{uuid}")
     @Produces(value = CONTENT_TYPE)
     public Response updateAPICredential(@PathParam("domainUuid") String domainUuid, @PathParam("uuid") String uuid, APIDomainCredential apiDomCred) throws RestException {
         APIDomainCredential apiCredential = control.updateAPICredential(domainUuid, uuid, apiDomCred);
@@ -78,15 +69,15 @@ public class CredentialRest {
 
     //TODO change @PathParam to have a meaningful name for APIDomainCredential resource
     @DELETE
-    @Path("apikeys/{apikeyUuid}")
+    @Path("{apikeyUuid}")
     @Produces(value = CONTENT_TYPE)
     public Response deleteAPICredential(@PathParam("domainUuid") String domainUuid, @PathParam("apikeyUuid") String apikeyUuid) throws RestException {
-        control.deleteAPiCredential(domainUuid, apikeyUuid);
+        control.deleteAPICredential(domainUuid, apikeyUuid);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.NO_CONTENT, info);
     }
 
     @GET
-    @Path("apikeys/{apikeyUuid}")
+    @Path("{apikeyUuid}")
     @Produces(value = CONTENT_TYPE)
     public Response getAPICredential(@PathParam("domainUuid") String domainUuid, @PathParam("apikeyUuid") String apikeyUuid) {
         APIDomainCredential apiCredential = control.getAPICredential(domainUuid, apikeyUuid);

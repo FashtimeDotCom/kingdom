@@ -5,17 +5,17 @@
  */
 package com.josue.kingdom.invitation;
 
-import com.josue.kingdom.invitation.entity.InvitationStatus;
-import com.josue.kingdom.invitation.entity.Invitation;
+import com.josue.kingdom.account.AccountRepository;
+import com.josue.kingdom.account.Current;
+import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.account.entity.Manager;
-import com.josue.kingdom.domain.entity.Role;
-import com.josue.kingdom.account.Current;
-import com.josue.kingdom.util.ListResourceUtil;
-import com.josue.kingdom.account.AccountRepository;
+import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.invitation.entity.Invitation;
+import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
+import com.josue.kingdom.util.ListResourceUtil;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -44,9 +44,9 @@ public class InvitationControl {
     InvitationService service;
 
     //TODO make this application robust using validator, ere we have several possibles NPE, fix this ASAP
-    public Invitation create(Invitation invitation) {
+    public Invitation createInvitation(Invitation invitation) {
         Domain foundDomain = repository.find(Domain.class, invitation.getDomain().getUuid());
-        Role role = repository.find(Role.class, invitation.getRole().getId());
+        DomainRole role = repository.find(DomainRole.class, invitation.getRole().getUuid());
 
         invitation.removeNonCreatableFields();
         invitation.setStatus(InvitationStatus.CREATED);
@@ -56,7 +56,7 @@ public class InvitationControl {
         invitation.setRole(role);
         invitation.setToken(UUID.randomUUID().toString());
 
-        Manager manager = accountRepository.findManagerByEmail(invitation.getTargetEmail());
+        Manager manager = accountRepository.getManagerByEmail(invitation.getTargetEmail());
         if (manager == null) {
             //Manager should fill form before acion completes
         } else {
@@ -69,13 +69,13 @@ public class InvitationControl {
         return invitation;
     }
 
-    public Invitation update(String uuid, Invitation inv) throws ResourceNotFoundException {
+    public Invitation updateInvitation(String uuid, Invitation inv) throws ResourceNotFoundException {
         Invitation invitation = repository.find(Invitation.class, uuid);
         if (invitation == null) {
             throw new ResourceNotFoundException(Invitation.class, uuid);
         }
         invitation.copyUpdatebleFields(inv);
-        Invitation updatedInvitation = repository.edit(invitation);
+        Invitation updatedInvitation = repository.update(invitation);
         return updatedInvitation;
 
     }
@@ -92,7 +92,7 @@ public class InvitationControl {
     public boolean isSignup(String token) {
         //Here invitation can return null for non existing tokens
         Invitation invitation = getInvitationByToken(token);
-        Manager foundManager = accountRepository.findManagerByEmail(invitation.getTargetEmail());
+        Manager foundManager = accountRepository.getManagerByEmail(invitation.getTargetEmail());
         return foundManager == null;
     }
 

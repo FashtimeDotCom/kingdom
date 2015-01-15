@@ -26,7 +26,7 @@ public abstract class DomainCredential extends Resource {
     //Role for this domain
     @OneToOne
     @JoinColumn(name = "domain_role_id")
-    private Role role;
+    private DomainRole role;
 
     @Override
     protected void copyUpdatebleFields(Resource newData) {
@@ -46,11 +46,11 @@ public abstract class DomainCredential extends Resource {
         this.domain = domain;
     }
 
-    public Role getRole() {
+    public DomainRole getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(DomainRole role) {
         this.role = role;
     }
 

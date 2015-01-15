@@ -5,12 +5,10 @@
  */
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.credential.CredentialControl;
-import com.josue.kingdom.credential.CredentialRepository;
+import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
-import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.rest.ListResource;
 import java.util.Arrays;
 import java.util.List;
@@ -54,18 +52,18 @@ public class CredentialControlTest {
         currentCredential.setManager(manager);
     }
 
-    @Test
-    public void testGetManager() {
-        //TODO testing nothing
-        String credUuid = "123";
-        Manager mockedManager = mock(Manager.class);
-
-        when(repository.getManager(credUuid)).thenReturn(mockedManager);
-        Manager foundManager = control.getManagerByCredential(credUuid);
-        assertNotNull(mockedManager);
-        assertEquals(mockedManager, foundManager);
-    }
-
+//    @Test
+//    //TODO move to correct test class
+//    public void testGetManager() {
+//        //TODO testing nothing
+//        String credUuid = "123";
+//        Manager mockedManager = mock(Manager.class);
+//
+//        when(repository.getManager(credUuid)).thenReturn(mockedManager);
+//        Manager foundManager = control.getManagerByCredential(credUuid);
+//        assertNotNull(mockedManager);
+//        assertEquals(mockedManager, foundManager);
+//    }
     @Test
     public void testGetApiCredentials() {
         APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
@@ -73,14 +71,14 @@ public class CredentialControlTest {
 
         String domainUuid = "uuid-123";
 
-        when(repository.getApiCredentials(currentCredential.getManager().getUuid(), domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
+        when(repository.getAPICredentials(currentCredential.getManager().getUuid(), domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
 
         APICredential credMock = mock(APICredential.class);
         when(apiCredMock.getCredential()).thenReturn(credMock);
         when(credMock.getApiKey()).thenReturn(UUID.randomUUID().toString());
 
         ListResource<APIDomainCredential> apiCredentials = control.getAPICredentials(domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET);
-        verify(repository, times(1)).getApiCredentials(domainUuid, manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        verify(repository, times(1)).getAPICredentials(domainUuid, manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(realList.size(), apiCredentials.getItems().size());
         for (APIDomainCredential apicred : apiCredentials.getItems()) {
             assertNotNull(apicred);
@@ -96,14 +94,14 @@ public class CredentialControlTest {
         APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
         List<APIDomainCredential> realList = Arrays.asList(apiCredMock, apiCredMock, apiCredMock);
 
-        when(repository.getApiCredentials(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
+        when(repository.getAPICredentials(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
 
         APICredential credMock = mock(APICredential.class);
         when(apiCredMock.getCredential()).thenReturn(credMock);
         when(credMock.getApiKey()).thenReturn(UUID.randomUUID().toString());
 
         ListResource<APIDomainCredential> apiCredentials = control.getAPICredentials(DEFAULT_LIMIT, DEFAULT_OFFSET);
-        verify(repository, times(1)).getApiCredentials(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        verify(repository, times(1)).getAPICredentials(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(realList.size(), apiCredentials.getItems().size());
         for (APIDomainCredential apicred : apiCredentials.getItems()) {
             assertNotNull(apicred);
@@ -120,14 +118,14 @@ public class CredentialControlTest {
         String domainUuid = "domain-uuid-123";
         APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
 
-        when(repository.getApiCredential(currentCredential.getManager().getUuid(), domainUuid, apiKeyUuid)).thenReturn(apiCredMock);
+        when(repository.getAPICredential(currentCredential.getManager().getUuid(), domainUuid, apiKeyUuid)).thenReturn(apiCredMock);
 
         APICredential credMock = mock(APICredential.class);
         when(apiCredMock.getCredential()).thenReturn(credMock);
         when(credMock.getApiKey()).thenReturn(UUID.randomUUID().toString());
 
         APIDomainCredential apiCredential = control.getAPICredential(domainUuid, apiKeyUuid);
-        verify(repository, times(1)).getApiCredential(manager.getUuid(), domainUuid, apiKeyUuid);
+        verify(repository, times(1)).getAPICredential(manager.getUuid(), domainUuid, apiKeyUuid);
 
         assertNotNull(apiCredential);
 

@@ -28,12 +28,12 @@ public class ApplicationConfig extends Application {
      * out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.josue.kingdom.account.AccountRest.class);
-        resources.add(com.josue.kingdom.credential.CredentialRest.class);
-        resources.add(com.josue.kingdom.domain.DomainRest.class);
-        resources.add(com.josue.kingdom.domain.RoleRest.class);
-        resources.add(com.josue.kingdom.domain.RoleSubRest.class);
-        resources.add(com.josue.kingdom.invitation.InvitationRest.class);
+        resources.add(com.josue.kingdom.account.AccountResource.class);
+        resources.add(com.josue.kingdom.credential.APICredentialSubResource.class);
+        resources.add(com.josue.kingdom.credential.CredentialResource.class);
+        resources.add(com.josue.kingdom.domain.DomainResource.class);
+        resources.add(com.josue.kingdom.domain.DomainRoleSubResource.class);
+        resources.add(com.josue.kingdom.invitation.InvitationResource.class);
         resources.add(com.josue.kingdom.rest.CustomJacksonProvider.class);
         resources.add(com.josue.kingdom.rest.VersionRest.class);
         resources.add(com.josue.kingdom.rest.ex.RestExceptionMapper.class);

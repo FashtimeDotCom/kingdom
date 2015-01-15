@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom.rest.ex;
 
-import com.josue.kingdom.domain.entity.Role;
+import com.josue.kingdom.domain.entity.DomainRole;
 import javax.ws.rs.core.Response;
 
 /**
@@ -19,7 +19,7 @@ public class AuthorizationException extends RestException {
                 "Access denied for this resource"), Response.Status.FORBIDDEN);
     }
 
-    public AuthorizationException(Role role) {
+    public AuthorizationException(DomainRole role) {
         super(null, "", String.format("Requires role {0}", role.getName()), Response.Status.BAD_REQUEST);
     }
 

@@ -5,16 +5,16 @@
  */
 package com.josue.kingdom.account;
 
+import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
-import com.josue.kingdom.account.entity.Manager;
-import com.josue.kingdom.domain.entity.Role;
+import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
-import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.UUID;
@@ -58,10 +58,10 @@ public class AuthEntitiesIT {
 
     @Test
     public void testRole() {
-        Role role = InstanceHelper.createRole();
+        DomainRole role = InstanceHelper.createRole();
         repository.create(role);
 
-        Role foundRole = repository.find(Role.class, role.getId());
+        DomainRole foundRole = repository.find(DomainRole.class, role.getUuid());
         assertEquals(role, foundRole);
     }
 
@@ -123,7 +123,7 @@ public class AuthEntitiesIT {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        Role role = InstanceHelper.createRole();
+        DomainRole role = InstanceHelper.createRole();
         repository.create(role);
 
         APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, role);
@@ -147,7 +147,7 @@ public class AuthEntitiesIT {
         ManagerCredential managerCredential = InstanceHelper.createManagerCredential(manager);
         repository.create(managerCredential);
 
-        Role role = InstanceHelper.createRole();
+        DomainRole role = InstanceHelper.createRole();
         repository.create(role);
 
         ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, managerCredential, role);

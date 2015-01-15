@@ -5,22 +5,21 @@
  */
 package com.josue.kingdom.credential;
 
+import com.josue.kingdom.account.Current;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.CredentialStatus;
+import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.account.entity.Manager;
-import com.josue.kingdom.domain.entity.Role;
-import com.josue.kingdom.shiro.AccessLevelPermission;
-import com.josue.kingdom.account.Current;
-import com.josue.kingdom.util.ListResourceUtil;
-import com.josue.kingdom.domain.RoleRepository;
+import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ex.AuthorizationException;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
+import com.josue.kingdom.shiro.AccessLevelPermission;
+import com.josue.kingdom.util.ListResourceUtil;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
@@ -39,18 +38,14 @@ public class CredentialControl {
     CredentialRepository repository;
 
     @Inject
-    RoleRepository roleRepository;
+    DomainRepository roleRepository;
 
     @Inject
     @Current
     Credential currentCredential;
 
-    public Manager getManagerByCredential(String credentialUuid) {
-        return repository.getManager(credentialUuid);
-    }
-
     public ListResource<APIDomainCredential> getAPICredentials(String domainUuid, Integer limit, Integer offset) {
-        List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentials(currentCredential.getManager().getUuid(), domainUuid, limit, offset);
+        List<APIDomainCredential> apiDomainCredentials = repository.getAPICredentials(currentCredential.getManager().getUuid(), domainUuid, limit, offset);
         for (APIDomainCredential apiDomCredential : apiDomainCredentials) {
             obfuscateKeys(apiDomCredential.getCredential());
             //Optional.. removing non usable fields
@@ -64,7 +59,7 @@ public class CredentialControl {
 
     //Not used yet, return all credential for all Domains
     public ListResource<APIDomainCredential> getAPICredentials(Integer limit, Integer offset) {
-        List<APIDomainCredential> apiDomainCredentials = repository.getApiCredentials(currentCredential.getManager().getUuid(), limit, offset);
+        List<APIDomainCredential> apiDomainCredentials = repository.getAPICredentials(currentCredential.getManager().getUuid(), limit, offset);
         for (APIDomainCredential apiDomCredential : apiDomainCredentials) {
             obfuscateKeys(apiDomCredential.getCredential());
         }
@@ -73,7 +68,7 @@ public class CredentialControl {
     }
 
     public APIDomainCredential getAPICredential(String domainUuid, String apiKeyUuid) {
-        APIDomainCredential apiDomainCredentials = repository.getApiCredential(currentCredential.getManager().getUuid(), domainUuid, apiKeyUuid);
+        APIDomainCredential apiDomainCredentials = repository.getAPICredential(currentCredential.getManager().getUuid(), domainUuid, apiKeyUuid);
         obfuscateKeys(apiDomainCredentials.getCredential());
         return apiDomainCredentials;
     }
@@ -84,7 +79,7 @@ public class CredentialControl {
             throw new ResourceNotFoundException(APICredential.class, credentialUuid);
         }
 
-        Role foundRole = roleRepository.findRole(domainCredential.getRole().getName());
+        DomainRole foundRole = roleRepository.getDomainRole(domainUuid, domainCredential.getRole().getName());
         if (foundRole == null) {
             throw new InvalidResourceArgException(APICredential.class, "Role name", domainCredential.getRole().getName());
         }
@@ -95,8 +90,8 @@ public class CredentialControl {
         }
 
         foundCredential.copyUpdatebleFields(domainCredential);
-        APIDomainCredential updated = repository.edit(foundCredential);
-        repository.edit(foundCredential.getCredential());
+        APIDomainCredential updated = repository.update(foundCredential);
+        repository.update(foundCredential.getCredential());
         return updated;
 
     }
@@ -104,7 +99,7 @@ public class CredentialControl {
     public APIDomainCredential createAPICredential(String domainUuid, APIDomainCredential domainCredential) throws RestException {
 
         domainCredential.removeNonCreatableFields();
-        Role foundRole = roleRepository.findRole(domainCredential.getRole().getName());
+        DomainRole foundRole = roleRepository.getDomainRole(domainUuid, domainCredential.getRole().getName());
         if (foundRole == null) {
             throw new InvalidResourceArgException(APICredential.class, "Role name", domainCredential.getRole().getName());
         }
@@ -133,14 +128,14 @@ public class CredentialControl {
 
     }
 
-    public void deleteAPiCredential(String domainUuid, String domainCredentialUuid) throws ResourceNotFoundException {
+    public void deleteAPICredential(String domainUuid, String domainCredentialUuid) throws ResourceNotFoundException {
         APIDomainCredential apiDomCred = repository.find(APIDomainCredential.class, domainCredentialUuid);
         if (apiDomCred == null) {
             throw new ResourceNotFoundException(APIDomainCredential.class, domainCredentialUuid);
         }
         //TODO This block should run within the same TX
-        repository.remove(apiDomCred);
-        repository.remove(apiDomCred.getCredential());
+        repository.delete(apiDomCred);
+        repository.delete(apiDomCred.getCredential());
     }
 
     //This method should not executed inside the same transaction of ANY repository

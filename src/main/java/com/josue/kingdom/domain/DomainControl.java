@@ -78,7 +78,7 @@ public class DomainControl {
             throw new ResourceNotFoundException(Domain.class, domainUuid);
         }
         foundDomain.copyUpdatebleFields(domain);
-        foundDomain = repository.edit(foundDomain);
+        foundDomain = repository.update(foundDomain);
         return foundDomain;
     }
 
@@ -89,6 +89,6 @@ public class DomainControl {
             //TODO exceptions... ?!!!
             throw new ResourceNotFoundException(Domain.class, domainUuid);
         }
-        repository.remove(foundDomain);
+        repository.delete(foundDomain);
     }
 }

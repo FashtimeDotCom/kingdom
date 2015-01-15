@@ -11,7 +11,7 @@ import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.account.entity.Manager;
-import com.josue.kingdom.domain.entity.Role;
+import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
@@ -79,7 +79,7 @@ public class DomainRepositoryIT {
         ManagerCredential invitedManagerCredential = InstanceHelper.createManagerCredential(invitedManager);
         repository.create(invitedManagerCredential);
 
-        Role simpleRole = InstanceHelper.createRole();
+        DomainRole simpleRole = InstanceHelper.createRole();
         repository.create(simpleRole);
 
         //Assign the new manager to the Domain
@@ -119,7 +119,7 @@ public class DomainRepositoryIT {
         repository.create(invitedManagerCredential);
 
         //commom role
-        Role simpleRole = InstanceHelper.createRole();
+        DomainRole simpleRole = InstanceHelper.createRole();
         repository.create(simpleRole);
 
         //Assign the new manager to the Domain 1

@@ -5,11 +5,11 @@
  */
 package com.josue.kingdom.domain;
 
-import com.josue.kingdom.credential.entity.Credential;
-import com.josue.kingdom.domain.entity.Role;
-import com.josue.kingdom.shiro.AccessLevelPermission;
 import com.josue.kingdom.account.Current;
+import com.josue.kingdom.credential.entity.Credential;
+import com.josue.kingdom.domain.entity.DomainRole;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
+import com.josue.kingdom.shiro.AccessLevelPermission;
 import java.util.Iterator;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
@@ -27,10 +27,10 @@ import org.apache.shiro.SecurityUtils;
 @ApplicationScoped
 //TODO rename this class
 //This is a subresource locator class... can be accessed throught /domains/123/roles
-public class RoleSubRest {
+public class DomainRoleSubResource {
 
     @Inject
-    RoleRepository repository;
+    DomainRepository repository;
 
     @Inject
     @Current
@@ -38,10 +38,12 @@ public class RoleSubRest {
 
     @GET
     @Produces(value = CONTENT_TYPE)
-    public Response getSystemRolesForDomainCredential(@PathParam("domainUuid") String domainUuid) {
-        List<Role> roles = repository.findAll(Role.class);
-        for (Iterator<Role> iterator = roles.iterator(); iterator.hasNext();) {
-            Role role = iterator.next();
+    //TODO add limit offset ? is it needed ?
+    public Response getDomainRoles(@PathParam("domainUuid") String domainUuid) {
+        //TODO change this... each domain should have its own roles
+        List<DomainRole> roles = repository.findAll(DomainRole.class);
+        for (Iterator<DomainRole> iterator = roles.iterator(); iterator.hasNext();) {
+            DomainRole role = iterator.next();
             if (!SecurityUtils.getSubject().isPermitted(new AccessLevelPermission(domainUuid, role))) {
                 iterator.remove();
             }
