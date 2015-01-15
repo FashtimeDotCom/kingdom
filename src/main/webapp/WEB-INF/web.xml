@@ -7,7 +7,7 @@
     </session-config>
     <!-- Shiro configurations -->
     <listener>
-        <listener-class>com.josue.kingdom.manager.auth.shiro.CustomEnvironmentLoaderListener</listener-class>
+        <listener-class>com.josue.kingdom.shiro.CustomEnvironmentLoaderListener</listener-class>
     </listener>
     <filter>
         <filter-name>ShiroFilter</filter-name>

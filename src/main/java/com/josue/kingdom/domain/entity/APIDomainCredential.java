@@ -21,7 +21,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "api_domain_credential", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"domain_uuid", "api_credential_uuid"}),
-    @UniqueConstraint(columnNames = {"domain_role_id", "api_credential_uuid"})})
+    @UniqueConstraint(columnNames = {"domain_role_uuid", "api_credential_uuid"})})
 public class APIDomainCredential extends DomainCredential {
 
     private String name;

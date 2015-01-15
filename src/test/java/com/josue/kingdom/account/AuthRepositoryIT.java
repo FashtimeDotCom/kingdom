@@ -5,15 +5,15 @@
  */
 package com.josue.kingdom.account;
 
-import com.josue.kingdom.credential.AuthRepository;
 import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.AuthRepository;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainCredential;
-import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
@@ -97,7 +97,7 @@ public class AuthRepositoryIT {
         Domain domain = InstanceHelper.createDomain(manager);
         repository.create(domain);
 
-        DomainRole role = InstanceHelper.createRole();
+        DomainRole role = InstanceHelper.createRole(domain);
         repository.create(role);
 
         ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, role);

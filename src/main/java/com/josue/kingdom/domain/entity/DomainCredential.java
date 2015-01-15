@@ -25,7 +25,7 @@ public abstract class DomainCredential extends Resource {
 
     //Role for this domain
     @OneToOne
-    @JoinColumn(name = "domain_role_id")
+    @JoinColumn(name = "domain_role_uuid")
     private DomainRole role;
 
     @Override

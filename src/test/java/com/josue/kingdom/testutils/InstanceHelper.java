@@ -6,15 +6,15 @@
 package com.josue.kingdom.testutils;
 
 import com.josue.kingdom.JpaRepository;
+import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.APICredential;
-import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.credential.entity.CredentialStatus;
 import com.josue.kingdom.credential.entity.ManagerCredential;
-import com.josue.kingdom.domain.entity.ManagerDomainCredential;
+import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainStatus;
-import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainStatus;
+import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Calendar;
@@ -28,7 +28,7 @@ import java.util.UUID;
  */
 public abstract class InstanceHelper {
 
-    private static SecureRandom random = new SecureRandom();
+    private static final SecureRandom random = new SecureRandom();
 
     public static Date mysqlMilliSafeTimestamp() {
 
@@ -42,11 +42,12 @@ public abstract class InstanceHelper {
     }
 
     //#### Role ####
-    public static DomainRole createRole() {
+    public static DomainRole createRole(Domain domain) {
         DomainRole role = new DomainRole();
         role.setDescription("Role description");
         role.setLevel(new Random().nextInt());
         role.setName("ADMIN");
+        role.setDomain(domain);
         return role;
     }
 
@@ -121,7 +122,7 @@ public abstract class InstanceHelper {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainRole role = InstanceHelper.createRole();
+        DomainRole role = InstanceHelper.createRole(domain);
         repository.create(role);
 
         APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, role);
@@ -143,7 +144,7 @@ public abstract class InstanceHelper {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainRole role = InstanceHelper.createRole();
+        DomainRole role = InstanceHelper.createRole(domain);
         repository.create(role);
 
         ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, role);

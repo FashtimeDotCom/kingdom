@@ -5,7 +5,9 @@
  */
 package com.josue.kingdom;
 
+import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.AuthRepository;
+import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
@@ -51,7 +53,12 @@ public class JpaRepositoryIT {
     }
 
     private DomainRole simpleCreate(JpaRepository repo) {
-        DomainRole role = InstanceHelper.createRole();
+        Manager manager = InstanceHelper.createManager();
+        repo.create(manager);
+        Domain domain = InstanceHelper.createDomain(manager);
+        repo.create(domain);
+
+        DomainRole role = InstanceHelper.createRole(domain);
         repo.create(role);
         assertNotNull(role.getUuid());
         return role;
@@ -98,10 +105,16 @@ public class JpaRepositoryIT {
 
     @Test
     public void testFindAll() {
+        Manager manager = InstanceHelper.createManager();
+        repo.create(manager);
+        Domain domain = InstanceHelper.createDomain(manager);
+        repo.create(domain);
 
-        DomainRole role1 = InstanceHelper.createRole();
+        DomainRole role1 = InstanceHelper.createRole(domain);
+        role1.setLevel(5);
         repo.create(role1);
-        DomainRole role2 = InstanceHelper.createRole();
+        DomainRole role2 = InstanceHelper.createRole(domain);
+        role2.setLevel(3);
         repo.create(role2);
 
         List<DomainRole> foundRoles = repo.findAll(DomainRole.class);
@@ -169,7 +182,7 @@ public class JpaRepositoryIT {
         }
         assertNotNull(someRole);
 
-        TypedQuery<DomainRole> query = em.createQuery("SELECT ro from Role ro where ro.uuid = :uuid", DomainRole.class);
+        TypedQuery<DomainRole> query = em.createQuery("SELECT ro from DomainRole ro where ro.uuid = :uuid", DomainRole.class);
         query.setParameter("uuid", someRole.getUuid());
         List<DomainRole> resultList = query.getResultList();
         DomainRole foundRole = repo.extractSingleResultFromList(resultList);

@@ -47,7 +47,7 @@ public class Invitation extends Resource {
     private Resource domain;
 
     @OneToOne
-    @JoinColumn(name = "role_id")
+    @JoinColumn(name = "domain_role_uuid")
     private DomainRole role;
 
     @NotNull

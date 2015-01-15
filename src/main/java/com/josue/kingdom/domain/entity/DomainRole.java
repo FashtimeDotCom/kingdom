@@ -8,6 +8,8 @@ package com.josue.kingdom.domain.entity;
 import com.josue.kingdom.rest.Resource;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -16,7 +18,7 @@ import javax.persistence.UniqueConstraint;
  * @author Josue
  */
 @Entity
-@Table(name = "role", uniqueConstraints = @UniqueConstraint(columnNames = {"level", "domain_uuid"}))
+@Table(name = "domain_role", uniqueConstraints = @UniqueConstraint(columnNames = {"level", "domain_uuid"}))
 //TODO extend from Resource
 public class DomainRole extends Resource {
 
@@ -30,6 +32,9 @@ public class DomainRole extends Resource {
     private int level;
     private String name;
     private String description;
+
+    @OneToOne
+    @JoinColumn(name = "domain_uuid")
     private Domain domain;
 
     @Override

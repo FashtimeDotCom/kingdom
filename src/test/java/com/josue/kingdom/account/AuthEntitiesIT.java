@@ -11,8 +11,8 @@ import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.testutils.ArquillianTestBase;
@@ -58,7 +58,12 @@ public class AuthEntitiesIT {
 
     @Test
     public void testRole() {
-        DomainRole role = InstanceHelper.createRole();
+        Manager owner = InstanceHelper.createManager();
+        repository.create(owner);
+        Domain domain = InstanceHelper.createDomain(owner);
+        repository.create(domain);
+
+        DomainRole role = InstanceHelper.createRole(domain);
         repository.create(role);
 
         DomainRole foundRole = repository.find(DomainRole.class, role.getUuid());
@@ -123,7 +128,7 @@ public class AuthEntitiesIT {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainRole role = InstanceHelper.createRole();
+        DomainRole role = InstanceHelper.createRole(domain);
         repository.create(role);
 
         APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, role);
@@ -147,7 +152,8 @@ public class AuthEntitiesIT {
         ManagerCredential managerCredential = InstanceHelper.createManagerCredential(manager);
         repository.create(managerCredential);
 
-        DomainRole role = InstanceHelper.createRole();
+        DomainRole role = InstanceHelper.createRole(domain);
+        role.setDomain(domain);
         repository.create(role);
 
         ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, managerCredential, role);
@@ -183,15 +189,18 @@ public class AuthEntitiesIT {
         Domain domain = InstanceHelper.createDomain(authorManager);
         repository.create(domain);
 
+        DomainRole role = InstanceHelper.createRole(domain);
+        repository.create(role);
+
         Invitation invitation = new Invitation();
         invitation.setAuthorManager(authorManager);
         invitation.setTargetEmail("eduardo@gmail.com");
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setToken(UUID.randomUUID().toString());
         invitation.setDomain(domain);
+        invitation.setRole(role);
 
         invitation.setValidUntil(InstanceHelper.mysqlMilliSafeTimestamp());
-
         repository.create(invitation);
 
         Invitation foundInvitation = repository.find(Invitation.class, invitation.getUuid());

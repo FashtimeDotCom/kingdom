@@ -31,7 +31,7 @@ public abstract class ArquillianTestBase {
 
         WebArchive war = ShrinkWrap
                 .create(WebArchive.class, "kingdom-test.war")
-                .addPackages(true, Filters.exclude(LiquibaseHelper.class), "com.josue.credential.kingdom")
+                .addPackages(true, Filters.exclude(LiquibaseHelper.class), "com.josue.kingdom")
                 .addClass(LiquibaseTestHelper.class)
                 .addAsResource("liquibase")
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")

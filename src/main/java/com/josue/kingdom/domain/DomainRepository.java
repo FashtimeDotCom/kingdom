@@ -7,8 +7,8 @@ package com.josue.kingdom.domain;
 
 import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Query;
@@ -71,7 +71,7 @@ public class DomainRepository extends JpaRepository {
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public DomainRole getDomainRole(String domainUuid, String roleName) {
-        TypedQuery<DomainRole> query = em.createQuery("SELECT r FROM Role r WHERE r.domain.uuid = :domainUuid AND r.name = :roleName", DomainRole.class);
+        TypedQuery<DomainRole> query = em.createQuery("SELECT r FROM DomainRole r WHERE r.domain.uuid = :domainUuid AND r.name = :roleName", DomainRole.class);
         query.setParameter("roleName", roleName);
         List<DomainRole> roles = query.getResultList();
         return extractSingleResultFromList(roles);
@@ -79,7 +79,7 @@ public class DomainRepository extends JpaRepository {
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public DomainRole getDomainRole(String domainUuid, int roleLevel) {
-        TypedQuery<DomainRole> query = em.createQuery("SELECT r FROM Role r WHERE  r.domain.uuid = :domainUuid AND r.level = :roleLevel", DomainRole.class);
+        TypedQuery<DomainRole> query = em.createQuery("SELECT r FROM DomainRole r WHERE  r.domain.uuid = :domainUuid AND r.level = :roleLevel", DomainRole.class);
         query.setParameter("roleLevel", roleLevel);
         List<DomainRole> roles = query.getResultList();
         return extractSingleResultFromList(roles);

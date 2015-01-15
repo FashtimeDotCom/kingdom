@@ -13,7 +13,7 @@ import liquibase.resource.ResourceAccessor;
 @ApplicationScoped
 public class LiquibaseTestHelper {
 
-    @Resource(lookup = "java:jboss/datasources/credential-manager-testDS")
+    @Resource(lookup = "java:jboss/datasources/kingdom-testDS")
     private DataSource datasource;
     private static final Logger LOG = Logger.getLogger(LiquibaseTestHelper.class.getName());
 
