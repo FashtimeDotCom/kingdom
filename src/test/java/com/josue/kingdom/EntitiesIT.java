@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.account;
+package com.josue.kingdom;
 
 import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
@@ -39,7 +40,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.ROLLBACK)
-public class AuthEntitiesIT {
+public class EntitiesIT {
 
     @Deployment
     @TargetsContainer("wildfly-managed")
@@ -47,7 +48,7 @@ public class AuthEntitiesIT {
         return ArquillianTestBase.createDefaultDeployment();
     }
 
-    private static final Logger LOG = Logger.getLogger(AuthEntitiesIT.class.getName());
+    private static final Logger LOG = Logger.getLogger(EntitiesIT.class.getName());
 
     @PersistenceContext
     EntityManager em;

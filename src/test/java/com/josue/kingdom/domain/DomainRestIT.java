@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -112,6 +113,10 @@ public class DomainRestIT {
         assertNotNull(updatedDomain.getLastUpdate());
         assertEquals(createdDomain.getDescription(), updatedDomain.getDescription());
         assertThat(newName, not(updatedDomain.getName()));
+    }
 
+    @Test
+    public void testGetDomainRoles() {
+        fail("The test case is a prototype.");
     }
 }
