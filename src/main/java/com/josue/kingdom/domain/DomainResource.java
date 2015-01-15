@@ -97,7 +97,7 @@ public class DomainResource {
     @Path("{uuid}")
     @Consumes(value = CONTENT_TYPE)
     @Produces(value = CONTENT_TYPE)
-    public Response update(@PathParam("uuid") String uuid, Domain domain) throws RestException {
+    public Response updateDomain(@PathParam("uuid") String uuid, Domain domain) throws RestException {
         Domain updatedDomain = control.updateDomain(uuid, domain);
         return ResponseUtils.buildSimpleResponse(updatedDomain, Response.Status.OK, info);
     }
@@ -106,7 +106,7 @@ public class DomainResource {
     @Path("{uuid}")
     @Consumes(value = CONTENT_TYPE)
     @Produces(value = CONTENT_TYPE)
-    public Response delete(@PathParam("uuid") String uuid) throws RestException {
+    public Response deleteDomain(@PathParam("uuid") String uuid) throws RestException {
         control.deleteDomain(uuid);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.NO_CONTENT, info);
     }

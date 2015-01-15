@@ -10,7 +10,6 @@ import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
-import com.josue.kingdom.testutils.Logged;
 import com.josue.kingdom.testutils.RestHelper;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
@@ -35,10 +34,9 @@ import org.junit.runner.RunWith;
  *
  * @author Josue
  */
-@Logged
 @RunAsClient
 @RunWith(Arquillian.class)
-public class DomainRestIT {
+public class DomainResourceIT {
 
     private static final String DOMAINS = "/domains";
     private static final String OWNED_DOMAINS = "/owned";

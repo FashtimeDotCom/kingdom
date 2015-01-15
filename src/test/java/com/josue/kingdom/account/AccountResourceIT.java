@@ -5,16 +5,28 @@
  */
 package com.josue.kingdom.account;
 
+import com.josue.kingdom.testutils.ArquillianTestBase;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.container.test.api.TargetsContainer;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.fail;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  *
  * @author Josue
  */
+@RunAsClient
+@RunWith(Arquillian.class)
 public class AccountResourceIT {
 
-    public AccountResourceIT() {
+    @Deployment
+    @TargetsContainer("wildfly-managed")
+    public static WebArchive createDeployment() {
+        return ArquillianTestBase.createDefaultDeployment();
     }
 
     @Test
