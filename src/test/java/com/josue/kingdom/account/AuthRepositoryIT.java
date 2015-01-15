@@ -55,7 +55,7 @@ public class AuthRepositoryIT {
     private static final Logger LOG = Logger.getLogger(AuthRepositoryIT.class.getName());
 
     @Test
-    public void testFindApiCredentialByToken() {
+    public void testGetApiCredentialByToken() {
         APIDomainCredential apiDomainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
 
         APICredential foundApiCredentialByToken = repository.getAPICredentialByToken(apiDomainCredential.getCredential().getApiKey());
@@ -75,7 +75,7 @@ public class AuthRepositoryIT {
     }
 
     @Test
-    public void testFindManagerCredentialByLogin() {
+    public void testGetManagerCredentialByLogin() {
         Manager manager = InstanceHelper.createManager();
         repository.create(manager);
 

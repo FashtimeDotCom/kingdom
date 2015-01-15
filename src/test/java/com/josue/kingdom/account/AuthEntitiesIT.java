@@ -57,7 +57,7 @@ public class AuthEntitiesIT {
     CredentialRepository repository;
 
     @Test
-    public void testRole() {
+    public void testDomainRole() {
         Manager owner = InstanceHelper.createManager();
         repository.create(owner);
         Domain domain = InstanceHelper.createDomain(owner);
@@ -72,7 +72,6 @@ public class AuthEntitiesIT {
 
     @Test
     public void testDomain() {
-//        LOG.log(Level.INFO, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         Manager manager = InstanceHelper.createManager();
         repository.create(manager);
 
@@ -88,7 +87,7 @@ public class AuthEntitiesIT {
     }
 
     @Test
-    public void testApiCredential() {
+    public void testAPICredential() {
         Manager manager = InstanceHelper.createManager();
         repository.create(manager);
 
@@ -115,7 +114,7 @@ public class AuthEntitiesIT {
     }
 
     @Test
-    public void testApiDomainCredential() {
+    public void testAPIDomainCredential() {
         Manager manager = InstanceHelper.createManager();
         repository.create(manager);
 
