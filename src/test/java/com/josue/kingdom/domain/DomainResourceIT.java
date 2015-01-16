@@ -40,7 +40,7 @@ public class DomainResourceIT {
     private static final String DOMAINS = "/domains";
     private static final String OWNED_DOMAINS = "/owned";
     private static final String JOINED_DOMAINS = "/joined";
-    private static final String DOMAIN_ROLES = "/permissions";
+    private static final String DOMAIN_PERMISSIONS = "/permissions";
 
     @Deployment
     @TargetsContainer("wildfly-managed")
@@ -54,7 +54,7 @@ public class DomainResourceIT {
         assertEquals(Response.Status.CREATED, domainResponse.getStatus());
 
         DomainPermission permission = InstanceHelper.createPermission(domain);
-        ClientResponse permissionResponse = RestHelper.doPostRequest(permission, DOMAINS, DOMAIN_ROLES);
+        ClientResponse permissionResponse = RestHelper.doPostRequest(permission, DOMAINS, DOMAIN_PERMISSIONS);
         assertEquals(Response.Status.CREATED, permissionResponse.getStatus());
 
         Domain foundDomain = domainResponse.getEntity(new GenericType<Domain>() {

@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.sql.DataSource;
@@ -31,15 +30,15 @@ public class DatabaseHelper {
     private final String REMOVE_API_CREDENTIAL = "DELETE FROM API_CREDENTIAL";
     private final String REMOVE_INVITATION = "DELETE FROM INVITATION";
     private final String REMOVE_MANAGER = "DELETE FROM MANAGER";
-    private final String REMOVE_DOMAIN_ROLE = "DELETE FROM DOMAIN_ROLE";
+    private final String REMOVE_DOMAIN_PERMISSION = "DELETE FROM DOMAIN_PERMISSION";
     private final String REMOVE_DOMAIN = "DELETE FROM DOMAIN";
 
     private final String DISABLE_CONSTRAINTS = "SET FOREIGN_KEY_CHECKS=0;";
     private final String ENABLE_CONSTRAINT = "SET FOREIGN_KEY_CHECKS=1;";
 
     //TODO check full DB deletion... FK constraint error
-    @PostConstruct
-    public void init() {
+//    @PostConstruct
+    public void cleanDatabase() {
         try {
             LOG.log(Level.INFO, "### REMOVING DATABASE DATA ###");
             try (Statement statement = datasource.getConnection().createStatement()) {
@@ -51,7 +50,7 @@ public class DatabaseHelper {
                 statement.addBatch(REMOVE_API_CREDENTIAL);
                 statement.addBatch(REMOVE_INVITATION);
                 statement.addBatch(REMOVE_MANAGER);
-                statement.addBatch(REMOVE_DOMAIN_ROLE);
+                statement.addBatch(REMOVE_DOMAIN_PERMISSION);
                 statement.addBatch(REMOVE_DOMAIN);
 
                 statement.addBatch(ENABLE_CONSTRAINT);

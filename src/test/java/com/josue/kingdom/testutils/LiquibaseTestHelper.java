@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import liquibase.integration.cdi.CDILiquibaseConfig;
 import liquibase.integration.cdi.annotations.LiquibaseType;
@@ -12,6 +13,9 @@ import liquibase.resource.ResourceAccessor;
 
 @ApplicationScoped
 public class LiquibaseTestHelper {
+
+    @Inject
+    DatabaseHelper dbHelper;
 
     @Resource(lookup = "java:jboss/datasources/kingdom-testDS")
     private DataSource datasource;
@@ -25,6 +29,8 @@ public class LiquibaseTestHelper {
             config.setChangeLog("liquibase/changelog.xml");
             //Drop schema each test iteration
 //            config.setDropFirst(true);
+            dbHelper.cleanDatabase();
+
             return config;
         } catch (Exception e) {
             LOG.severe(e.getMessage());
