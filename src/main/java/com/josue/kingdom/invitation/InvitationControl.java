@@ -46,14 +46,14 @@ public class InvitationControl {
     //TODO make this application robust using validator, ere we have several possibles NPE, fix this ASAP
     public Invitation createInvitation(Invitation invitation) {
         Domain foundDomain = repository.find(Domain.class, invitation.getDomain().getUuid());
-        DomainPermission permission = repository.find(DomainPermission.class, invitation.getRole().getUuid());
+        DomainPermission permission = repository.find(DomainPermission.class, invitation.getPermission().getUuid());
 
         invitation.removeNonCreatable();
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setValidUntil(getInvitationExprirationDate());
         invitation.setDomain(foundDomain);
         invitation.setAuthorManager(credential.getManager());
-        invitation.setRole(permission);
+        invitation.setPermission(permission);
         invitation.setToken(UUID.randomUUID().toString());
 
         Manager manager = accountRepository.getManagerByEmail(invitation.getTargetEmail());

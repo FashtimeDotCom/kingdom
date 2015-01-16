@@ -79,14 +79,14 @@ public class CredentialControl {
             throw new ResourceNotFoundException(APICredential.class, credentialUuid);
         }
 
-        DomainPermission foundRole = permissionRepository.getDomainPermission(domainUuid, domainCredential.getRole().getName());
-        if (foundRole == null) {
-            throw new InvalidResourceArgException(APICredential.class, "Role name", domainCredential.getRole().getName());
+        DomainPermission foundPermission = permissionRepository.getDomainPermission(domainUuid, domainCredential.getPermission().getName());
+        if (foundPermission == null) {
+            throw new InvalidResourceArgException(APICredential.class, "Permission name", domainCredential.getPermission().getName());
         }
 
-        //Check permission for create API Role level
-        if (!SecurityUtils.getSubject().isPermitted(new AccessLevelPermission(domainUuid, foundRole))) {
-            throw new AuthorizationException(domainCredential.getRole());
+        //Check permission for create API Permission level
+        if (!SecurityUtils.getSubject().isPermitted(new AccessLevelPermission(domainUuid, foundPermission))) {
+            throw new AuthorizationException(domainCredential.getPermission());
         }
 
         foundCredential.copyUpdatable(domainCredential);
@@ -99,14 +99,14 @@ public class CredentialControl {
     public APIDomainCredential createAPICredential(String domainUuid, APIDomainCredential domainCredential) throws RestException {
 
         domainCredential.removeNonCreatable();
-        DomainPermission foundRole = permissionRepository.getDomainPermission(domainUuid, domainCredential.getRole().getName());
-        if (foundRole == null) {
-            throw new InvalidResourceArgException(APICredential.class, "Role name", domainCredential.getRole().getName());
+        DomainPermission foundPermission = permissionRepository.getDomainPermission(domainUuid, domainCredential.getPermission().getName());
+        if (foundPermission == null) {
+            throw new InvalidResourceArgException(APICredential.class, "Permission name", domainCredential.getPermission().getName());
         }
 
-        //Check permission for create API Role level
-        if (!SecurityUtils.getSubject().isPermitted(new AccessLevelPermission(domainUuid, foundRole))) {
-            throw new AuthorizationException(domainCredential.getRole());
+        //Check permission for create API Permission level
+        if (!SecurityUtils.getSubject().isPermitted(new AccessLevelPermission(domainUuid, foundPermission))) {
+            throw new AuthorizationException(domainCredential.getPermission());
         }
 
         Domain currentDomain = repository.find(Domain.class, domainUuid);
@@ -114,7 +114,7 @@ public class CredentialControl {
             throw new InvalidResourceArgException(Domain.class, "Domain", domainUuid);
         }
 
-        domainCredential.setRole(foundRole);
+        domainCredential.setPermission(foundPermission);
         domainCredential.setDomain(currentDomain);
         domainCredential.getCredential().setApiKey(generateAPIKey());
         domainCredential.getCredential().setStatus(CredentialStatus.ACTIVE);

@@ -86,7 +86,7 @@ public class APICredentialRealm extends AuthorizingRealm {
 
         Map<Object, DomainPermission> permissions = new HashMap<>();
         for (DomainCredential domainCredential : domainCredentials) {
-            permissions.put(domainCredential.getDomain().getUuid(), domainCredential.getRole());
+            permissions.put(domainCredential.getDomain().getUuid(), domainCredential.getPermission());
         }
 
 //        String fetchedDomainName = "uuid-doc-123-TODO-check-if-OK";

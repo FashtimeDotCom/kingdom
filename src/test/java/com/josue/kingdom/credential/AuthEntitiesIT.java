@@ -63,11 +63,11 @@ public class AuthEntitiesIT {
         Domain domain = InstanceHelper.createDomain(owner);
         repository.create(domain);
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         repository.create(permission);
 
-        DomainPermission foundRole = repository.find(DomainPermission.class, permission.getUuid());
-        assertEquals(permission, foundRole);
+        DomainPermission foundPermission = repository.find(DomainPermission.class, permission.getUuid());
+        assertEquals(permission, foundPermission);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class AuthEntitiesIT {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         repository.create(permission);
 
         APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, permission);
@@ -151,7 +151,7 @@ public class AuthEntitiesIT {
         ManagerCredential managerCredential = InstanceHelper.createManagerCredential(manager);
         repository.create(managerCredential);
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         permission.setDomain(domain);
         repository.create(permission);
 
@@ -188,7 +188,7 @@ public class AuthEntitiesIT {
         Domain domain = InstanceHelper.createDomain(authorManager);
         repository.create(domain);
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         repository.create(permission);
 
         Invitation invitation = new Invitation();
@@ -197,7 +197,7 @@ public class AuthEntitiesIT {
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setToken(UUID.randomUUID().toString());
         invitation.setDomain(domain);
-        invitation.setRole(permission);
+        invitation.setPermission(permission);
 
         invitation.setValidUntil(InstanceHelper.mysqlMilliSafeTimestamp());
         repository.create(invitation);

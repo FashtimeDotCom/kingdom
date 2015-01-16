@@ -68,7 +68,7 @@ public class CredentialRepositoryIT {
         Domain domain2 = InstanceHelper.createDomain(manager);
         repository.create(domain2);
 
-        DomainPermission simpleRole = domainCredential.getRole();
+        DomainPermission simplePermission = domainCredential.getPermission();
 
         APICredential apiCred1 = InstanceHelper.createAPICredential(manager);
         repository.create(apiCred1);
@@ -77,11 +77,11 @@ public class CredentialRepositoryIT {
         APICredential apiCred3 = InstanceHelper.createAPICredential(manager);
         repository.create(apiCred3);
 
-        APIDomainCredential apiDomainCred1 = InstanceHelper.createAPIDomainCredential(domain2, apiCred1, simpleRole);
+        APIDomainCredential apiDomainCred1 = InstanceHelper.createAPIDomainCredential(domain2, apiCred1, simplePermission);
         repository.create(apiDomainCred1);
-        APIDomainCredential apiDomainCred2 = InstanceHelper.createAPIDomainCredential(domain2, apiCred2, simpleRole);
+        APIDomainCredential apiDomainCred2 = InstanceHelper.createAPIDomainCredential(domain2, apiCred2, simplePermission);
         repository.create(apiDomainCred2);
-        APIDomainCredential apiDomainCred3 = InstanceHelper.createAPIDomainCredential(domain2, apiCred3, simpleRole);
+        APIDomainCredential apiDomainCred3 = InstanceHelper.createAPIDomainCredential(domain2, apiCred3, simplePermission);
         repository.create(apiDomainCred3);
 
         List<APIDomainCredential> foundDomainCredentials = repository.getAPICredentials(manager.getUuid(), domain1.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
@@ -126,16 +126,16 @@ public class CredentialRepositoryIT {
         Manager manager = domainCredential.getCredential().getManager();
         Domain domain1 = domainCredential.getDomain();
 
-        DomainPermission simpleRole = domainCredential.getRole();
+        DomainPermission simplePermission = domainCredential.getPermission();
 
         APICredential apiCredential1 = InstanceHelper.createAPICredential(manager);
         repository.create(apiCredential1);
         APICredential apiCredential2 = InstanceHelper.createAPICredential(manager);
         repository.create(apiCredential2);
 
-        APIDomainCredential apiDomainCredential2 = InstanceHelper.createAPIDomainCredential(domain1, apiCredential1, simpleRole);
+        APIDomainCredential apiDomainCredential2 = InstanceHelper.createAPIDomainCredential(domain1, apiCredential1, simplePermission);
         repository.create(apiDomainCredential2);
-        APIDomainCredential apiDomainCredential3 = InstanceHelper.createAPIDomainCredential(domain1, apiCredential2, simpleRole);
+        APIDomainCredential apiDomainCredential3 = InstanceHelper.createAPIDomainCredential(domain1, apiCredential2, simplePermission);
         repository.create(apiDomainCredential3);
 
         long countByManager = repository.countAPICredential(manager.getUuid());

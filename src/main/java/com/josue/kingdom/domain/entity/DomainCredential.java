@@ -23,7 +23,7 @@ public abstract class DomainCredential extends Resource {
     @JoinColumn(name = "domain_uuid")
     private Domain domain;
 
-    //Role for this domain
+    //Permission for this domain
     @OneToOne
     @JoinColumn(name = "domain_permission_uuid")
     private DomainPermission permission;
@@ -46,11 +46,11 @@ public abstract class DomainCredential extends Resource {
         this.domain = domain;
     }
 
-    public DomainPermission getRole() {
+    public DomainPermission getPermission() {
         return permission;
     }
 
-    public void setRole(DomainPermission permission) {
+    public void setPermission(DomainPermission permission) {
         this.permission = permission;
     }
 

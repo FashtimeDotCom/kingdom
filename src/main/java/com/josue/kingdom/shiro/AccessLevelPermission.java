@@ -40,11 +40,11 @@ public class AccessLevelPermission implements Permission {
 
         for (Map.Entry<Object, DomainPermission> entry : permission.getAccessLevels().entrySet()) {
             Object domain = entry.getKey();
-            DomainPermission requiredRole = entry.getValue();
+            DomainPermission requiredPermission = entry.getValue();
 
             if (this.getAccessLevels().containsKey(domain)) {
-                DomainPermission thisRole = this.getAccessLevels().get(domain);
-                if (thisRole.getLevel() >= requiredRole.getLevel()) {
+                DomainPermission thisPermission = this.getAccessLevels().get(domain);
+                if (thisPermission.getLevel() >= requiredPermission.getLevel()) {
                     return true;
                 }
             }

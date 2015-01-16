@@ -68,6 +68,7 @@ public class DomainControl {
         return foundDomain;
     }
 
+    //TODO add test case
     public Domain createDomain(Domain domain) throws RestException {
         //removes not allowed user input
         domain.removeNonCreatable();
@@ -79,7 +80,11 @@ public class DomainControl {
             throw new RestException(Domain.class, foundDomain.getUuid(), "Domain already exists with name '" + domain.getName() + "'", Response.Status.BAD_REQUEST);
         }
         domain.setOwner(actualManager);
+
+        //TODO this should run inside the TX
         repository.create(domain);
+        createDefaultPermissions(domain);
+
         return domain;
     }
 
@@ -108,8 +113,8 @@ public class DomainControl {
             throw new InvalidResourceArgException(DomainPermission.class, "level", "0");
         }
 
-        DomainPermission foundRole = repository.getDomainPermission(domainUuid, domainPermission.getLevel());
-        if (foundRole != null) { //Role level already exists
+        DomainPermission foundPermission = repository.getDomainPermission(domainUuid, domainPermission.getLevel());
+        if (foundPermission != null) { //Permission level already exists
             throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
         }
 
@@ -121,8 +126,8 @@ public class DomainControl {
     public DomainPermission updateDomainPermission(String domainUuid, String permissionUuid, DomainPermission domainPermission) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(domainUuid);
-        DomainPermission foundRole = repository.getDomainPermission(domainUuid, domainPermission.getLevel());
-        if (foundRole != null) { //Role level already exists
+        DomainPermission foundPermission = repository.getDomainPermission(domainUuid, domainPermission.getLevel());
+        if (foundPermission != null) { //Permission level already exists
             throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
         }
         if (domainPermission.getLevel() == 0) {
@@ -132,7 +137,7 @@ public class DomainControl {
         if (permissionByUuid == null) {
             throw new ResourceNotFoundException(DomainPermission.class, permissionUuid);
         }
-        if (foundRole != null) { //Role level already exists
+        if (foundPermission != null) { //Permission level already exists
             throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
         }
 
@@ -156,35 +161,35 @@ public class DomainControl {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(domainUuid);
         List<DomainPermission> domainPermissions = repository.getDomainPermissions(domainUuid);
-        DomainPermission foundRole = null;
-        DomainPermission foundReplacementRole = null;
+        DomainPermission foundPermission = null;
+        DomainPermission foundReplacementPermission = null;
         for (DomainPermission r : domainPermissions) { //reusing the result
             if (r.getUuid().equals(permissionUuid)) {
-                foundRole = r;
+                foundPermission = r;
             }
             //here r.getUuid() will never be null, so its safe to simply compare
             if (r.getUuid().equals(replacementUuid)) {
-                foundReplacementRole = r;
+                foundReplacementPermission = r;
             }
         }
         if (domainPermissions.size() == 1) {
             throw new RestException(DomainPermission.class, domainUuid, "A domain should have at least one permission", Response.Status.BAD_REQUEST);
         }
-        if (foundRole == null) {
+        if (foundPermission == null) {
             throw new ResourceNotFoundException(DomainPermission.class, permissionUuid);
         }
         //TODO this block should run inside the same transaction
         if (replacementUuid != null) {
-            if (foundReplacementRole == null) {
+            if (foundReplacementPermission == null) {
                 //replacement permission doenst exists
                 //not using ResourceNotFound because its an optional param
                 throw new RestException(DomainPermission.class, replacementUuid, "", Response.Status.BAD_REQUEST);
             } else {
                 //replacement exists and its valid...
-                //TODO change managers permissions and remove this Role
+                //TODO change managers permissions and remove this Permission
             }
         }
-        repository.delete(foundRole);
+        repository.delete(foundPermission);
     }
 
     public ListResource<DomainPermission> getDomainPermissions(String domainUuid) {
@@ -208,5 +213,28 @@ public class DomainControl {
             throw new ResourceNotFoundException(Domain.class, domainUuid);
         }
         return foundDomain;
+    }
+
+    private void createDefaultPermissions(Domain domain) {
+        DomainPermission permission = new DomainPermission();
+        permission.setLevel(1);
+        permission.setName("LEVEL_1");
+        permission.setDescription("Permission level 1");
+        permission.setDomain(domain);
+        repository.create(permission);
+
+        permission = new DomainPermission();
+        permission.setLevel(2);
+        permission.setName("LEVEL_2");
+        permission.setDescription("Permission level 2");
+        permission.setDomain(domain);
+        repository.create(permission);
+
+        permission = new DomainPermission();
+        permission.setLevel(3);
+        permission.setName("LEVEL_3");
+        permission.setDescription("Permission level 3");
+        permission.setDomain(domain);
+        repository.create(permission);
     }
 }

@@ -96,7 +96,7 @@ public class AuthRepositoryIT {
         Domain domain = InstanceHelper.createDomain(manager);
         repository.create(domain);
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         repository.create(permission);
 
         ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, permission);

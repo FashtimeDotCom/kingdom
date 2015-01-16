@@ -86,7 +86,7 @@ public class AccountControl {
         }
 
         Domain foundDomain = accountRepository.find(Domain.class, invitationByToken.getDomain().getUuid());
-        DomainPermission foundRole = accountRepository.find(DomainPermission.class, invitationByToken.getRole().getUuid());
+        DomainPermission foundPermission = accountRepository.find(DomainPermission.class, invitationByToken.getPermission().getUuid());
         //check if domain is null... etc
 
         //TODO All this block should run inside the same TX
@@ -102,7 +102,7 @@ public class AccountControl {
         ManagerDomainCredential manDomCred = new ManagerDomainCredential();
         manDomCred.setCredential(managerCredential);
         manDomCred.setDomain(foundDomain);
-        manDomCred.setRole(foundRole);
+        manDomCred.setPermission(foundPermission);
 
         accountRepository.create(manDomCred);
 

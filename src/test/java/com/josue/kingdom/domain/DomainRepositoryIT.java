@@ -73,11 +73,11 @@ public class DomainRepositoryIT {
         ManagerCredential invitedManagerCredential = InstanceHelper.createManagerCredential(invitedManager);
         repository.create(invitedManagerCredential);
 
-        DomainPermission simpleRole = InstanceHelper.createRole(domain);
-        repository.create(simpleRole);
+        DomainPermission simplePermission = InstanceHelper.createPermission(domain);
+        repository.create(simplePermission);
 
         //Assign the new manager to the Domain
-        ManagerDomainCredential invitedDomainCredential = InstanceHelper.createManagerDomainCredential(domain, invitedManagerCredential, simpleRole);
+        ManagerDomainCredential invitedDomainCredential = InstanceHelper.createManagerDomainCredential(domain, invitedManagerCredential, simplePermission);
         repository.create(invitedDomainCredential);
 
         List<ManagerDomainCredential> foundDomainCredentials = repository.getJoinedDomainsByManager(invitedManagerCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
@@ -112,18 +112,18 @@ public class DomainRepositoryIT {
         ManagerCredential invitedManagerCredential = InstanceHelper.createManagerCredential(invitedManager);
         repository.create(invitedManagerCredential);
 
-        DomainPermission simpleRole1 = InstanceHelper.createRole(domain1);
-        repository.create(simpleRole1);
+        DomainPermission simplePermission1 = InstanceHelper.createPermission(domain1);
+        repository.create(simplePermission1);
 
-        DomainPermission simpleRole2 = InstanceHelper.createRole(domain2);
-        repository.create(simpleRole2);
+        DomainPermission simplePermission2 = InstanceHelper.createPermission(domain2);
+        repository.create(simplePermission2);
 
         //Assign the new manager to the Domain 1
-        ManagerDomainCredential invitedDomainCredential1 = InstanceHelper.createManagerDomainCredential(domain1, invitedManagerCredential, simpleRole1);
+        ManagerDomainCredential invitedDomainCredential1 = InstanceHelper.createManagerDomainCredential(domain1, invitedManagerCredential, simplePermission1);
         repository.create(invitedDomainCredential1);
 
         //Assign the new manager to the Domain 2
-        ManagerDomainCredential invitedDomainCredential2 = InstanceHelper.createManagerDomainCredential(domain2, invitedManagerCredential, simpleRole2);
+        ManagerDomainCredential invitedDomainCredential2 = InstanceHelper.createManagerDomainCredential(domain2, invitedManagerCredential, simplePermission2);
         repository.create(invitedDomainCredential2);
 
         Long count = repository.countDomainCredentials(invitedManager.getUuid());

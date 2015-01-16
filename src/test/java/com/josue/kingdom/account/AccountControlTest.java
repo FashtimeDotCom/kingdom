@@ -131,7 +131,7 @@ public class AccountControlTest {
 
         Invitation invitation = new Invitation();
         invitation.setDomain(domain);
-        invitation.setRole(permission);
+        invitation.setPermission(permission);
         invitation.setTargetEmail("target@email.com");
         Invitation spyInvitation = Mockito.spy(invitation);
 
@@ -145,7 +145,7 @@ public class AccountControlTest {
 
         when(invRepository.getInvitationByToken(token)).thenReturn(spyInvitation);
         when(accountRepository.find(Domain.class, spyInvitation.getDomain().getUuid())).thenReturn(domain);
-        when(accountRepository.find(DomainPermission.class, spyInvitation.getRole().getUuid())).thenReturn(permission);
+        when(accountRepository.find(DomainPermission.class, spyInvitation.getPermission().getUuid())).thenReturn(permission);
         when(credentialRepository.getManagerCredentialByLogin(login)).thenReturn(null);
 
         ManagerCredential createdCredential = control.createCredential(token, spyManCred);
@@ -159,7 +159,7 @@ public class AccountControlTest {
         ManagerDomainCredential manDomCred = new ManagerDomainCredential();
         manDomCred.setCredential(spyManCred);
         manDomCred.setDomain(domain);
-        manDomCred.setRole(permission);
+        manDomCred.setPermission(permission);
 
         verify(accountRepository, times(1)).create(manDomCred);
     }

@@ -62,11 +62,11 @@ public class ManagerCredentialRealm extends AuthorizingRealm {
 //        //TODO check if can reuse the fetched entity, and if its safe
 //        String principalUuid = (String) getAvailablePrincipal(principals);
 //
-//        //TODO improve this... should not fetch the entire entity to use the Role
+//        //TODO improve this... should not fetch the entire entity to use the Permission
 //        List<ManagerDomainCredential> managerCredentials = persistence.getApiDomainCredentials(principalUuid);
-//        Map<Object, Role> permissions = new HashMap<>();
+//        Map<Object, Permission> permissions = new HashMap<>();
 //        for (APIDomainCredential adc : managerCredentials) {
-//            permissions.put(adc.getDomain().getUuid(), adc.getRole());
+//            permissions.put(adc.getDomain().getUuid(), adc.getPermission());
 //        }
 //
 ////        String fetchedDomainName = "uuid-doc-123-TODO-check-if-OK";
@@ -75,7 +75,7 @@ public class ManagerCredentialRealm extends AuthorizingRealm {
 //        Set<Permission> permSet = new HashSet<>();
 //        permSet.add(permissions);
 //        info.setObjectPermissions(permSet);
-////        info.setRoles(new HashSet<>(Arrays.asList(fetchedDomainName)));
+////        info.setPermissions(new HashSet<>(Arrays.asList(fetchedDomainName)));
         return info;
     }
 

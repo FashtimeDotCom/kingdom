@@ -48,12 +48,12 @@ public class DomainResourceIT {
         return ArquillianTestBase.createDefaultDeployment();
     }
 
-    private Domain createDomainWithRoles() {
+    private Domain createDomainWithPermissions() {
         Domain domain = InstanceHelper.createDomain(null);
         ClientResponse domainResponse = RestHelper.doPostRequest(domain, DOMAINS);
         assertEquals(Response.Status.CREATED, domainResponse.getStatus());
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         ClientResponse permissionResponse = RestHelper.doPostRequest(permission, DOMAINS, DOMAIN_ROLES);
         assertEquals(Response.Status.CREATED, permissionResponse.getStatus());
 
@@ -66,7 +66,7 @@ public class DomainResourceIT {
     //Testing against the self joined domain, when a new one is created
     @Test
     public void testGetJoinedDomains() throws Exception {
-        Domain domain = createDomainWithRoles();
+        Domain domain = createDomainWithPermissions();
 
         ClientResponse getDomainsResponse = RestHelper.doGetRequest(DOMAINS, JOINED_DOMAINS);
         assertEquals(Response.Status.OK, getDomainsResponse.getStatus());
@@ -85,7 +85,7 @@ public class DomainResourceIT {
     //Testing against the self joined domain, when a new one is created
     @Test
     public void testGetJoinedDomain() throws Exception {
-        Domain domain = createDomainWithRoles();
+        Domain domain = createDomainWithPermissions();
 
         ClientResponse getDomainsResponse = RestHelper.doGetRequest(DOMAINS, JOINED_DOMAINS, "/" + domain.getUuid());
         assertEquals(Response.Status.OK, getDomainsResponse.getStatus());
@@ -97,7 +97,7 @@ public class DomainResourceIT {
 
     @Test
     public void testGetOwnedDomains() throws Exception {
-        Domain createdDomain = createDomainWithRoles();
+        Domain createdDomain = createDomainWithPermissions();
 
         ClientResponse getDomainsResponse = RestHelper.doGetRequest(DOMAINS, OWNED_DOMAINS);
         assertEquals(Response.Status.OK, getDomainsResponse.getStatus());
@@ -109,7 +109,7 @@ public class DomainResourceIT {
 
     @Test
     public void testGetOwnedDomain() throws Exception {
-        Domain createdDomain = createDomainWithRoles();
+        Domain createdDomain = createDomainWithPermissions();
 
         ClientResponse getDomainResponse = RestHelper.doGetRequest(DOMAINS, OWNED_DOMAINS, "/" + createdDomain.getUuid());
         assertEquals(Response.Status.OK, getDomainResponse.getStatus());
@@ -120,12 +120,12 @@ public class DomainResourceIT {
 
     @Test
     public void testCreateDomain() throws Exception {
-        createDomainWithRoles();
+        createDomainWithPermissions();
     }
 
     @Test
     public void testUpdateDomain() throws Exception {
-        Domain createdDomain = createDomainWithRoles();
+        Domain createdDomain = createDomainWithPermissions();
 
         createdDomain.setDescription("new description");
         //Cannot be updated
@@ -144,7 +144,7 @@ public class DomainResourceIT {
 
     @Test
     public void testDeleteDomain() throws Exception {
-        Domain createdDomain = createDomainWithRoles();
+        Domain createdDomain = createDomainWithPermissions();
 
         ClientResponse deleteResponse = RestHelper.doDeleteRequest(DOMAINS, "/" + createdDomain.getUuid());
         assertEquals(Response.Status.NO_CONTENT, deleteResponse.getStatus());

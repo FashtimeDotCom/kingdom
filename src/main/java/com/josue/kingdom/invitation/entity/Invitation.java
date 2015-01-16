@@ -109,11 +109,11 @@ public class Invitation extends Resource {
         this.domain = domain;
     }
 
-    public DomainPermission getRole() {
+    public DomainPermission getPermission() {
         return permission;
     }
 
-    public void setRole(DomainPermission permission) {
+    public void setPermission(DomainPermission permission) {
         this.permission = permission;
     }
 

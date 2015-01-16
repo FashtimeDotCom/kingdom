@@ -68,10 +68,10 @@ public class DomainPermissionSubResource {
     @Produces(value = CONTENT_TYPE)
     public Response deleteDomainPermission(@PathParam("domainUuid") String domainUuid,
             @PathParam("permissionUuid") String permissionUuid,
-            @QueryParam("replacement") String replacementRoleUuid,
+            @QueryParam("replacement") String replacementPermissionUuid,
             DomainPermission domainPermission) throws RestException {
 
-        control.deleteDomainPermission(domainUuid, permissionUuid, replacementRoleUuid);
+        control.deleteDomainPermission(domainUuid, permissionUuid, replacementPermissionUuid);
         return Response.noContent().build();
     }
 

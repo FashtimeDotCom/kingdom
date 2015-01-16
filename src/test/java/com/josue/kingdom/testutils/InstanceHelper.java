@@ -41,10 +41,10 @@ public abstract class InstanceHelper {
         return cal.getTime();
     }
 
-    //#### Role ####
-    public static DomainPermission createRole(Domain domain) {
+    //#### Permission ####
+    public static DomainPermission createPermission(Domain domain) {
         DomainPermission permission = new DomainPermission();
-        permission.setDescription("Role description");
+        permission.setDescription("Permission description");
         permission.setLevel(new Random().nextInt());
         permission.setName("ADMIN");
         permission.setDomain(domain);
@@ -94,7 +94,7 @@ public abstract class InstanceHelper {
         ManagerDomainCredential domainCredential = new ManagerDomainCredential();
         domainCredential.setDomain(domain);
         domainCredential.setCredential(credential);
-        domainCredential.setRole(permission);
+        domainCredential.setPermission(permission);
         return domainCredential;
     }
 
@@ -104,7 +104,7 @@ public abstract class InstanceHelper {
         domainCredential.setName("api-key-name");
         domainCredential.setDomain(domain);
         domainCredential.setCredential(credential);
-        domainCredential.setRole(permission);
+        domainCredential.setPermission(permission);
         return domainCredential;
     }
 
@@ -122,7 +122,7 @@ public abstract class InstanceHelper {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         repository.create(permission);
 
         APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, permission);
@@ -144,7 +144,7 @@ public abstract class InstanceHelper {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         repository.create(permission);
 
         ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, permission);

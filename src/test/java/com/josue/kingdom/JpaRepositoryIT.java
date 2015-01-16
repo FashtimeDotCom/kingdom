@@ -58,7 +58,7 @@ public class JpaRepositoryIT {
         Domain domain = InstanceHelper.createDomain(manager);
         repo.create(domain);
 
-        DomainPermission permission = InstanceHelper.createRole(domain);
+        DomainPermission permission = InstanceHelper.createPermission(domain);
         repo.create(permission);
         assertNotNull(permission.getUuid());
         return permission;
@@ -69,8 +69,8 @@ public class JpaRepositoryIT {
 
         DomainPermission permission = simpleCreate(repo);
 
-        DomainPermission foundRole = repo.find(DomainPermission.class, permission.getUuid());
-        assertNotNull(foundRole);
+        DomainPermission foundPermission = repo.find(DomainPermission.class, permission.getUuid());
+        assertNotNull(foundPermission);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class JpaRepositoryIT {
 
         DomainPermission permission = simpleCreate(repo);
 
-        //Fail prone, if the random methos generate an existing Role.level
+        //Fail prone, if the random methos generate an existing Permission.level
         //For this test purpose its enough
         permission.setLevel(new Random().nextInt(Integer.MAX_VALUE) + 1);
         DomainPermission editedEntity = repo.update(permission);
@@ -91,16 +91,16 @@ public class JpaRepositoryIT {
         DomainPermission permission = simpleCreate(repo);
 
         repo.delete(permission);
-        DomainPermission foundRole = repo.find(DomainPermission.class, permission.getUuid());
-        assertNull(foundRole);
+        DomainPermission foundPermission = repo.find(DomainPermission.class, permission.getUuid());
+        assertNull(foundPermission);
     }
 
     @Test
     public void testFind() {
 
         DomainPermission permission = simpleCreate(repo);
-        DomainPermission foundRole = repo.find(DomainPermission.class, permission.getUuid());
-        assertEquals(permission, foundRole);
+        DomainPermission foundPermission = repo.find(DomainPermission.class, permission.getUuid());
+        assertEquals(permission, foundPermission);
     }
 
     @Test
@@ -110,17 +110,17 @@ public class JpaRepositoryIT {
         Domain domain = InstanceHelper.createDomain(manager);
         repo.create(domain);
 
-        DomainPermission permission1 = InstanceHelper.createRole(domain);
+        DomainPermission permission1 = InstanceHelper.createPermission(domain);
         permission1.setLevel(5);
         repo.create(permission1);
-        DomainPermission permission2 = InstanceHelper.createRole(domain);
+        DomainPermission permission2 = InstanceHelper.createPermission(domain);
         permission2.setLevel(3);
         repo.create(permission2);
 
-        List<DomainPermission> foundRoles = repo.findAll(DomainPermission.class);
-        assertTrue(foundRoles.size() >= 2);
-        assertTrue(foundRoles.contains(permission1));
-        assertTrue(foundRoles.contains(permission2));
+        List<DomainPermission> foundPermissions = repo.findAll(DomainPermission.class);
+        assertTrue(foundPermissions.size() >= 2);
+        assertTrue(foundPermissions.contains(permission1));
+        assertTrue(foundPermissions.contains(permission2));
     }
 
     @Test
@@ -135,28 +135,28 @@ public class JpaRepositoryIT {
         // because the test environment pre-load some data
         int limit = 50;
         int offset = 50;
-        List<DomainPermission> foundRoles1 = repo.findRange(DomainPermission.class, limit, offset);
-        assertTrue(foundRoles1.size() >= 50);
+        List<DomainPermission> foundPermissions1 = repo.findRange(DomainPermission.class, limit, offset);
+        assertTrue(foundPermissions1.size() >= 50);
 
         limit = 100;
         offset = 50;
-        List<DomainPermission> foundRoles2 = repo.findRange(DomainPermission.class, limit, offset);
-        assertTrue(foundRoles2.size() >= 50);
+        List<DomainPermission> foundPermissions2 = repo.findRange(DomainPermission.class, limit, offset);
+        assertTrue(foundPermissions2.size() >= 50);
 
         limit = 100;
         offset = 0;
-        List<DomainPermission> foundRoles3 = repo.findRange(DomainPermission.class, limit, offset);
-        assertTrue(foundRoles3.size() >= limit);
+        List<DomainPermission> foundPermissions3 = repo.findRange(DomainPermission.class, limit, offset);
+        assertTrue(foundPermissions3.size() >= limit);
 
         limit = 1;
         offset = 99;
-        List<DomainPermission> foundRoles4 = repo.findRange(DomainPermission.class, limit, offset);
-        assertTrue(foundRoles4.size() >= limit);
+        List<DomainPermission> foundPermissions4 = repo.findRange(DomainPermission.class, limit, offset);
+        assertTrue(foundPermissions4.size() >= limit);
 
         limit = 10;
         offset = 95;
-        List<DomainPermission> foundRoles5 = repo.findRange(DomainPermission.class, limit, offset);
-        assertTrue(foundRoles5.size() >= 5);
+        List<DomainPermission> foundPermissions5 = repo.findRange(DomainPermission.class, limit, offset);
+        assertTrue(foundPermissions5.size() >= 5);
 
     }
 
@@ -176,17 +176,17 @@ public class JpaRepositoryIT {
     public void testExtractSingleResultFromList() {
         int total = 5;
 
-        DomainPermission someRole = null;
+        DomainPermission somePermission = null;
         for (int i = 0; i < total; i++) {
-            someRole = simpleCreate(repo);
+            somePermission = simpleCreate(repo);
         }
-        assertNotNull(someRole);
+        assertNotNull(somePermission);
 
         TypedQuery<DomainPermission> query = em.createQuery("SELECT ro from DomainPermission ro where ro.uuid = :uuid", DomainPermission.class);
-        query.setParameter("uuid", someRole.getUuid());
+        query.setParameter("uuid", somePermission.getUuid());
         List<DomainPermission> resultList = query.getResultList();
-        DomainPermission foundRole = repo.extractSingleResultFromList(resultList);
-        assertEquals(someRole, foundRole);
+        DomainPermission foundPermission = repo.extractSingleResultFromList(resultList);
+        assertEquals(somePermission, foundPermission);
     }
 
 }
