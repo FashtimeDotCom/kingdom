@@ -6,6 +6,7 @@
 package com.josue.kingdom.domain;
 
 import com.josue.kingdom.domain.entity.Domain;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.testutils.ArquillianTestBase;
@@ -13,8 +14,8 @@ import com.josue.kingdom.testutils.InstanceHelper;
 import com.josue.kingdom.testutils.RestHelper;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
-import java.io.IOException;
 import java.util.Date;
+import javax.ws.rs.core.Response;
 import static org.hamcrest.CoreMatchers.not;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -23,10 +24,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,6 +40,7 @@ public class DomainResourceIT {
     private static final String DOMAINS = "/domains";
     private static final String OWNED_DOMAINS = "/owned";
     private static final String JOINED_DOMAINS = "/joined";
+    private static final String DOMAIN_ROLES = "/permissions";
 
     @Deployment
     @TargetsContainer("wildfly-managed")
@@ -48,73 +48,109 @@ public class DomainResourceIT {
         return ArquillianTestBase.createDefaultDeployment();
     }
 
-    @Test
-    public void testListJoinedDomains() throws IOException {
-        ClientResponse response = RestHelper.doGetRequest(DOMAINS, JOINED_DOMAINS);
+    private Domain createDomainWithRoles() {
+        Domain domain = InstanceHelper.createDomain(null);
+        ClientResponse domainResponse = RestHelper.doPostRequest(domain, DOMAINS);
+        assertEquals(Response.Status.CREATED, domainResponse.getStatus());
 
-        assertEquals(200, response.getStatus());
+        DomainPermission permission = InstanceHelper.createRole(domain);
+        ClientResponse permissionResponse = RestHelper.doPostRequest(permission, DOMAINS, DOMAIN_ROLES);
+        assertEquals(Response.Status.CREATED, permissionResponse.getStatus());
 
-        ListResource<ManagerDomainCredential> manDomainCreds = response.getEntity(new GenericType<ListResource<ManagerDomainCredential>>() {
+        Domain foundDomain = domainResponse.getEntity(new GenericType<Domain>() {
         });
-        assertEquals(2, manDomainCreds.getItems().size());
-        for (ManagerDomainCredential mdc : manDomainCreds.getItems()) {
-            //Credential should not be returned on rest calls
-            assertNull(mdc.getCredential());
-        }
-
+        assertNotNull(foundDomain);
+        return foundDomain;
     }
 
+    //Testing against the self joined domain, when a new one is created
     @Test
-    public void testListOwnedDomains() throws IOException {
-        ClientResponse response = RestHelper.doGetRequest(DOMAINS, OWNED_DOMAINS);
+    public void testGetJoinedDomains() throws Exception {
+        Domain domain = createDomainWithRoles();
 
-        assertEquals(200, response.getStatus());
-
-        ListResource<Domain> domains = response.getEntity(new GenericType<ListResource<Domain>>() {
+        ClientResponse getDomainsResponse = RestHelper.doGetRequest(DOMAINS, JOINED_DOMAINS);
+        assertEquals(Response.Status.OK, getDomainsResponse.getStatus());
+        ListResource<ManagerDomainCredential> domains = getDomainsResponse.getEntity(new GenericType<ListResource<ManagerDomainCredential>>() {
         });
-        //TODO should generate all Resources stack for testing ?
         assertTrue(domains.getItems().size() >= 1);
+        boolean hasDomain = false;
+        for (ManagerDomainCredential d : domains.getItems()) {
+            if (d.getDomain() == domain) {
+                hasDomain = true;
+            }
+        }
+        assertTrue(hasDomain);
+    }
+
+    //Testing against the self joined domain, when a new one is created
+    @Test
+    public void testGetJoinedDomain() throws Exception {
+        Domain domain = createDomainWithRoles();
+
+        ClientResponse getDomainsResponse = RestHelper.doGetRequest(DOMAINS, JOINED_DOMAINS, "/" + domain.getUuid());
+        assertEquals(Response.Status.OK, getDomainsResponse.getStatus());
+        ManagerDomainCredential domainCredential = getDomainsResponse.getEntity(new GenericType<ManagerDomainCredential>() {
+        });
+        assertNotNull(domain);
+        assertEquals(domain, domainCredential);
     }
 
     @Test
-    public void testCreate() {
-        Domain domain = InstanceHelper.createDomain(null);
-        ClientResponse response = RestHelper.doPostRequest(domain, DOMAINS);
-        assertEquals(201, response.getStatus());
+    public void testGetOwnedDomains() throws Exception {
+        Domain createdDomain = createDomainWithRoles();
 
-        Domain createdDomain = response.getEntity(new GenericType<Domain>() {
+        ClientResponse getDomainsResponse = RestHelper.doGetRequest(DOMAINS, OWNED_DOMAINS);
+        assertEquals(Response.Status.OK, getDomainsResponse.getStatus());
+        ListResource<Domain> domains = getDomainsResponse.getEntity(new GenericType<ListResource<Domain>>() {
         });
-        assertNotNull(createdDomain);
-        assertNotNull(createdDomain.getUuid());
-        assertEquals(domain.getName(), createdDomain.getName());
+        assertTrue(domains.getItems().size() >= 1);
+        assertTrue(domains.getItems().contains(createdDomain));
     }
 
     @Test
-    public void testUpdate() {
-        Domain domain = InstanceHelper.createDomain(null);
-        ClientResponse response = RestHelper.doPostRequest(domain, DOMAINS);
-        assertEquals(201, response.getStatus());
-        Domain createdDomain = response.getEntity(new GenericType<Domain>() {
+    public void testGetOwnedDomain() throws Exception {
+        Domain createdDomain = createDomainWithRoles();
+
+        ClientResponse getDomainResponse = RestHelper.doGetRequest(DOMAINS, OWNED_DOMAINS, "/" + createdDomain.getUuid());
+        assertEquals(Response.Status.OK, getDomainResponse.getStatus());
+        Domain foundDomain = getDomainResponse.getEntity(new GenericType<Domain>() {
         });
+        assertEquals(createdDomain, foundDomain);
+    }
+
+    @Test
+    public void testCreateDomain() throws Exception {
+        createDomainWithRoles();
+    }
+
+    @Test
+    public void testUpdateDomain() throws Exception {
+        Domain createdDomain = createDomainWithRoles();
 
         createdDomain.setDescription("new description");
         //Cannot be updated
-        String newName = "NEW-NAME";
-        createdDomain.setName(newName);
+        createdDomain.setName("new-name");
+        createdDomain.setUuid("illegal-uuid-set");
         createdDomain.setDateCreated(new Date());
 
         ClientResponse updateResponse = RestHelper.doPutRequest(createdDomain, DOMAINS, "/" + createdDomain.getUuid());
-        assertEquals(200, updateResponse.getStatus());
         Domain updatedDomain = updateResponse.getEntity(new GenericType<Domain>() {
         });
-
         assertNotNull(updatedDomain.getLastUpdate());
-        assertEquals(createdDomain.getDescription(), updatedDomain.getDescription());
-        assertThat(newName, not(updatedDomain.getName()));
+        assertEquals(updatedDomain.getDescription(), updatedDomain.getDescription());
+        assertThat(createdDomain.getName(), not(updatedDomain.getName()));
+        assertThat(createdDomain.getUuid(), not(updatedDomain.getUuid()));
     }
 
     @Test
-    public void testGetDomainRoles() {
-        fail("The test case is a prototype.");
+    public void testDeleteDomain() throws Exception {
+        Domain createdDomain = createDomainWithRoles();
+
+        ClientResponse deleteResponse = RestHelper.doDeleteRequest(DOMAINS, "/" + createdDomain.getUuid());
+        assertEquals(Response.Status.NO_CONTENT, deleteResponse.getStatus());
+
+        ClientResponse getDomainResponse = RestHelper.doGetRequest(DOMAINS, OWNED_DOMAINS, "/" + createdDomain.getUuid());
+        assertEquals(Response.Status.NOT_FOUND, getDomainResponse.getStatus());
+
     }
 }

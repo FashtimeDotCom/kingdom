@@ -88,7 +88,7 @@ public class AccountResource {
     @POST
     @Produces(value = CONTENT_TYPE)
     @Consumes(value = CONTENT_TYPE)
-    public Response createAccount(@QueryParam("token") String token, ManagerCredential managerCredential) {
+    public Response createAccount(@QueryParam("token") String token, ManagerCredential managerCredential) throws RestException {
         ManagerCredential createdCredential = control.createCredential(token, managerCredential);
         return ResponseUtils.buildSimpleResponse(createdCredential, Response.Status.CREATED, info);
     }

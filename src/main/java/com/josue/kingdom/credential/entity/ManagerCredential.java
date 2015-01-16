@@ -42,7 +42,7 @@ public class ManagerCredential extends Credential {
     }
 
     @Override
-    public void copyUpdatebleFields(Resource newData) {
+    public void copyUpdatable(Resource newData) {
         if (newData instanceof ManagerCredential) {
             ManagerCredential managerCredential = (ManagerCredential) newData;
             password = managerCredential.password == null ? password : managerCredential.password;

@@ -10,11 +10,13 @@ import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.credential.entity.CredentialStatus;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.Domain;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
-import com.josue.kingdom.domain.entity.DomainRole;
 import com.josue.kingdom.invitation.InvitationRepository;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.rest.ListResource;
+import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
+import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.util.ListResourceUtil;
 import java.math.BigInteger;
@@ -70,24 +72,25 @@ public class AccountControl {
     }
 
     //TODO validate all cases (username already exists.. etc)
-    public ManagerCredential createCredential(String token, ManagerCredential managerCredential) {
+    public ManagerCredential createCredential(String token, ManagerCredential managerCredential) throws RestException {
         Invitation invitationByToken = invRepository.getInvitationByToken(token);
         if (invitationByToken == null) {
-            //throw new Exception ???? AccountExceptin... business Exception ?? create better EX !
-            return null;
+            //TODOthrow new Exception ???? AccountExceptin... business Exception ?? create better EX !
+            throw new ResourceNotFoundException(Invitation.class, token);
         }
         //Check
         String foundLogin = credentialRepository.getManagerCredentialByLogin(managerCredential.getLogin());
         if (foundLogin != null) {
             //TODO throw another exception, check for exception for package modules
+            throw new ResourceAlreadyExistsException(ManagerCredential.class, token);
         }
 
         Domain foundDomain = accountRepository.find(Domain.class, invitationByToken.getDomain().getUuid());
-        DomainRole foundRole = accountRepository.find(DomainRole.class, invitationByToken.getRole().getUuid());
+        DomainPermission foundRole = accountRepository.find(DomainPermission.class, invitationByToken.getRole().getUuid());
         //check if domain is null... etc
 
         //TODO All this block should run inside the same TX
-        managerCredential.removeNonCreatableFields();
+        managerCredential.removeNonCreatable();
         //Email should be the same from invitation
         managerCredential.getManager().setEmail(invitationByToken.getTargetEmail());
         managerCredential.setStatus(CredentialStatus.ACTIVE);

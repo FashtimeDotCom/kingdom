@@ -4,7 +4,7 @@ import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
@@ -68,7 +68,7 @@ public class CredentialRepositoryIT {
         Domain domain2 = InstanceHelper.createDomain(manager);
         repository.create(domain2);
 
-        DomainRole simpleRole = domainCredential.getRole();
+        DomainPermission simpleRole = domainCredential.getRole();
 
         APICredential apiCred1 = InstanceHelper.createAPICredential(manager);
         repository.create(apiCred1);
@@ -126,7 +126,7 @@ public class CredentialRepositoryIT {
         Manager manager = domainCredential.getCredential().getManager();
         Domain domain1 = domainCredential.getDomain();
 
-        DomainRole simpleRole = domainCredential.getRole();
+        DomainPermission simpleRole = domainCredential.getRole();
 
         APICredential apiCredential1 = InstanceHelper.createAPICredential(manager);
         repository.create(apiCredential1);

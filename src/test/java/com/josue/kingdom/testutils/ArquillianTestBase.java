@@ -35,6 +35,7 @@ public abstract class ArquillianTestBase {
                 .addClass(LiquibaseTestHelper.class)
                 .addAsResource("liquibase")
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
+                .addAsResource("META-INF/services/javax.enterprise.inject.spi.Extension")
                 //                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsWebInfResource("test-ds.xml") //generic test DS
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))

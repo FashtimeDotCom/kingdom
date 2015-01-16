@@ -47,7 +47,7 @@ public class DomainResource {
     @GET
     @Path("joined")
     @Produces(value = CONTENT_TYPE)
-    public Response listJoinedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
+    public Response getJoinedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
         ListResource<ManagerDomainCredential> foundDomains = control.getJoinedDomains(limit, offset);
 
@@ -57,7 +57,7 @@ public class DomainResource {
     @GET
     @Path("joined/{uuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response listJoinedDomainByUuid(@PathParam("uuid") String uuid) throws RestException {
+    public Response getJoinedDomain(@PathParam("uuid") String uuid) throws RestException {
         ManagerDomainCredential foundDomains = control.getJoinedDomain(uuid);
         return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
     }
@@ -75,7 +75,7 @@ public class DomainResource {
     @GET
     @Path("owned/{uuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response getOwnedDomainByUuid(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
+    public Response getOwnedDomain(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
         ListResource<Domain> foundDomains = control.getOwnedDomains(limit, offset);
 
@@ -85,7 +85,7 @@ public class DomainResource {
     @POST
     @Consumes(value = CONTENT_TYPE)
     @Produces(value = CONTENT_TYPE)
-    public Response create(Domain domain) throws RestException {
+    public Response createDomain(Domain domain) throws RestException {
         Domain createdDomain = control.createDomain(domain);
         return ResponseUtils.buildSimpleResponse(createdDomain, Response.Status.CREATED, info);
     }
@@ -116,15 +116,15 @@ public class DomainResource {
     APICredentialSubResource credentialLocator;
 
     @Inject
-    DomainRoleSubResource roleLocator;
+    DomainPermissionSubResource permissionLocator;
 
     @Path("{domainUuid}/apikeys")
     public APICredentialSubResource credentials() throws RestException {
         return credentialLocator;
     }
 
-    @Path("{domainUuid}/roles")
-    public DomainRoleSubResource roles() throws RestException {
-        return roleLocator;
+    @Path("{domainUuid}/permissions")
+    public DomainPermissionSubResource permissions() throws RestException {
+        return permissionLocator;
     }
 }

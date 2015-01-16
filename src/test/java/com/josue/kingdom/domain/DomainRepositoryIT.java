@@ -9,15 +9,13 @@ import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
@@ -42,9 +40,6 @@ public class DomainRepositoryIT {
     private static final Integer DEFAULT_OFFSET = 0;
 
     private static final Logger LOG = Logger.getLogger(DomainRepositoryIT.class.getName());
-
-    @PersistenceContext
-    EntityManager em;
 
     @Inject
     DomainRepository repository;
@@ -78,7 +73,7 @@ public class DomainRepositoryIT {
         ManagerCredential invitedManagerCredential = InstanceHelper.createManagerCredential(invitedManager);
         repository.create(invitedManagerCredential);
 
-        DomainRole simpleRole = InstanceHelper.createRole(domain);
+        DomainPermission simpleRole = InstanceHelper.createRole(domain);
         repository.create(simpleRole);
 
         //Assign the new manager to the Domain
@@ -117,10 +112,10 @@ public class DomainRepositoryIT {
         ManagerCredential invitedManagerCredential = InstanceHelper.createManagerCredential(invitedManager);
         repository.create(invitedManagerCredential);
 
-        DomainRole simpleRole1 = InstanceHelper.createRole(domain1);
+        DomainPermission simpleRole1 = InstanceHelper.createRole(domain1);
         repository.create(simpleRole1);
 
-        DomainRole simpleRole2 = InstanceHelper.createRole(domain2);
+        DomainPermission simpleRole2 = InstanceHelper.createRole(domain2);
         repository.create(simpleRole2);
 
         //Assign the new manager to the Domain 1

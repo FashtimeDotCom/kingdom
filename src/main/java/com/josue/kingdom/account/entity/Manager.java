@@ -6,6 +6,7 @@
 package com.josue.kingdom.account.entity;
 
 import com.josue.kingdom.rest.Resource;
+import com.josue.kingdom.util.validation.Email;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,11 +32,11 @@ public class Manager extends Resource {
     @Column(name = "last_name")
     private String lastName;
 
-    @NotNull
+    @Email
     private String email;
 
     @Override
-    public void copyUpdatebleFields(Resource newData) {
+    public void copyUpdatable(Resource newData) {
         if (newData instanceof Manager) {
             Manager manager = (Manager) newData;
             firstName = manager.firstName == null ? firstName : manager.firstName;

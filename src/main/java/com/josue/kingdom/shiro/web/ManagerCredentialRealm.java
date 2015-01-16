@@ -64,13 +64,13 @@ public class ManagerCredentialRealm extends AuthorizingRealm {
 //
 //        //TODO improve this... should not fetch the entire entity to use the Role
 //        List<ManagerDomainCredential> managerCredentials = persistence.getApiDomainCredentials(principalUuid);
-//        Map<Object, Role> roles = new HashMap<>();
+//        Map<Object, Role> permissions = new HashMap<>();
 //        for (APIDomainCredential adc : managerCredentials) {
-//            roles.put(adc.getDomain().getUuid(), adc.getRole());
+//            permissions.put(adc.getDomain().getUuid(), adc.getRole());
 //        }
 //
 ////        String fetchedDomainName = "uuid-doc-123-TODO-check-if-OK";
-//        AccessLevelPermission permissions = new AccessLevelPermission(roles);
+//        AccessLevelPermission permissions = new AccessLevelPermission(permissions);
 //
 //        Set<Permission> permSet = new HashSet<>();
 //        permSet.add(permissions);

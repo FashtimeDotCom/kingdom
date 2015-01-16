@@ -7,7 +7,7 @@ package com.josue.kingdom.domain;
 
 import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
@@ -37,6 +37,14 @@ public class DomainRepository extends JpaRepository {
         query.setParameter("managerUuid", managerUuid);
         List<ManagerDomainCredential> resultList = query.getResultList();
         return resultList;
+    }
+
+    public Domain getOwnedDomain(String domainUuid, String managerUuid) {
+        Query query = em.createQuery("SELECT domain FROM Domain domain WHERE domain.owner.uuid = :managerUuid AND domain.uuid = :domainUuid", Domain.class);
+        query.setParameter("domainUuid", domainUuid);
+        query.setParameter("managerUuid", managerUuid);
+        List<Domain> resultList = query.getResultList();
+        return extractSingleResultFromList(resultList);
     }
 
     public List<Domain> getOwnedDomainsByManager(String managerUuid, Integer limit, Integer offset) {
@@ -70,18 +78,26 @@ public class DomainRepository extends JpaRepository {
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public DomainRole getDomainRole(String domainUuid, String roleName) {
-        TypedQuery<DomainRole> query = em.createQuery("SELECT r FROM DomainRole r WHERE r.domain.uuid = :domainUuid AND r.name = :roleName", DomainRole.class);
-        query.setParameter("roleName", roleName);
-        List<DomainRole> roles = query.getResultList();
-        return extractSingleResultFromList(roles);
+    public DomainPermission getDomainPermission(String domainUuid, String permissionName) {
+        TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE r.domain.uuid = :domainUuid AND r.name = :permissionName", DomainPermission.class);
+        query.setParameter("permissionName", permissionName);
+        List<DomainPermission> permissions = query.getResultList();
+        return extractSingleResultFromList(permissions);
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public DomainRole getDomainRole(String domainUuid, int roleLevel) {
-        TypedQuery<DomainRole> query = em.createQuery("SELECT r FROM DomainRole r WHERE  r.domain.uuid = :domainUuid AND r.level = :roleLevel", DomainRole.class);
-        query.setParameter("roleLevel", roleLevel);
-        List<DomainRole> roles = query.getResultList();
-        return extractSingleResultFromList(roles);
+    public List<DomainPermission> getDomainPermissions(String domainUuid) {
+        TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE  r.domain.uuid = :domainUuid", DomainPermission.class);
+        List<DomainPermission> permissions = query.getResultList();
+        return permissions;
     }
+
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public DomainPermission getDomainPermission(String domainUuid, int permissionLevel) {
+        TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE  r.domain.uuid = :domainUuid AND r.level = :permissionLevel", DomainPermission.class);
+        query.setParameter("permissionLevel", permissionLevel);
+        List<DomainPermission> permissions = query.getResultList();
+        return extractSingleResultFromList(permissions);
+    }
+
 }

@@ -25,16 +25,16 @@ public abstract class DomainCredential extends Resource {
 
     //Role for this domain
     @OneToOne
-    @JoinColumn(name = "domain_role_uuid")
-    private DomainRole role;
+    @JoinColumn(name = "domain_permission_uuid")
+    private DomainPermission permission;
 
     @Override
-    protected void copyUpdatebleFields(Resource newData) {
+    protected void copyUpdatable(Resource newData) {
         if (newData instanceof DomainCredential) {
             DomainCredential domainCredential = (DomainCredential) newData;
-            domain.copyUpdatebleFields(domainCredential.domain);
+            domain.copyUpdatable(domainCredential.domain);
 
-            role = domainCredential.role == null ? role : domainCredential.role;
+            permission = domainCredential.permission == null ? permission : domainCredential.permission;
         }
     }
 
@@ -46,19 +46,19 @@ public abstract class DomainCredential extends Resource {
         this.domain = domain;
     }
 
-    public DomainRole getRole() {
-        return role;
+    public DomainPermission getRole() {
+        return permission;
     }
 
-    public void setRole(DomainRole role) {
-        this.role = role;
+    public void setRole(DomainPermission permission) {
+        this.permission = permission;
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
         hash = 41 * hash + Objects.hashCode(this.domain);
-        hash = 41 * hash + Objects.hashCode(this.role);
+        hash = 41 * hash + Objects.hashCode(this.permission);
         return hash;
     }
 
@@ -74,7 +74,7 @@ public abstract class DomainCredential extends Resource {
         if (!Objects.equals(this.domain, other.domain)) {
             return false;
         }
-        if (!Objects.equals(this.role, other.role)) {
+        if (!Objects.equals(this.permission, other.permission)) {
             return false;
         }
         return true;

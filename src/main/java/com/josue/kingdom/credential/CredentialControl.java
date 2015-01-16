@@ -5,14 +5,14 @@
  */
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.account.Current;
+import com.josue.kingdom.util.cdi.Current;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.CredentialStatus;
 import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ex.AuthorizationException;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
@@ -38,7 +38,7 @@ public class CredentialControl {
     CredentialRepository repository;
 
     @Inject
-    DomainRepository roleRepository;
+    DomainRepository permissionRepository;
 
     @Inject
     @Current
@@ -79,7 +79,7 @@ public class CredentialControl {
             throw new ResourceNotFoundException(APICredential.class, credentialUuid);
         }
 
-        DomainRole foundRole = roleRepository.getDomainRole(domainUuid, domainCredential.getRole().getName());
+        DomainPermission foundRole = permissionRepository.getDomainPermission(domainUuid, domainCredential.getRole().getName());
         if (foundRole == null) {
             throw new InvalidResourceArgException(APICredential.class, "Role name", domainCredential.getRole().getName());
         }
@@ -89,7 +89,7 @@ public class CredentialControl {
             throw new AuthorizationException(domainCredential.getRole());
         }
 
-        foundCredential.copyUpdatebleFields(domainCredential);
+        foundCredential.copyUpdatable(domainCredential);
         APIDomainCredential updated = repository.update(foundCredential);
         repository.update(foundCredential.getCredential());
         return updated;
@@ -98,8 +98,8 @@ public class CredentialControl {
 
     public APIDomainCredential createAPICredential(String domainUuid, APIDomainCredential domainCredential) throws RestException {
 
-        domainCredential.removeNonCreatableFields();
-        DomainRole foundRole = roleRepository.getDomainRole(domainUuid, domainCredential.getRole().getName());
+        domainCredential.removeNonCreatable();
+        DomainPermission foundRole = permissionRepository.getDomainPermission(domainUuid, domainCredential.getRole().getName());
         if (foundRole == null) {
             throw new InvalidResourceArgException(APICredential.class, "Role name", domainCredential.getRole().getName());
         }

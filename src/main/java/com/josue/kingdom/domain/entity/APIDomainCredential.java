@@ -21,7 +21,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "api_domain_credential", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"domain_uuid", "api_credential_uuid"}),
-    @UniqueConstraint(columnNames = {"domain_role_uuid", "api_credential_uuid"})})
+    @UniqueConstraint(columnNames = {"domain_permission_uuid", "api_credential_uuid"})})
 public class APIDomainCredential extends DomainCredential {
 
     private String name;
@@ -31,12 +31,12 @@ public class APIDomainCredential extends DomainCredential {
     private APICredential credential;
 
     @Override
-    public void copyUpdatebleFields(Resource newData) {
-        super.copyUpdatebleFields(newData);
+    public void copyUpdatable(Resource newData) {
+        super.copyUpdatable(newData);
         if (newData instanceof APIDomainCredential) {
             APIDomainCredential apiDomainCredential = (APIDomainCredential) newData;
             name = apiDomainCredential.name == null ? null : apiDomainCredential.name;
-            credential.copyUpdatebleFields(apiDomainCredential.credential);
+            credential.copyUpdatable(apiDomainCredential.credential);
         }
     }
 

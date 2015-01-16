@@ -38,7 +38,7 @@ public class Domain extends Resource {
     private Manager owner;
 
     @Override
-    public void copyUpdatebleFields(Resource newData) {
+    public void copyUpdatable(Resource newData) {
         if (newData instanceof Domain) {
             Domain domain = (Domain) newData;
             description = domain.description == null ? description : domain.description;
@@ -47,8 +47,8 @@ public class Domain extends Resource {
     }
 
     @Override
-    public void removeNonCreatableFields() {
-        super.removeNonCreatableFields();
+    public void removeNonCreatable() {
+        super.removeNonCreatable();
         this.owner = null;
     }
 

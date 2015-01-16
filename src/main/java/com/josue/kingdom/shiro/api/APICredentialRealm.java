@@ -10,7 +10,7 @@ import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.DomainCredential;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.shiro.AccessLevelPermission;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -84,16 +84,16 @@ public class APICredentialRealm extends AuthorizingRealm {
             throw new AuthenticationException("Illegal Credential type");
         }
 
-        Map<Object, DomainRole> roles = new HashMap<>();
+        Map<Object, DomainPermission> permissions = new HashMap<>();
         for (DomainCredential domainCredential : domainCredentials) {
-            roles.put(domainCredential.getDomain().getUuid(), domainCredential.getRole());
+            permissions.put(domainCredential.getDomain().getUuid(), domainCredential.getRole());
         }
 
 //        String fetchedDomainName = "uuid-doc-123-TODO-check-if-OK";
-        AccessLevelPermission permissions = new AccessLevelPermission(roles);
+        AccessLevelPermission permissionsLevel = new AccessLevelPermission(permissions);
 
         Set<Permission> permSet = new HashSet<>();
-        permSet.add(permissions);
+        permSet.add(permissionsLevel);
         info.setObjectPermissions(permSet);
 
         return info;

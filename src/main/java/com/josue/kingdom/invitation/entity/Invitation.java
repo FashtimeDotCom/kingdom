@@ -7,7 +7,7 @@ package com.josue.kingdom.invitation.entity;
 
 import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.rest.Resource;
 import java.util.Date;
 import java.util.Objects;
@@ -47,8 +47,8 @@ public class Invitation extends Resource {
     private Resource domain;
 
     @OneToOne
-    @JoinColumn(name = "domain_role_uuid")
-    private DomainRole role;
+    @JoinColumn(name = "domain_permission_uuid")
+    private DomainPermission permission;
 
     @NotNull
     private String token;
@@ -62,22 +62,23 @@ public class Invitation extends Resource {
     private InvitationStatus status;
 
     @Override
-    public void removeNonCreatableFields() {
-        super.removeNonCreatableFields();
+    public void removeNonCreatable() {
+        super.removeNonCreatable();
         this.token = null;
         this.validUntil = null;
         this.status = null;
         this.authorManager = null;
         if (authorManager != null) {
-            authorManager.removeNonCreatableFields();
+            authorManager.removeNonCreatable();
         }
         if (domain != null) {
-            domain.removeNonCreatableFields();
+            domain.removeNonCreatable();
         }
     }
 
     @Override
-    public void copyUpdatebleFields(Resource newData) {
+    public void copyUpdatable(Resource newData) {
+        super.copyUpdatable(newData);
         if (newData instanceof Invitation) {
             Invitation invitation = (Invitation) newData;
             status = status != null ? invitation.status : status;
@@ -108,12 +109,12 @@ public class Invitation extends Resource {
         this.domain = domain;
     }
 
-    public DomainRole getRole() {
-        return role;
+    public DomainPermission getRole() {
+        return permission;
     }
 
-    public void setRole(DomainRole role) {
-        this.role = role;
+    public void setRole(DomainPermission permission) {
+        this.permission = permission;
     }
 
     public String getToken() {
@@ -146,7 +147,7 @@ public class Invitation extends Resource {
         hash = 37 * hash + Objects.hashCode(this.targetEmail);
         hash = 37 * hash + Objects.hashCode(this.authorManager);
         hash = 37 * hash + Objects.hashCode(this.domain);
-        hash = 37 * hash + Objects.hashCode(this.role);
+        hash = 37 * hash + Objects.hashCode(this.permission);
         hash = 37 * hash + Objects.hashCode(this.token);
         hash = 37 * hash + Objects.hashCode(this.validUntil);
         hash = 37 * hash + Objects.hashCode(this.status);
@@ -171,7 +172,7 @@ public class Invitation extends Resource {
         if (!Objects.equals(this.domain, other.domain)) {
             return false;
         }
-        if (!Objects.equals(this.role, other.role)) {
+        if (!Objects.equals(this.permission, other.permission)) {
             return false;
         }
         if (!Objects.equals(this.token, other.token)) {

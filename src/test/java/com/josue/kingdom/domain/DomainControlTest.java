@@ -5,13 +5,11 @@
  */
 package com.josue.kingdom.domain;
 
-import com.josue.kingdom.domain.DomainControl;
-import com.josue.kingdom.domain.DomainRepository;
+import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainStatus;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
-import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
@@ -141,7 +139,7 @@ public class DomainControlTest {
         when(repository.update(actualDomainStub)).thenReturn(actualDomainStub);
 
         Domain updatedDomain = control.updateDomain(domainUuid, userInput);
-        verify(actualDomainStub, times(1)).copyUpdatebleFields(userInput);
+        verify(actualDomainStub, times(1)).copyUpdatable(userInput);
         verify(repository, times(1)).update(actualDomainStub);
         assertEquals(userInput.getStatus(), updatedDomain.getStatus());
         assertThat(userInput.getName(), not(updatedDomain.getName()));
@@ -196,7 +194,7 @@ public class DomainControlTest {
     }
 
     @Test
-    public void testGetJoinedDomainsByUuid() {
+    public void testGetJoinedDomain() throws RestException {
         String uuid = "123";
 
         ManagerDomainCredential manDomCred = Mockito.spy(new ManagerDomainCredential());
@@ -205,5 +203,51 @@ public class DomainControlTest {
         control.getJoinedDomain(uuid);
 
         verify(manDomCred, times(1)).setCredential(null);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testGetJoinedDomainsNotFound() throws RestException {
+        String uuid = "123";
+
+        ManagerDomainCredential manDomCred = Mockito.spy(new ManagerDomainCredential());
+        when(repository.find(ManagerDomainCredential.class, uuid)).thenReturn(null);
+        fail();
+
+    }
+
+    @Test
+    public void testCreateDomainPermission() throws Exception {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testUpdateDomainPermission() throws Exception {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testDeleteDomainPermission() throws Exception {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testGetDomainPermissions() {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testCheckOwnerAccess() throws Exception {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testCheckDomainExists() throws Exception {
+
+        fail("The test case is a prototype.");
     }
 }

@@ -18,18 +18,18 @@ import javax.persistence.UniqueConstraint;
  * @author Josue
  */
 @Entity
-@Table(name = "domain_role", uniqueConstraints = @UniqueConstraint(columnNames = {"level", "domain_uuid"}))
+@Table(name = "domain_permission", uniqueConstraints = @UniqueConstraint(columnNames = {"level", "domain_uuid"}))
 //TODO extend from Resource
-public class DomainRole extends Resource {
+public class DomainPermission extends Resource {
 
-    public DomainRole() {
+    public DomainPermission() {
     }
 
-    public DomainRole(int level) {
+    public DomainPermission(int level) {
         this.level = level;
     }
 
-    private int level;
+    private Integer level;
     private String name;
     private String description;
 
@@ -38,22 +38,23 @@ public class DomainRole extends Resource {
     private Domain domain;
 
     @Override
-    protected void copyUpdatebleFields(Resource newData) {
-        if (newData instanceof DomainRole) {
-            DomainRole role = (DomainRole) newData;
+    public void copyUpdatable(Resource newData) {
+        if (newData instanceof DomainPermission) {
+            DomainPermission permission = (DomainPermission) newData;
 
-            name = role.name == null ? name : role.name;
-            description = role.description == null ? description : role.description;
+            name = permission.name == null ? name : permission.name;
+            description = permission.description == null ? description : permission.description;
+            level = permission.level == null ? level : permission.level;
 
-            domain.copyUpdatebleFields(role.domain);
+            domain.copyUpdatable(permission.domain);
         }
     }
 
-    public int getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
@@ -99,8 +100,8 @@ public class DomainRole extends Resource {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DomainRole other = (DomainRole) obj;
-        if (this.level != other.level) {
+        final DomainPermission other = (DomainPermission) obj;
+        if (!Objects.equals(this.level, other.level)) {
             return false;
         }
         if (!Objects.equals(this.name, other.name)) {
@@ -109,10 +110,7 @@ public class DomainRole extends Resource {
         if (!Objects.equals(this.description, other.description)) {
             return false;
         }
-        if (!Objects.equals(this.domain, other.domain)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.domain, other.domain);
     }
 
 }

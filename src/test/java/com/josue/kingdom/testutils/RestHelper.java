@@ -79,4 +79,11 @@ public class RestHelper {
         return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).put(ClientResponse.class, resource);
     }
 
+    public static ClientResponse doDeleteRequest(String... paths) {
+        WebResource wr = getWebResource();
+        for (String path : paths) {
+            wr = wr.path(path);
+        }
+        return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).delete(ClientResponse.class);
+    }
 }

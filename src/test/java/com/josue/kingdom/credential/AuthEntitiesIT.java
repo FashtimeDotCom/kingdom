@@ -11,7 +11,7 @@ import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
@@ -57,17 +57,17 @@ public class AuthEntitiesIT {
     CredentialRepository repository;
 
     @Test
-    public void testDomainRole() {
+    public void testDomainPermission() {
         Manager owner = InstanceHelper.createManager();
         repository.create(owner);
         Domain domain = InstanceHelper.createDomain(owner);
         repository.create(domain);
 
-        DomainRole role = InstanceHelper.createRole(domain);
-        repository.create(role);
+        DomainPermission permission = InstanceHelper.createRole(domain);
+        repository.create(permission);
 
-        DomainRole foundRole = repository.find(DomainRole.class, role.getUuid());
-        assertEquals(role, foundRole);
+        DomainPermission foundRole = repository.find(DomainPermission.class, permission.getUuid());
+        assertEquals(permission, foundRole);
     }
 
     @Test
@@ -127,10 +127,10 @@ public class AuthEntitiesIT {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainRole role = InstanceHelper.createRole(domain);
-        repository.create(role);
+        DomainPermission permission = InstanceHelper.createRole(domain);
+        repository.create(permission);
 
-        APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, role);
+        APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, permission);
         repository.create(domainCredential);
 
         APIDomainCredential foundDomainCredential = repository.find(APIDomainCredential.class, domainCredential.getUuid());
@@ -151,11 +151,11 @@ public class AuthEntitiesIT {
         ManagerCredential managerCredential = InstanceHelper.createManagerCredential(manager);
         repository.create(managerCredential);
 
-        DomainRole role = InstanceHelper.createRole(domain);
-        role.setDomain(domain);
-        repository.create(role);
+        DomainPermission permission = InstanceHelper.createRole(domain);
+        permission.setDomain(domain);
+        repository.create(permission);
 
-        ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, managerCredential, role);
+        ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, managerCredential, permission);
         repository.create(domainCredential);
 
         ManagerDomainCredential foundDomainCredential = repository.find(ManagerDomainCredential.class, domainCredential.getUuid());
@@ -188,8 +188,8 @@ public class AuthEntitiesIT {
         Domain domain = InstanceHelper.createDomain(authorManager);
         repository.create(domain);
 
-        DomainRole role = InstanceHelper.createRole(domain);
-        repository.create(role);
+        DomainPermission permission = InstanceHelper.createRole(domain);
+        repository.create(permission);
 
         Invitation invitation = new Invitation();
         invitation.setAuthorManager(authorManager);
@@ -197,7 +197,7 @@ public class AuthEntitiesIT {
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setToken(UUID.randomUUID().toString());
         invitation.setDomain(domain);
-        invitation.setRole(role);
+        invitation.setRole(permission);
 
         invitation.setValidUntil(InstanceHelper.mysqlMilliSafeTimestamp());
         repository.create(invitation);

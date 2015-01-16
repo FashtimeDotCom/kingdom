@@ -6,11 +6,11 @@
 package com.josue.kingdom.invitation;
 
 import com.josue.kingdom.account.AccountRepository;
-import com.josue.kingdom.account.Current;
+import com.josue.kingdom.util.cdi.Current;
 import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.rest.ListResource;
@@ -46,14 +46,14 @@ public class InvitationControl {
     //TODO make this application robust using validator, ere we have several possibles NPE, fix this ASAP
     public Invitation createInvitation(Invitation invitation) {
         Domain foundDomain = repository.find(Domain.class, invitation.getDomain().getUuid());
-        DomainRole role = repository.find(DomainRole.class, invitation.getRole().getUuid());
+        DomainPermission permission = repository.find(DomainPermission.class, invitation.getRole().getUuid());
 
-        invitation.removeNonCreatableFields();
+        invitation.removeNonCreatable();
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setValidUntil(getInvitationExprirationDate());
         invitation.setDomain(foundDomain);
         invitation.setAuthorManager(credential.getManager());
-        invitation.setRole(role);
+        invitation.setRole(permission);
         invitation.setToken(UUID.randomUUID().toString());
 
         Manager manager = accountRepository.getManagerByEmail(invitation.getTargetEmail());
@@ -74,7 +74,7 @@ public class InvitationControl {
         if (invitation == null) {
             throw new ResourceNotFoundException(Invitation.class, uuid);
         }
-        invitation.copyUpdatebleFields(inv);
+        invitation.copyUpdatable(inv);
         Invitation updatedInvitation = repository.update(invitation);
         return updatedInvitation;
 

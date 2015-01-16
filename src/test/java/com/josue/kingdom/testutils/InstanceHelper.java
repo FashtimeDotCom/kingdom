@@ -12,7 +12,7 @@ import com.josue.kingdom.credential.entity.CredentialStatus;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import java.math.BigInteger;
@@ -42,13 +42,13 @@ public abstract class InstanceHelper {
     }
 
     //#### Role ####
-    public static DomainRole createRole(Domain domain) {
-        DomainRole role = new DomainRole();
-        role.setDescription("Role description");
-        role.setLevel(new Random().nextInt());
-        role.setName("ADMIN");
-        role.setDomain(domain);
-        return role;
+    public static DomainPermission createRole(Domain domain) {
+        DomainPermission permission = new DomainPermission();
+        permission.setDescription("Role description");
+        permission.setLevel(new Random().nextInt());
+        permission.setName("ADMIN");
+        permission.setDomain(domain);
+        return permission;
     }
 
     //#### APICredential ###
@@ -90,21 +90,21 @@ public abstract class InstanceHelper {
     }
 
     //#### ManagerDomainCredential ###
-    public static ManagerDomainCredential createManagerDomainCredential(Domain domain, ManagerCredential credential, DomainRole role) {
+    public static ManagerDomainCredential createManagerDomainCredential(Domain domain, ManagerCredential credential, DomainPermission permission) {
         ManagerDomainCredential domainCredential = new ManagerDomainCredential();
         domainCredential.setDomain(domain);
         domainCredential.setCredential(credential);
-        domainCredential.setRole(role);
+        domainCredential.setRole(permission);
         return domainCredential;
     }
 
     //#### ManagerDomainCredential ###
-    public static APIDomainCredential createAPIDomainCredential(Domain domain, APICredential credential, DomainRole role) {
+    public static APIDomainCredential createAPIDomainCredential(Domain domain, APICredential credential, DomainPermission permission) {
         APIDomainCredential domainCredential = new APIDomainCredential();
         domainCredential.setName("api-key-name");
         domainCredential.setDomain(domain);
         domainCredential.setCredential(credential);
-        domainCredential.setRole(role);
+        domainCredential.setRole(permission);
         return domainCredential;
     }
 
@@ -122,10 +122,10 @@ public abstract class InstanceHelper {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainRole role = InstanceHelper.createRole(domain);
-        repository.create(role);
+        DomainPermission permission = InstanceHelper.createRole(domain);
+        repository.create(permission);
 
-        APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, role);
+        APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, permission);
         repository.create(domainCredential);
 
         return domainCredential;
@@ -144,10 +144,10 @@ public abstract class InstanceHelper {
         APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
         repository.create(credapiCredential);
 
-        DomainRole role = InstanceHelper.createRole(domain);
-        repository.create(role);
+        DomainPermission permission = InstanceHelper.createRole(domain);
+        repository.create(permission);
 
-        ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, role);
+        ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, permission);
         repository.create(domainCredential);
 
         return domainCredential;

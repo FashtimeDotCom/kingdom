@@ -34,17 +34,17 @@ public abstract class Credential extends Resource implements AuthenticationToken
     private CredentialStatus status;
 
     @Override
-    public void copyUpdatebleFields(Resource newData) {
+    public void copyUpdatable(Resource newData) {
         if (newData instanceof Credential) {
             Credential credential = (Credential) newData;
             status = credential.status == null ? status : credential.status;
-            manager.copyUpdatebleFields(credential.manager);
+            manager.copyUpdatable(credential.manager);
         }
     }
 
     @Override
-    public void removeNonCreatableFields() {
-        super.removeNonCreatableFields();
+    public void removeNonCreatable() {
+        super.removeNonCreatable();
 //        this.manager = null;
     }
 

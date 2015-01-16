@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom.shiro;
 
-import com.josue.kingdom.domain.entity.DomainRole;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.shiro.authz.Permission;
@@ -16,15 +16,15 @@ import org.apache.shiro.authz.Permission;
  */
 public class AccessLevelPermission implements Permission {
 
-    private final Map<Object, DomainRole> accessLevels;
+    private final Map<Object, DomainPermission> accessLevels;
 
-    public AccessLevelPermission(Map<Object, DomainRole> accessLevels) {
+    public AccessLevelPermission(Map<Object, DomainPermission> accessLevels) {
         this.accessLevels = accessLevels;
     }
 
-    public AccessLevelPermission(Object domain, DomainRole role) {
+    public AccessLevelPermission(Object domain, DomainPermission permission) {
         this.accessLevels = new HashMap<>();
-        this.accessLevels.put(domain, role);
+        this.accessLevels.put(domain, permission);
     }
 
     public AccessLevelPermission() {
@@ -38,12 +38,12 @@ public class AccessLevelPermission implements Permission {
         }
         AccessLevelPermission permission = (AccessLevelPermission) p;
 
-        for (Map.Entry<Object, DomainRole> entry : permission.getAccessLevels().entrySet()) {
+        for (Map.Entry<Object, DomainPermission> entry : permission.getAccessLevels().entrySet()) {
             Object domain = entry.getKey();
-            DomainRole requiredRole = entry.getValue();
+            DomainPermission requiredRole = entry.getValue();
 
             if (this.getAccessLevels().containsKey(domain)) {
-                DomainRole thisRole = this.getAccessLevels().get(domain);
+                DomainPermission thisRole = this.getAccessLevels().get(domain);
                 if (thisRole.getLevel() >= requiredRole.getLevel()) {
                     return true;
                 }
@@ -52,12 +52,12 @@ public class AccessLevelPermission implements Permission {
         return false;
     }
 
-    public Map<Object, DomainRole> getAccessLevels() {
+    public Map<Object, DomainPermission> getAccessLevels() {
         return accessLevels;
     }
 
-    public boolean addAccessLevel(Object key, DomainRole role) {
-        return this.accessLevels.put(key, role) != null;
+    public boolean addAccessLevel(Object key, DomainPermission permission) {
+        return this.accessLevels.put(key, permission) != null;
     }
 
 }

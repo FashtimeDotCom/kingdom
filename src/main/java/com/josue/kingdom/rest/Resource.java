@@ -55,11 +55,11 @@ public class Resource implements Serializable {
         return res;
     }
 
-    protected void copyUpdatebleFields(Resource newData) {
+    protected void copyUpdatable(Resource newData) {
         //Do nothing
     }
 
-    public void removeNonCreatableFields() {
+    public void removeNonCreatable() {
         //Simply remove system fields
         uuid = null;
         dateCreated = null;
@@ -71,7 +71,7 @@ public class Resource implements Serializable {
         return uuid;
     }
 
-    protected void setUuid(String uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
