@@ -29,7 +29,6 @@ public class LiquibaseTestHelper {
             config.setChangeLog("liquibase/changelog.xml");
             //Drop schema each test iteration
 //            config.setDropFirst(true);
-            dbHelper.cleanDatabase();
 
             return config;
         } catch (Exception e) {

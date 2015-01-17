@@ -31,6 +31,7 @@ public class ApplicationConfig extends Application {
         resources.add(com.josue.kingdom.account.AccountResource.class);
         resources.add(com.josue.kingdom.credential.APICredentialSubResource.class);
         resources.add(com.josue.kingdom.credential.CredentialResource.class);
+        resources.add(com.josue.kingdom.domain.DomainPermissionSubResource.class);
         resources.add(com.josue.kingdom.domain.DomainResource.class);
         resources.add(com.josue.kingdom.invitation.InvitationResource.class);
         resources.add(com.josue.kingdom.rest.CustomJacksonProvider.class);

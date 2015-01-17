@@ -71,16 +71,12 @@ public class DomainControlTest {
 
     @Test
     public void testGetJoinedDomains() {
-        List<ManagerDomainCredential> domainCredentials = Arrays.asList(Mockito.mock(ManagerDomainCredential.class));
-        when(repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(domainCredentials);
+        List<Domain> domains = Arrays.asList(Mockito.mock(Domain.class));
+        when(repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(domains);
 
-        ListResource<ManagerDomainCredential> joinedDomains = control.getJoinedDomains(DEFAULT_LIMIT, DEFAULT_OFFSET);
-        verify(repository, times(1)).getJoinedDomainsByManager(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
-
-        for (ManagerDomainCredential mdc : domainCredentials) {
-            verify(mdc, times(1)).setCredential(null);
-        }
-        assertEquals(domainCredentials, joinedDomains.getItems());
+        ListResource<Domain> joinedDomains = control.getJoinedDomains(DEFAULT_LIMIT, DEFAULT_OFFSET);
+        verify(repository, times(1)).getDomainCredentialsByManager(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(domains, joinedDomains.getItems());
     }
 
     @Test
@@ -137,6 +133,8 @@ public class DomainControlTest {
 
         when(repository.find(Domain.class, domainUuid)).thenReturn(actualDomainStub);
         when(repository.update(actualDomainStub)).thenReturn(actualDomainStub);
+        when(repository.find(Domain.class, domainUuid)).thenReturn(actualDomainStub);
+        when(currentCredential.getManager()).thenReturn(man1);
 
         Domain updatedDomain = control.updateDomain(domainUuid, userInput);
         verify(actualDomainStub, times(1)).copyUpdatable(userInput);
@@ -180,6 +178,8 @@ public class DomainControlTest {
         Domain mockedDomain = Mockito.mock(Domain.class);
 
         when(repository.find(Domain.class, domainUuid)).thenReturn(mockedDomain);
+        when(mockedDomain.getOwner()).thenReturn(manager);
+
         control.deleteDomain(domainUuid);
         verify(repository, times(1)).delete(mockedDomain);
     }
@@ -203,16 +203,6 @@ public class DomainControlTest {
         control.getJoinedDomain(uuid);
 
         verify(manDomCred, times(1)).setCredential(null);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void testGetJoinedDomainsNotFound() throws RestException {
-        String uuid = "123";
-
-        ManagerDomainCredential manDomCred = Mockito.spy(new ManagerDomainCredential());
-        when(repository.find(ManagerDomainCredential.class, uuid)).thenReturn(null);
-        fail();
-
     }
 
     @Test

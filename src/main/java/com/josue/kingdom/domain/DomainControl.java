@@ -44,22 +44,18 @@ public class DomainControl {
         return ListResourceUtil.buildListResource(ownedDomains, totalCount, limit, offset);
     }
 
-    public ListResource<ManagerDomainCredential> getJoinedDomains(Integer limit, Integer offset) {
-        List<ManagerDomainCredential> joinedDomains = repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid(), limit, offset);
-        for (ManagerDomainCredential dc : joinedDomains) {
-            dc.setCredential(null);
-        }
+    public ListResource<Domain> getJoinedDomains(Integer limit, Integer offset) {
+        List<Domain> joinedDomains = repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid(), limit, offset);
+
         long totalCount = repository.countDomainCredentials(currentCredential.getManager().getUuid());
         return ListResourceUtil.buildListResource(joinedDomains, totalCount, limit, offset);
     }
 
-    public ManagerDomainCredential getJoinedDomain(String manDomCredUuid) throws RestException {
-        ManagerDomainCredential joinedDomain = repository.find(ManagerDomainCredential.class, manDomCredUuid);
+    public Domain getJoinedDomain(String domainUuid) throws RestException {
+        Domain joinedDomain = repository.find(Domain.class, domainUuid);
         if (joinedDomain == null) {
-            throw new ResourceNotFoundException(ManagerDomainCredential.class, manDomCredUuid);
+            throw new ResourceNotFoundException(ManagerDomainCredential.class, domainUuid);
         }
-        joinedDomain.setCredential(null);
-
         return joinedDomain;
     }
 
@@ -91,7 +87,7 @@ public class DomainControl {
     //TODO improve business logic for this class
     public Domain updateDomain(String domainUuid, Domain domain) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
-        checkOwnerAccess(domainUuid);
+        checkOwnerAccess(foundDomain);
         foundDomain.copyUpdatable(domain);
         foundDomain = repository.update(foundDomain);
         return foundDomain;
@@ -99,14 +95,14 @@ public class DomainControl {
 
     public void deleteDomain(String domainUuid) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
-        checkOwnerAccess(domainUuid);
+        checkOwnerAccess(foundDomain);
         //TODO improve business logic:... deactivate all docs and clean everything
-        repository.delete(foundDomain);
+        repository.purgeDomain(foundDomain);
     }
 
     public DomainPermission createDomainPermission(String domainUuid, DomainPermission domainPermission) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
-        checkOwnerAccess(domainUuid);
+        checkOwnerAccess(foundDomain);
         domainPermission.removeNonCreatable();
 
         if (domainPermission.getLevel() == 0) {
@@ -125,7 +121,7 @@ public class DomainControl {
 
     public DomainPermission updateDomainPermission(String domainUuid, String permissionUuid, DomainPermission domainPermission) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
-        checkOwnerAccess(domainUuid);
+        checkOwnerAccess(foundDomain);
         DomainPermission foundPermission = repository.getDomainPermission(domainUuid, domainPermission.getLevel());
         if (foundPermission != null) { //Permission level already exists
             throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
@@ -159,7 +155,7 @@ public class DomainControl {
      */
     public void deleteDomainPermission(String domainUuid, String permissionUuid, String replacementUuid) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
-        checkOwnerAccess(domainUuid);
+        checkOwnerAccess(foundDomain);
         List<DomainPermission> domainPermissions = repository.getDomainPermissions(domainUuid);
         DomainPermission foundPermission = null;
         DomainPermission foundReplacementPermission = null;
@@ -199,9 +195,8 @@ public class DomainControl {
 
     //Created a simple method because its important responsability
     //Returns true if a the actual credential can update the domain
-    protected void checkOwnerAccess(String domainUuid) throws RestException {
-        Domain ownedDomain = repository.getOwnedDomain(domainUuid, currentCredential.getUuid());
-        if (ownedDomain == null) {
+    protected void checkOwnerAccess(Domain domain) throws RestException {
+        if (!domain.getOwner().equals(currentCredential.getManager())) {
             throw new AuthorizationException();
         }
     }

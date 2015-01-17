@@ -6,12 +6,19 @@
 package com.josue.kingdom.testutils;
 
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.sql.DataSource;
+import liquibase.Contexts;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.FileSystemResourceAccessor;
 
 /**
  *
@@ -39,26 +46,17 @@ public class DatabaseHelper {
     //TODO check full DB deletion... FK constraint error
 //    @PostConstruct
     public void cleanDatabase() {
+
+        LOG.log(Level.INFO, "### REMOVING DATABASE DATA ###");
         try {
-            LOG.log(Level.INFO, "### REMOVING DATABASE DATA ###");
-            try (Statement statement = datasource.getConnection().createStatement()) {
-                statement.addBatch(DISABLE_CONSTRAINTS);
-
-                statement.addBatch(REMOVE_MANAGER_DOMAIN_CREDENTIAL);
-                statement.addBatch(REMOVE_API_DOMAIN_CREDENTIAL);
-                statement.addBatch(REMOVE_MANAGER_CREDENTIAL);
-                statement.addBatch(REMOVE_API_CREDENTIAL);
-                statement.addBatch(REMOVE_INVITATION);
-                statement.addBatch(REMOVE_MANAGER);
-                statement.addBatch(REMOVE_DOMAIN_PERMISSION);
-                statement.addBatch(REMOVE_DOMAIN);
-
-                statement.addBatch(ENABLE_CONSTRAINT);
-
-                statement.executeBatch();
-            }
-
+            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(datasource.getConnection()));
+            Liquibase liquibase = new Liquibase("initial-test-data.xml", new FileSystemResourceAccessor(), database);
+            liquibase.update(new Contexts());
         } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DatabaseException ex) {
+            Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (LiquibaseException ex) {
             Logger.getLogger(DatabaseHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
         LOG.log(Level.INFO, "### DATABASE DATA SUCESSFUL REMOVED ###");

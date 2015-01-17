@@ -7,6 +7,7 @@ package com.josue.kingdom.testutils;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -15,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Assert;
 
 /**
  *
@@ -55,35 +57,44 @@ public class RestHelper {
         return webResource;
     }
 
+    private static WebResource setPath(WebResource wr, String... paths) {
+        for (String path : paths) {
+            wr = wr.path("/" + path);
+        }
+        return wr;
+    }
+
     public static ClientResponse doGetRequest(String... paths) {
         WebResource wr = getWebResource();
-        for (String path : paths) {
-            wr = wr.path(path);
-        }
+        wr = setPath(wr, paths);
         return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).get(ClientResponse.class);
     }
 
     public static ClientResponse doPostRequest(Object resource, String... paths) {
         WebResource wr = getWebResource();
-        for (String path : paths) {
-            wr = wr.path(path);
-        }
+        wr = setPath(wr, paths);
         return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).post(ClientResponse.class, resource);
     }
 
     public static ClientResponse doPutRequest(Object resource, String... paths) {
         WebResource wr = getWebResource();
-        for (String path : paths) {
-            wr = wr.path(path);
-        }
+        wr = setPath(wr, paths);
         return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).put(ClientResponse.class, resource);
     }
 
     public static ClientResponse doDeleteRequest(String... paths) {
         WebResource wr = getWebResource();
-        for (String path : paths) {
-            wr = wr.path(path);
-        }
+        wr = setPath(wr, paths);
         return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).delete(ClientResponse.class);
+    }
+
+    //This method is useful for detail message response
+    // when we get a close stream when reading the body twice
+    public static void assertStatusCode(int expected, ClientResponse response) {
+        if (response.getStatus() != expected) {
+            String errorMessage = response.getEntity(new GenericType<String>() {
+            });
+            Assert.fail(String.format("java.lang.AssertionError: expected:<%d> but was:<%d> \n%s", new Object[]{expected, response.getStatus(), errorMessage}));
+        }
     }
 }

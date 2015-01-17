@@ -80,7 +80,7 @@ public class DomainRepositoryIT {
         ManagerDomainCredential invitedDomainCredential = InstanceHelper.createManagerDomainCredential(domain, invitedManagerCredential, simplePermission);
         repository.create(invitedDomainCredential);
 
-        List<ManagerDomainCredential> foundDomainCredentials = repository.getJoinedDomainsByManager(invitedManagerCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<ManagerDomainCredential> foundDomainCredentials = repository.getDomainCredentialsByManager(invitedManagerCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundDomainCredentials.size());
         assertEquals(invitedDomainCredential, foundDomainCredentials.get(0));
 

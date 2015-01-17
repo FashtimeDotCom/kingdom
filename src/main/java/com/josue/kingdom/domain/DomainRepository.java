@@ -6,6 +6,7 @@
 package com.josue.kingdom.domain;
 
 import com.josue.kingdom.JpaRepository;
+import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
@@ -22,7 +23,7 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 public class DomainRepository extends JpaRepository {
 
-    @Transactional(Transactional.TxType.REQUIRED)
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<Domain> getDomainsByCredential(String credentialUuid) {
         Query query = em.createQuery("SELECT manCred.domain FROM ManagerDomainCredential manCred WHERE manCred.credential.uuid = :credentialUuid", Domain.class);
         query.setParameter("credentialUuid", credentialUuid);
@@ -30,9 +31,17 @@ public class DomainRepository extends JpaRepository {
         return resultList;
     }
 
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public List<Domain> getJoinedDomainsByManager(String managerUuid, Integer limit, Integer offset) {
+        Query query = em.createQuery("SELECT manCred.domain FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :managerUuid", Domain.class);
+        query.setParameter("managerUuid", managerUuid);
+        List<Domain> resultList = query.getResultList();
+        return resultList;
+    }
+
     //Control change some data, we dont want to update it on database
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public List<ManagerDomainCredential> getJoinedDomainsByManager(String managerUuid, Integer limit, Integer offset) {
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public List<ManagerDomainCredential> getDomainCredentialsByManager(String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :managerUuid", ManagerDomainCredential.class);
         query.setParameter("managerUuid", managerUuid);
         List<ManagerDomainCredential> resultList = query.getResultList();
@@ -98,6 +107,32 @@ public class DomainRepository extends JpaRepository {
         query.setParameter("permissionLevel", permissionLevel);
         List<DomainPermission> permissions = query.getResultList();
         return extractSingleResultFromList(permissions);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void purgeDomain(Domain domain) {
+        TypedQuery<APIDomainCredential> apiDomCredQuery = em.createQuery("SELECT apidomcred FROM APIDomainCredential apidomcred WHERE apidomcred.domain.uuid = :domainUuid", APIDomainCredential.class);
+        apiDomCredQuery.setParameter("domainUuid", domain.getUuid());
+        List<APIDomainCredential> foundCreds = apiDomCredQuery.getResultList();
+        for (APIDomainCredential adc : foundCreds) {
+            em.remove(adc.getCredential());
+        }
+
+        Query q1 = em.createQuery("DELETE FROM ManagerDomainCredential mandomcred WHERE mandomcred.domain.uuid = :domainUuid");
+        q1.setParameter("domainUuid", domain.getUuid());
+        q1.executeUpdate();
+
+        Query q2 = em.createQuery("DELETE FROM Invitation inv WHERE inv.domain.uuid = :domainUuid");
+        q2.setParameter("domainUuid", domain.getUuid());
+        q2.executeUpdate();
+
+        Query q3 = em.createQuery("DELETE FROM DomainPermission domainperm WHERE domainperm.domain.uuid = :domainUuid");
+        q3.setParameter("domainUuid", domain.getUuid());
+        q3.executeUpdate();
+
+        Query q4 = em.createQuery("DELETE FROM Domain dom WHERE dom.uuid = :domainUuid");
+        q4.setParameter("domainUuid", domain.getUuid());
+        q4.executeUpdate();
     }
 
 }

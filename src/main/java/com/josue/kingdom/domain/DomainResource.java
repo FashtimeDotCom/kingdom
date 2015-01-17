@@ -7,7 +7,6 @@ package com.josue.kingdom.domain;
 
 import com.josue.kingdom.credential.APICredentialSubResource;
 import com.josue.kingdom.domain.entity.Domain;
-import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
@@ -49,17 +48,17 @@ public class DomainResource {
     @Produces(value = CONTENT_TYPE)
     public Response getJoinedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
-        ListResource<ManagerDomainCredential> foundDomains = control.getJoinedDomains(limit, offset);
+        ListResource<Domain> foundDomains = control.getJoinedDomains(limit, offset);
 
         return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
     }
 
     @GET
-    @Path("joined/{uuid}")
+    @Path("joined/{domainUuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response getJoinedDomain(@PathParam("uuid") String uuid) throws RestException {
-        ManagerDomainCredential foundDomains = control.getJoinedDomain(uuid);
-        return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
+    public Response getJoinedDomain(@PathParam("domainUuid") String domainUuid) throws RestException {
+        Domain foundDomain = control.getJoinedDomain(domainUuid);
+        return ResponseUtils.buildSimpleResponse(foundDomain, Response.Status.OK, info);
     }
 
     @GET
@@ -68,18 +67,15 @@ public class DomainResource {
     public Response getOwnedDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
             @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
         ListResource<Domain> foundDomains = control.getOwnedDomains(limit, offset);
-
         return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
     }
 
     @GET
-    @Path("owned/{uuid}")
+    @Path("owned/{domainUuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response getOwnedDomain(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
-            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
-        ListResource<Domain> foundDomains = control.getOwnedDomains(limit, offset);
-
-        return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
+    public Response getOwnedDomain(@PathParam("domainUuid") String domainUuid) throws RestException {
+        Domain foundDomain = control.getOwnedDomain(domainUuid);
+        return ResponseUtils.buildSimpleResponse(foundDomain, Response.Status.OK, info);
     }
 
     @POST
@@ -94,20 +90,20 @@ public class DomainResource {
      Update an owned Domain, this method supports partial update
      */
     @PUT
-    @Path("{uuid}")
+    @Path("{domainUuid}")
     @Consumes(value = CONTENT_TYPE)
     @Produces(value = CONTENT_TYPE)
-    public Response updateDomain(@PathParam("uuid") String uuid, Domain domain) throws RestException {
-        Domain updatedDomain = control.updateDomain(uuid, domain);
+    public Response updateDomain(@PathParam("domainUuid") String domainUuid, Domain domain) throws RestException {
+        Domain updatedDomain = control.updateDomain(domainUuid, domain);
         return ResponseUtils.buildSimpleResponse(updatedDomain, Response.Status.OK, info);
     }
 
     @DELETE
-    @Path("{uuid}")
+    @Path("{domainUuid}")
     @Consumes(value = CONTENT_TYPE)
     @Produces(value = CONTENT_TYPE)
-    public Response deleteDomain(@PathParam("uuid") String uuid) throws RestException {
-        control.deleteDomain(uuid);
+    public Response deleteDomain(@PathParam("domainUuid") String domainUuid) throws RestException {
+        control.deleteDomain(domainUuid);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.NO_CONTENT, info);
     }
 
