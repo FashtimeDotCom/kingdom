@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom.invitation.entity;
 
-import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.rest.Resource;

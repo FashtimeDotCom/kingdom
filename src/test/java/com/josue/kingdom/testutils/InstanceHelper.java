@@ -6,7 +6,7 @@
 package com.josue.kingdom.testutils;
 
 import com.josue.kingdom.JpaRepository;
-import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.CredentialStatus;
 import com.josue.kingdom.credential.entity.ManagerCredential;

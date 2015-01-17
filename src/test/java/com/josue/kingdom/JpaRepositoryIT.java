@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom;
 
-import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.AuthRepository;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;

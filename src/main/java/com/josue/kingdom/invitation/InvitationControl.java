@@ -5,10 +5,9 @@
  */
 package com.josue.kingdom.invitation;
 
-import com.josue.kingdom.account.AccountRepository;
-import com.josue.kingdom.util.cdi.Current;
-import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.credential.entity.Credential;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.invitation.entity.Invitation;
@@ -16,6 +15,7 @@ import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.util.ListResourceUtil;
+import com.josue.kingdom.util.cdi.Current;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +38,7 @@ public class InvitationControl {
     InvitationRepository repository;
 
     @Inject
-    AccountRepository accountRepository;
+    CredentialRepository credentialRepository;
 
     @Inject
     InvitationService service;
@@ -56,7 +56,7 @@ public class InvitationControl {
         invitation.setPermission(permission);
         invitation.setToken(UUID.randomUUID().toString());
 
-        Manager manager = accountRepository.getManagerByEmail(invitation.getTargetEmail());
+        Manager manager = credentialRepository.getManagerByEmail(invitation.getTargetEmail());
         if (manager == null) {
             //Manager should fill form before acion completes
         } else {
@@ -92,7 +92,7 @@ public class InvitationControl {
     public boolean isSignup(String token) {
         //Here invitation can return null for non existing tokens
         Invitation invitation = getInvitationByToken(token);
-        Manager foundManager = accountRepository.getManagerByEmail(invitation.getTargetEmail());
+        Manager foundManager = credentialRepository.getManagerByEmail(invitation.getTargetEmail());
         return foundManager == null;
     }
 

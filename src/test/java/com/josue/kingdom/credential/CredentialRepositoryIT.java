@@ -1,7 +1,8 @@
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.credential.entity.APICredential;
+import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
@@ -20,6 +21,7 @@ import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -106,19 +108,6 @@ public class CredentialRepositoryIT {
         assertEquals(apiDomCred, foundapiDomCred);
     }
 
-//    @Test
-//    //TODO move to correct test class
-//    public void testGetManagerByCredential() {
-//        Manager manager = InstanceHelper.createManager();
-//        repository.create(manager);
-//
-//        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
-//        repository.create(credential);
-//
-//        Manager foundManager = repository.getManager(credential.getUuid());
-//        assertNotNull(foundManager);
-//        assertEquals(manager, foundManager);
-//    }
     @Test
     public void testCountAPICredential() {
         APIDomainCredential domainCredential = InstanceHelper.createFullAPIDomainCredential(repository);
@@ -143,6 +132,43 @@ public class CredentialRepositoryIT {
 
         long count = repository.countAPICredential(domain1.getUuid(), manager.getUuid());
         assertEquals(3, count);
+    }
+
+    @Test
+    public void testGetManagers() {
+        List<Manager> foundManagers = repository.getManagers(DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertTrue(foundManagers.size() >= 2); // 2 managers from liquibase test data
+    }
+
+    @Test
+    public void testGetManagerByEmail() {
+        Manager man1 = InstanceHelper.createManager();
+        repository.create(man1);
+
+        Manager foundManager = repository.getManagerByEmail(man1.getEmail());
+        assertEquals(man1, foundManager);
+    }
+
+    @Test
+    public void testGetManagerByLogin() {
+        Manager man1 = InstanceHelper.createManager();
+        repository.create(man1);
+        ManagerCredential manCred = InstanceHelper.createManagerCredential(man1);
+        repository.create(manCred);
+
+        Manager foundManager = repository.getManagerByLogin(manCred.getLogin());
+        assertEquals(man1, foundManager);
+    }
+
+    @Test
+    public void testGetManagerByCredential() {
+        Manager man1 = InstanceHelper.createManager();
+        repository.create(man1);
+        ManagerCredential manCred = InstanceHelper.createManagerCredential(man1);
+        repository.create(manCred);
+
+        Manager foundManager = repository.getManagerByCredential(manCred.getUuid());
+        assertEquals(man1, foundManager);
     }
 
 }

@@ -6,7 +6,7 @@
 package com.josue.kingdom.invitation;
 
 import com.josue.kingdom.invitation.entity.Invitation;
-import com.josue.kingdom.account.AccountService;
+import com.josue.kingdom.credential.CredentialService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -46,9 +46,9 @@ public class InvitationService {
             m.setContent("You were invited to join Domain ...TODO... <br /> click the below to accept: <br /> " + getInvitationHref(invitation), "text/plain");
             Transport.send(m);
         } catch (AddressException ex) {
-            Logger.getLogger(AccountService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CredentialService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MessagingException ex) {
-            Logger.getLogger(AccountService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CredentialService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.account.entity;
+package com.josue.kingdom.credential.entity;
 
 import com.josue.kingdom.rest.Resource;
 import com.josue.kingdom.util.validation.Email;

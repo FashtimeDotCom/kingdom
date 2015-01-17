@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.account;
+package com.josue.kingdom.credential;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +23,7 @@ import javax.mail.internet.MimeMessage;
  * @author Josue
  */
 @ApplicationScoped
-public class AccountService {
+public class CredentialService {
 
     @Resource(mappedName = "java:jboss/mail/gmail")
     private Session mailSession;
@@ -44,9 +44,9 @@ public class AccountService {
             m.setContent("Your new password is " + newPassword, "text/plain");
             Transport.send(m);
         } catch (AddressException ex) {
-            Logger.getLogger(AccountService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CredentialService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MessagingException ex) {
-            Logger.getLogger(AccountService.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CredentialService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

@@ -5,7 +5,6 @@
  */
 package com.josue.kingdom.credential.entity;
 
-import com.josue.kingdom.account.entity.Manager;
 import com.josue.kingdom.rest.Resource;
 import java.util.Objects;
 import javax.persistence.EnumType;

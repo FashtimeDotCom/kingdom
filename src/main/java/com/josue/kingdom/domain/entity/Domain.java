@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom.domain.entity;
 
-import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.rest.Resource;
 import java.util.Objects;
 import javax.persistence.Entity;

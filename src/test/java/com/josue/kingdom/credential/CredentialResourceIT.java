@@ -31,7 +31,26 @@ public class CredentialResourceIT {
 
     @Test
     public void testGetCurrentCredential() {
+        fail("The test case is a prototype.");
+    }
 
+    @Test
+    public void testGetAccount() {
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testPasswordReset() {
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testLoginRecover() {
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testCreateAccount() {
         fail("The test case is a prototype.");
     }
 

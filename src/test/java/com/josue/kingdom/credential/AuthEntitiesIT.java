@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.account.entity.Manager;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.ManagerCredential;
