@@ -10,5 +10,11 @@ package com.josue.kingdom.invitation.entity;
  * @author iFood
  */
 public enum InvitationStatus {
-    CREATED, SENT, CONFIRMED, EXPIRED, FAILED, SIGNING_UP, SIGNED
+
+    CREATED, //Invitation is saved on database
+    SENT, //Invitation was sent to target email
+    SIGNING_UP, //User doesnt exist, optional phase
+    COMPLETED, //Domain and permission assigned to manager
+    EXPIRED, //Expired, default is 2 days
+    FAILED, // Failed for any reason
 }

@@ -50,7 +50,7 @@ public class AccountRepositoryIT {
         repository.create(man2);
 
         List<Manager> foundManagers = repository.getManagers(DEFAULT_LIMIT, DEFAULT_OFFSET);
-        assertEquals(2, foundManagers.size());
+        assertEquals(4, foundManagers.size()); // 2 managers created + 2 managers from liquibase test data
         assertTrue(foundManagers.contains(man1));
         assertTrue(foundManagers.contains(man2));
     }

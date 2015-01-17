@@ -14,7 +14,9 @@ import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.invitation.InvitationRepository;
 import com.josue.kingdom.invitation.entity.Invitation;
+import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.rest.ListResource;
+import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import java.util.List;
@@ -179,6 +181,48 @@ public class AccountControlTest {
 
         when(invRepository.getInvitationByToken(eq(token))).thenReturn(any(Invitation.class));
         when(credentialRepository.getManagerCredentialByLogin("login")).thenReturn("existentLogin");
+        control.createCredential(token, null);
+        fail();
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testCreateCredentialCompletedStatus() throws RestException {
+        String token = "token-123";
+
+        Invitation invitation = new Invitation();
+        invitation.setStatus(InvitationStatus.COMPLETED);
+
+        Invitation spyInvitation = Mockito.spy(invitation);
+
+        when(invRepository.getInvitationByToken(eq(token))).thenReturn(spyInvitation);
+        control.createCredential(token, null);
+        fail();
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testCreateCredentialExpiredStatus() throws RestException {
+        String token = "token-123";
+
+        Invitation invitation = new Invitation();
+        invitation.setStatus(InvitationStatus.EXPIRED);
+
+        Invitation spyInvitation = Mockito.spy(invitation);
+
+        when(invRepository.getInvitationByToken(eq(token))).thenReturn(spyInvitation);
+        control.createCredential(token, null);
+        fail();
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testCreateCredentialFailedStatus() throws RestException {
+        String token = "token-123";
+
+        Invitation invitation = new Invitation();
+        invitation.setStatus(InvitationStatus.FAILED);
+
+        Invitation spyInvitation = Mockito.spy(invitation);
+
+        when(invRepository.getInvitationByToken(eq(token))).thenReturn(spyInvitation);
         control.createCredential(token, null);
         fail();
     }

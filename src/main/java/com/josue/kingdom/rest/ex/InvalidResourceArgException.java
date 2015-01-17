@@ -12,4 +12,8 @@ public class InvalidResourceArgException extends RestException {
                 param), Response.Status.BAD_REQUEST);
     }
 
+    public InvalidResourceArgException(Class<?> entityClass, String message) {
+        super(entityClass, null, message, Response.Status.BAD_REQUEST);
+    }
+
 }
