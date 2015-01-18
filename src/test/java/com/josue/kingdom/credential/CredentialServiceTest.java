@@ -5,7 +5,6 @@
  */
 package com.josue.kingdom.credential;
 
-import static org.junit.Assert.fail;
 import org.junit.Test;
 
 /**
@@ -14,12 +13,14 @@ import org.junit.Test;
  */
 public class CredentialServiceTest {
 
-    public CredentialServiceTest() {
+    @Test
+    public void testSendPasswordReset() {
+        //TODO should test ?
     }
 
     @Test
-    public void testSendPasswordRecovery() {
-        fail("The test case is a prototype.");
+    public void testSendLoginRecovery() {
+        //TODO should test ?
     }
 
 }

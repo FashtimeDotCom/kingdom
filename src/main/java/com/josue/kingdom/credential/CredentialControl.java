@@ -185,7 +185,7 @@ public class CredentialControl {
         foundCredential.setPassword(newPassword);
         credentialRepository.update(foundCredential);
 
-        service.sendPasswordRecovery(foundManager.getEmail(), newPassword);
+        service.sendPasswordReset(foundManager.getEmail(), newPassword);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

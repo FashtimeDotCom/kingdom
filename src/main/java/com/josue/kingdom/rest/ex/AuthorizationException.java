@@ -23,4 +23,8 @@ public class AuthorizationException extends RestException {
         super(null, "", String.format("Requires permission {0}", permission.getName()), Response.Status.BAD_REQUEST);
     }
 
+    public AuthorizationException(String message) {
+        super(null, "", message, Response.Status.BAD_REQUEST);
+    }
+
 }

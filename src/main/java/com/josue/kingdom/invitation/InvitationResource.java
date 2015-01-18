@@ -12,6 +12,7 @@ import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
 import static com.josue.kingdom.rest.ResponseUtils.DEFAULT_LIMIT;
 import static com.josue.kingdom.rest.ResponseUtils.DEFAULT_OFFSET;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
+import com.josue.kingdom.rest.ex.RestException;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -58,7 +59,7 @@ public class InvitationResource {
     @POST
     @Produces(value = CONTENT_TYPE)
     @Consumes(value = CONTENT_TYPE)
-    public Response createInvitation(Invitation invitation) {
+    public Response createInvitation(Invitation invitation) throws RestException {
         Invitation createdInvitation = control.createInvitation(invitation);
         return ResponseUtils.buildSimpleResponse(createdInvitation, Response.Status.OK, info);
     }

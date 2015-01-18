@@ -41,7 +41,7 @@ public class CredentialResource {
     CredentialControl control;
 
     /*
-     returns the ManagerCredential fot the login
+     returns the ManagerCredential for the login
      */
     @GET
     @Path("current")
@@ -64,7 +64,6 @@ public class CredentialResource {
     @GET
     @Path("{login}/password-reset")
     public Response passwordReset(@QueryParam("login") String login) throws RestException {
-
         control.passwordRecovery(login);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }

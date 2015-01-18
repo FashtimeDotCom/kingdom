@@ -117,7 +117,7 @@ public class CredentialControlTest {
         control.passwordRecovery(login);
 
         verify(spyManCred, times(1)).setPassword(anyString());
-        verify(service, times(1)).sendPasswordRecovery(spyManager.getEmail(), spyManCred.getPassword());
+        verify(service, times(1)).sendPasswordReset(spyManager.getEmail(), spyManCred.getPassword());
 
     }
 
