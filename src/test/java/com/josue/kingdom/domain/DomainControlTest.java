@@ -63,19 +63,19 @@ public class DomainControlTest {
     public void testGetOwnedDomains() {
         List<Domain> mockedDomains = Arrays.asList(Mockito.mock(Domain.class));
 
-        when(repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(mockedDomains);
+        when(repository.getOwnedDomains(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(mockedDomains);
         ListResource<Domain> ownedDomains = control.getOwnedDomains(DEFAULT_LIMIT, DEFAULT_OFFSET);
-        verify(repository, times(1)).getOwnedDomainsByManager(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        verify(repository, times(1)).getOwnedDomains(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(mockedDomains.size(), ownedDomains.getItems().size());
     }
 
     @Test
     public void testGetJoinedDomains() {
         List<Domain> domains = Arrays.asList(Mockito.mock(Domain.class));
-        when(repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(domains);
+        when(repository.getJoinedDomains(currentCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(domains);
 
         ListResource<Domain> joinedDomains = control.getJoinedDomains(DEFAULT_LIMIT, DEFAULT_OFFSET);
-        verify(repository, times(1)).getDomainCredentialsByManager(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        verify(repository, times(1)).getDomainCredentials(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(domains, joinedDomains.getItems());
     }
 

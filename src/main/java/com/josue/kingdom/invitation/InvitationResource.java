@@ -11,14 +11,12 @@ import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
 import static com.josue.kingdom.rest.ResponseUtils.DEFAULT_LIMIT;
 import static com.josue.kingdom.rest.ResponseUtils.DEFAULT_OFFSET;
-import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -51,7 +49,7 @@ public class InvitationResource {
     @GET
     @Path("{uuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response getInvitation(@PathParam(("uuid")) String uuid) {
+    public Response getInvitation(@PathParam(("uuid")) String uuid) throws RestException {
         Invitation invitation = control.getInvitation(uuid);
         return ResponseUtils.buildSimpleResponse(invitation, Response.Status.OK, info);
     }
@@ -64,12 +62,4 @@ public class InvitationResource {
         return ResponseUtils.buildSimpleResponse(createdInvitation, Response.Status.OK, info);
     }
 
-    //TODO s it useful ?
-    @PUT
-    @Path("{uuid}")
-    @Consumes(value = CONTENT_TYPE)
-    public Response updateInvitation(@PathParam(("uuid")) String uuid, Invitation invitation) throws ResourceNotFoundException {
-        Invitation updatedInvitation = control.updateInvitation(uuid, invitation);
-        return ResponseUtils.buildSimpleResponse(updatedInvitation, Response.Status.OK, info);
-    }
 }

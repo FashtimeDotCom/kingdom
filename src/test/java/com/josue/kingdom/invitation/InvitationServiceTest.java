@@ -5,8 +5,15 @@
  */
 package com.josue.kingdom.invitation;
 
-import static org.junit.Assert.fail;
+import com.josue.kingdom.invitation.entity.Invitation;
+import org.junit.Before;
 import org.junit.Test;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import org.mockito.MockitoAnnotations;
 
 /**
  *
@@ -14,12 +21,22 @@ import org.junit.Test;
  */
 public class InvitationServiceTest {
 
-    public InvitationServiceTest() {
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void testSendInvitation() {
-        fail("The test case is a prototype.");
+        InvitationService invitationService = Mockito.spy(new InvitationService());
+        String targetEmail = "target@email.com";
+        Invitation invitation = Mockito.spy(new Invitation());
+        invitation.setTargetEmail(targetEmail);
+
+        doNothing().when(invitationService).send(eq(targetEmail), any(String.class), any(String.class));
+        invitationService.sendInvitation(invitation);
+
+        verify(invitationService).send(eq(targetEmail), any(String.class), any(String.class));
     }
 
 }

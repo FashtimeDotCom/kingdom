@@ -32,7 +32,7 @@ public class DomainRepository extends JpaRepository {
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public List<Domain> getJoinedDomainsByManager(String managerUuid, Integer limit, Integer offset) {
+    public List<Domain> getJoinedDomains(String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT manCred.domain FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :managerUuid", Domain.class);
         query.setParameter("managerUuid", managerUuid);
         List<Domain> resultList = query.getResultList();
@@ -40,8 +40,19 @@ public class DomainRepository extends JpaRepository {
     }
 
     //Control change some data, we dont want to update it on database
+    //This should return only one result
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public List<ManagerDomainCredential> getDomainCredentialsByManager(String managerUuid, Integer limit, Integer offset) {
+    public Domain getJoinedDomain(String managerUuid, String domainUuid) {
+        Query query = em.createQuery("SELECT manCred.domain FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :managerUuid AND manCred.domain.uuid = :domainUuid", Domain.class);
+        query.setParameter("managerUuid", managerUuid);
+        query.setParameter("domainUuid", domainUuid);
+        List<Domain> resultList = query.getResultList();
+        return extractSingleResultFromList(resultList);
+    }
+
+    //Control change some data, we dont want to update it on database
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public List<ManagerDomainCredential> getDomainCredentials(String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT manCred FROM ManagerDomainCredential manCred WHERE manCred.credential.manager.uuid = :managerUuid", ManagerDomainCredential.class);
         query.setParameter("managerUuid", managerUuid);
         List<ManagerDomainCredential> resultList = query.getResultList();
@@ -56,7 +67,7 @@ public class DomainRepository extends JpaRepository {
         return extractSingleResultFromList(resultList);
     }
 
-    public List<Domain> getOwnedDomainsByManager(String managerUuid, Integer limit, Integer offset) {
+    public List<Domain> getOwnedDomains(String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT domain FROM Domain domain WHERE domain.owner.uuid = :managerUuid", Domain.class);
         query.setParameter("managerUuid", managerUuid);
         query.setMaxResults(limit).setFirstResult(offset);
@@ -87,18 +98,18 @@ public class DomainRepository extends JpaRepository {
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public List<DomainPermission> getDomainPermissions(String domainUuid) {
+        TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE  r.domain.uuid = :domainUuid", DomainPermission.class);
+        List<DomainPermission> permissions = query.getResultList();
+        return permissions;
+    }
+
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public DomainPermission getDomainPermission(String domainUuid, String permissionName) {
         TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE r.domain.uuid = :domainUuid AND r.name = :permissionName", DomainPermission.class);
         query.setParameter("permissionName", permissionName);
         List<DomainPermission> permissions = query.getResultList();
         return extractSingleResultFromList(permissions);
-    }
-
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public List<DomainPermission> getDomainPermissions(String domainUuid) {
-        TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE  r.domain.uuid = :domainUuid", DomainPermission.class);
-        List<DomainPermission> permissions = query.getResultList();
-        return permissions;
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)

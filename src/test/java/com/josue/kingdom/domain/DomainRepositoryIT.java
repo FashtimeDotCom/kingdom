@@ -5,8 +5,8 @@
  */
 package com.josue.kingdom.domain;
 
-import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.Credential;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
@@ -25,6 +25,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -62,7 +63,7 @@ public class DomainRepositoryIT {
     }
 
     @Test
-    public void testGetJoinedDomainsByManager() {
+    public void testGetJoinedDomains() {
         //The main Manager full tree
         ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
         Domain domain = domainCredential.getDomain();
@@ -80,20 +81,81 @@ public class DomainRepositoryIT {
         ManagerDomainCredential invitedDomainCredential = InstanceHelper.createManagerDomainCredential(domain, invitedManagerCredential, simplePermission);
         repository.create(invitedDomainCredential);
 
-        List<ManagerDomainCredential> foundDomainCredentials = repository.getDomainCredentialsByManager(invitedManagerCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<Domain> foundDomainCredentials = repository.getJoinedDomains(invitedManagerCredential.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundDomainCredentials.size());
-        assertEquals(invitedDomainCredential, foundDomainCredentials.get(0));
+        assertEquals(invitedDomainCredential.getDomain(), foundDomainCredentials.get(0));
 
     }
 
     @Test
-    public void testGetOwnedDomainsByManager() {
+    public void testGetJoinedDomain() {
+
+        //The main Manager full tree
+        ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
+        Domain domain = domainCredential.getDomain();
+
+        //The manager to be invited
+        Manager invitedManager = InstanceHelper.createManager();
+        repository.create(invitedManager);
+        ManagerCredential invitedManagerCredential = InstanceHelper.createManagerCredential(invitedManager);
+        repository.create(invitedManagerCredential);
+
+        DomainPermission simplePermission = InstanceHelper.createPermission(domain);
+        repository.create(simplePermission);
+
+        //Assign the new manager to the Domain
+        ManagerDomainCredential invitedDomainCredential = InstanceHelper.createManagerDomainCredential(domain, invitedManagerCredential, simplePermission);
+        repository.create(invitedDomainCredential);
+
+        Domain joinedDomain = repository.getJoinedDomain(invitedManagerCredential.getManager().getUuid(), domain.getUuid());
+        assertEquals(domain, joinedDomain);
+    }
+
+    @Test
+    public void testGetDomainCredentials() {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testGetOwnedDomain() {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testGetOwnedDomains() {
         ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
         Manager manager = domainCredential.getCredential().getManager();
 
-        List<Domain> ownedDomains = repository.getOwnedDomainsByManager(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        List<Domain> ownedDomains = repository.getOwnedDomains(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, ownedDomains.size());
         assertEquals(domainCredential.getDomain(), ownedDomains.get(0));
+    }
+
+    @Test
+    public void testGetDomainByName() {
+        Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+        ManagerCredential manCred = InstanceHelper.createManagerCredential(manager);
+        repository.create(manCred);
+
+        Domain domain = InstanceHelper.createDomain(manager);
+        repository.create(domain);
+
+        String domainName = domain.getName();
+        Domain foundDomain = repository.getDomainByName(domainName);
+        assertNotNull(foundDomain);
+        assertEquals(domain, foundDomain);
+
+        Domain notFoundDomain = repository.getDomainByName("INEXISTENT-NAME");
+        assertNull(notFoundDomain);
+
+        notFoundDomain = repository.getDomainByName(domain.getName().substring(0, 2));
+        assertNull(notFoundDomain);
+
+        notFoundDomain = repository.getDomainByName(domain.getName().substring(2, domain.getName().length()));
+        assertNull(notFoundDomain);
     }
 
     @Test
@@ -144,28 +206,26 @@ public class DomainRepositoryIT {
     }
 
     @Test
-    public void testGetDomainUuidByName() {
-        Manager manager = InstanceHelper.createManager();
-        repository.create(manager);
-        ManagerCredential manCred = InstanceHelper.createManagerCredential(manager);
-        repository.create(manCred);
-
-        Domain domain = InstanceHelper.createDomain(manager);
-        repository.create(domain);
-
-        String domainName = domain.getName();
-        Domain foundDomain = repository.getDomainByName(domainName);
-        assertNotNull(foundDomain);
-        assertEquals(domain, foundDomain);
-
-        Domain notFoundDomain = repository.getDomainByName("INEXISTENT-NAME");
-        assertNull(notFoundDomain);
-
-        notFoundDomain = repository.getDomainByName(domain.getName().substring(0, 2));
-        assertNull(notFoundDomain);
-
-        notFoundDomain = repository.getDomainByName(domain.getName().substring(2, domain.getName().length()));
-        assertNull(notFoundDomain);
-
+    public void testGetDomainPermissions() {
+        fail("The test case is a prototype.");
     }
+
+    @Test
+    public void testGetDomainPermission_String_String() {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testGetDomainPermission_String_int() {
+
+        fail("The test case is a prototype.");
+    }
+
+    @Test
+    public void testPurgeDomain() {
+
+        fail("The test case is a prototype.");
+    }
+
 }

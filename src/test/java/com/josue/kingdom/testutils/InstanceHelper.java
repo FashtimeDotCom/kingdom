@@ -6,15 +6,17 @@
 package com.josue.kingdom.testutils;
 
 import com.josue.kingdom.JpaRepository;
-import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.CredentialStatus;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
+import com.josue.kingdom.invitation.entity.Invitation;
+import com.josue.kingdom.invitation.entity.InvitationStatus;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Calendar;
@@ -106,6 +108,24 @@ public abstract class InstanceHelper {
         domainCredential.setCredential(credential);
         domainCredential.setPermission(permission);
         return domainCredential;
+    }
+
+    //#### Invitation ###
+    public static Invitation createInvitation(Domain domain, Manager author, DomainPermission permission) {
+        Invitation invitation = new Invitation();
+        invitation.setDomain(domain);
+        invitation.setPermission(permission);
+        invitation.setAuthorManager(author);
+        invitation.setTargetEmail(Long.toHexString(Double.doubleToLongBits(Math.random())) + "@email.com");
+        invitation.setStatus(InvitationStatus.CREATED);
+        invitation.setToken(UUID.randomUUID().toString());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(mysqlMilliSafeTimestamp());
+        cal.set(Calendar.DAY_OF_MONTH, 2);
+        invitation.setValidUntil(cal.getTime());
+
+        return invitation;
     }
 
     //#### FULL ENTITY TREE CREATION ####

@@ -47,10 +47,4 @@ public class InvitationResourceIT {
         fail("The test case is a prototype.");
     }
 
-    @Test
-    public void testUpdateInvitation() throws Exception {
-
-        fail("The test case is a prototype.");
-    }
-
 }

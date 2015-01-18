@@ -6,6 +6,7 @@
 package com.josue.kingdom.invitation;
 
 import com.josue.kingdom.invitation.entity.Invitation;
+import com.josue.kingdom.rest.ex.RestException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.inject.Inject;
@@ -26,7 +27,7 @@ public class SignupServlet extends HttpServlet {
     InvitationControl control;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, RestException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
@@ -50,13 +51,24 @@ public class SignupServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        //TODO fix
+        try {
+            processRequest(request, response);
+        } catch (RestException e) {
+        }
+
     }
 
+    //TODO fix
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        //TODO fix
+        try {
+            processRequest(request, response);
+        } catch (RestException e) {
+        }
     }
 
     @Override

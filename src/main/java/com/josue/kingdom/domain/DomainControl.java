@@ -40,12 +40,12 @@ public class DomainControl {
 
     public ListResource<Domain> getOwnedDomains(Integer limit, Integer offset) {
         long totalCount = repository.countOwnedDomains(currentCredential.getManager().getUuid());
-        List<Domain> ownedDomains = repository.getOwnedDomainsByManager(currentCredential.getManager().getUuid(), limit, offset);
+        List<Domain> ownedDomains = repository.getOwnedDomains(currentCredential.getManager().getUuid(), limit, offset);
         return ListResourceUtil.buildListResource(ownedDomains, totalCount, limit, offset);
     }
 
     public ListResource<Domain> getJoinedDomains(Integer limit, Integer offset) {
-        List<Domain> joinedDomains = repository.getJoinedDomainsByManager(currentCredential.getManager().getUuid(), limit, offset);
+        List<Domain> joinedDomains = repository.getJoinedDomains(currentCredential.getManager().getUuid(), limit, offset);
 
         long totalCount = repository.countDomainCredentials(currentCredential.getManager().getUuid());
         return ListResourceUtil.buildListResource(joinedDomains, totalCount, limit, offset);

@@ -32,7 +32,7 @@ public class MailService {
 
     private final String systemEmail = "josue.eduardo206@gmail.com";
 
-    protected void send(String targetEmail, String subject, String content) {
+    public void send(String targetEmail, String subject, String content) {
         try {
             //build content... TODO improve
             MimeBodyPart htmlPart = new MimeBodyPart();

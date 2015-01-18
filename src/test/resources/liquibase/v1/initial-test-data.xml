@@ -290,4 +290,18 @@
         </insert>
     </changeSet>
     
+    <changeSet author="Josue" id="initial-test-data-18" runAlways="true">
+        <insert tableName="invitation">
+            <column name="uuid" value="1811009b-dc81-4686-9297-d5d357049858"/>
+            <column name="date_created" value="${now}"/>
+            <column name="domain_uuid" value="70f4b4b0-18d2-4707-824b-b30af193d99b"/>
+            <column name="target_email" value="testmail@email.com"/>
+            <column name="author_manager_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/> <!-- manager 1 -->
+            <column name="domain_permission_uuid" value="d1486e7e-611c-47eb-bba1-28e6d4adca95"/> 
+            <column name="token" value="b423de2d-465b-4062-889c-59f949bbe517"/> 
+            <column name="valid_until" value="${now}"/> 
+            <column name="status" value="CREATED"/> 
+        </insert>
+    </changeSet>
+    
 </databaseChangeLog>

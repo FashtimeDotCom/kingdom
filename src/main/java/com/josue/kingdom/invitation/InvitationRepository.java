@@ -35,7 +35,7 @@ public class InvitationRepository extends JpaRepository {
     public long getInvitationsCount(String authorUuid) {
         TypedQuery<Long> query = em.createQuery("SELECT COUNT(inv.uuid) FROM Invitation inv WHERE inv.authorManager.uuid = :authorUuid", Long.class);
         query.setParameter("authorUuid", authorUuid);
-        return query.getFirstResult();
+        return query.getSingleResult();
     }
 
 }

@@ -8,6 +8,7 @@ package com.josue.kingdom.invitation;
 import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.invitation.entity.Invitation;
@@ -44,6 +45,9 @@ public class InvitationControl {
     CredentialRepository credentialRepository;
 
     @Inject
+    DomainRepository domainRepository;
+
+    @Inject
     InvitationService service;
 
     //TODO make this application robust using validator, here we have several possibles NPE, fix this ASAP
@@ -70,8 +74,13 @@ public class InvitationControl {
         Manager manager = credentialRepository.getManagerByEmail(invitation.getTargetEmail());
         if (manager == null) {
             //Manager should fill form before acion completes
-        } else {
-            //Manager already exists, just add the Domain
+        } else {//Manager already exists, just add the Domain
+            Domain joinedDomain = domainRepository.getJoinedDomain(manager.getUuid(), foundDomain.getUuid());
+            if (joinedDomain != null) { //User already joined to Domain
+
+            } else {
+                //proceed with already existing manager
+            }
         }
 
         //TODO this should run within the same TX... check CDI observer for event on commit success !!!
@@ -80,6 +89,7 @@ public class InvitationControl {
         return invitation;
     }
 
+    //Internal only, theres no reason for user update an invitation
     public Invitation updateInvitation(String uuid, Invitation inv) throws RestException {
         Invitation invitation = invitationRepository.find(Invitation.class, uuid);
         if (invitation == null) {
