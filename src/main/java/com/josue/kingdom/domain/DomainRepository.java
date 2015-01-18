@@ -100,6 +100,7 @@ public class DomainRepository extends JpaRepository {
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<DomainPermission> getDomainPermissions(String domainUuid) {
         TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE  r.domain.uuid = :domainUuid", DomainPermission.class);
+        query.setParameter("domainUuid", domainUuid);
         List<DomainPermission> permissions = query.getResultList();
         return permissions;
     }
@@ -107,6 +108,7 @@ public class DomainRepository extends JpaRepository {
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public DomainPermission getDomainPermission(String domainUuid, String permissionName) {
         TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE r.domain.uuid = :domainUuid AND r.name = :permissionName", DomainPermission.class);
+        query.setParameter("domainUuid", domainUuid);
         query.setParameter("permissionName", permissionName);
         List<DomainPermission> permissions = query.getResultList();
         return extractSingleResultFromList(permissions);
@@ -115,18 +117,27 @@ public class DomainRepository extends JpaRepository {
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public DomainPermission getDomainPermission(String domainUuid, int permissionLevel) {
         TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE  r.domain.uuid = :domainUuid AND r.level = :permissionLevel", DomainPermission.class);
+        query.setParameter("domainUuid", domainUuid);
         query.setParameter("permissionLevel", permissionLevel);
         List<DomainPermission> permissions = query.getResultList();
         return extractSingleResultFromList(permissions);
     }
 
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public List<APIDomainCredential> getAPIDomainCredentials(String domainUuid) {
+        TypedQuery<APIDomainCredential> apiDomCredQuery = em.createQuery("SELECT apidomcred FROM APIDomainCredential apidomcred WHERE apidomcred.domain.uuid = :domainUuid", APIDomainCredential.class);
+        apiDomCredQuery.setParameter("domainUuid", domainUuid);
+        List<APIDomainCredential> foundCreds = apiDomCredQuery.getResultList();
+        return foundCreds;
+    }
+
     @Transactional(Transactional.TxType.REQUIRED)
     public void purgeDomain(Domain domain) {
-        TypedQuery<APIDomainCredential> apiDomCredQuery = em.createQuery("SELECT apidomcred FROM APIDomainCredential apidomcred WHERE apidomcred.domain.uuid = :domainUuid", APIDomainCredential.class);
-        apiDomCredQuery.setParameter("domainUuid", domain.getUuid());
-        List<APIDomainCredential> foundCreds = apiDomCredQuery.getResultList();
+        List<APIDomainCredential> foundCreds = getAPIDomainCredentials(domain.getUuid());
         for (APIDomainCredential adc : foundCreds) {
+            em.remove(adc);
             em.remove(adc.getCredential());
+            em.flush();
         }
 
         Query q1 = em.createQuery("DELETE FROM ManagerDomainCredential mandomcred WHERE mandomcred.domain.uuid = :domainUuid");

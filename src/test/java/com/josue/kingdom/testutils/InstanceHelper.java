@@ -48,7 +48,7 @@ public abstract class InstanceHelper {
         DomainPermission permission = new DomainPermission();
         permission.setDescription("Permission description");
         permission.setLevel(new Random().nextInt());
-        permission.setName("ADMIN");
+        permission.setName(new BigInteger(130, random).toString(8));
         permission.setDomain(domain);
         return permission;
     }

@@ -5,9 +5,11 @@
  */
 package com.josue.kingdom.domain;
 
+import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
+import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
@@ -16,6 +18,9 @@ import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
@@ -25,6 +30,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +47,9 @@ public class DomainRepositoryIT {
     private static final Integer DEFAULT_OFFSET = 0;
 
     private static final Logger LOG = Logger.getLogger(DomainRepositoryIT.class.getName());
+
+    @PersistenceContext
+    EntityManager em;
 
     @Inject
     DomainRepository repository;
@@ -207,25 +216,77 @@ public class DomainRepositoryIT {
 
     @Test
     public void testGetDomainPermissions() {
-        fail("The test case is a prototype.");
+        ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
+
+        List<DomainPermission> foundPermissions = repository.getDomainPermissions(domainCredential.getDomain().getUuid());
+        assertEquals(1, foundPermissions.size());
+        assertTrue(foundPermissions.contains(domainCredential.getPermission()));
+
     }
 
     @Test
     public void testGetDomainPermission_String_String() {
+        ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
+        DomainPermission permission = InstanceHelper.createPermission(domainCredential.getDomain());
+        repository.create(permission);
 
-        fail("The test case is a prototype.");
+        DomainPermission foundPermission = repository.getDomainPermission(domainCredential.getDomain().getUuid(), permission.getName());
+        assertNotNull(foundPermission);
+        assertEquals(permission, foundPermission);
     }
 
     @Test
     public void testGetDomainPermission_String_int() {
+        ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
+        DomainPermission permission = InstanceHelper.createPermission(domainCredential.getDomain());
+        repository.create(permission);
 
-        fail("The test case is a prototype.");
+        DomainPermission foundPermission = repository.getDomainPermission(domainCredential.getDomain().getUuid(), permission.getLevel());
+        assertNotNull(foundPermission);
+        assertEquals(permission, foundPermission);
     }
 
     @Test
-    public void testPurgeDomain() {
+    public void testGetAPIDomainCredentials() {
+        APIDomainCredential apiDomCred = InstanceHelper.createFullAPIDomainCredential(repository);
+        List<APIDomainCredential> foundApiDomCred = repository.getAPIDomainCredentials(apiDomCred.getDomain().getUuid());
+        assertEquals(1, foundApiDomCred.size());
+        assertEquals(apiDomCred.getCredential(), foundApiDomCred.get(0));
+    }
 
-        fail("The test case is a prototype.");
+    @Test
+    @Transactional(TransactionMode.DISABLED)
+    public void testPurgeDomain() {
+        ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
+        APICredential apiCred = InstanceHelper.createAPICredential(domainCredential.getCredential().getManager());
+        repository.create(apiCred);
+        APIDomainCredential apidc = InstanceHelper.createAPIDomainCredential(domainCredential.getDomain(), apiCred, domainCredential.getPermission());
+        repository.create(apidc);
+
+        repository.purgeDomain(domainCredential.getDomain());
+
+        List<APIDomainCredential> foundApiDomCred = repository.getAPIDomainCredentials(domainCredential.getDomain().getUuid());
+        assertEquals(0, foundApiDomCred.size());
+
+        Query q1 = em.createQuery("SELECT COUNT(mandomcred) FROM ManagerDomainCredential mandomcred WHERE mandomcred.domain.uuid = :domainUuid");
+        q1.setParameter("domainUuid", domainCredential.getDomain().getUuid());
+        long mangerDomainCredCount = (long) q1.getSingleResult();
+        assertEquals(0, mangerDomainCredCount);
+
+        Query q2 = em.createQuery("SELECT COUNT(inv) FROM Invitation inv WHERE inv.domain.uuid = :domainUuid");
+        q2.setParameter("domainUuid", domainCredential.getDomain().getUuid());
+        long invitationCount = (long) q2.getSingleResult();
+        assertEquals(0, invitationCount);
+
+        Query q3 = em.createQuery("SELECT COUNT(domainperm) FROM DomainPermission domainperm WHERE domainperm.domain.uuid = :domainUuid");
+        q3.setParameter("domainUuid", domainCredential.getDomain().getUuid());
+        long permissionCount = (long) q3.getSingleResult();
+        assertEquals(0, permissionCount);
+
+        Query q4 = em.createQuery("SELECT COUNT(dom) FROM Domain dom WHERE dom.uuid = :domainUuid");
+        q4.setParameter("domainUuid", domainCredential.getDomain().getUuid());
+        long domainCount = (long) q4.getSingleResult();
+        assertEquals(0, domainCount);
     }
 
 }

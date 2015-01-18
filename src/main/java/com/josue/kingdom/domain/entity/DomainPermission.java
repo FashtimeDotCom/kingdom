@@ -18,7 +18,9 @@ import javax.persistence.UniqueConstraint;
  * @author Josue
  */
 @Entity
-@Table(name = "domain_permission", uniqueConstraints = @UniqueConstraint(columnNames = {"level", "domain_uuid"}))
+@Table(name = "domain_permission", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"level", "domain_uuid"}),
+    @UniqueConstraint(columnNames = {"name", "domain_uuid"})})
 //TODO extend from Resource
 public class DomainPermission extends Resource {
 
