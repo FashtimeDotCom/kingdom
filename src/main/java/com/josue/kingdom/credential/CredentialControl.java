@@ -33,7 +33,6 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
 
 /**
@@ -51,6 +50,9 @@ public class CredentialControl {
 
     @Inject
     DomainRepository permissionRepository;
+
+    @Inject
+    CredentialService service;
 
     @Inject
     @Current
@@ -150,9 +152,6 @@ public class CredentialControl {
         credentialRepository.delete(apiDomCred.getCredential());
     }
 
-    @Inject
-    CredentialService service;
-
     public Manager getManagerByCredential(String credentialUuid) {
         return credentialRepository.getManagerByCredential(credentialUuid);
     }
@@ -171,12 +170,13 @@ public class CredentialControl {
         return managerByLogin;
     }
 
+    //TODO create a resource class to register credentials changes
     @Transactional(Transactional.TxType.REQUIRED)
-    public void passwordRecovery(String login) throws RestException {
+    public void passwordReset(String login) throws RestException {
         Manager foundManager = credentialRepository.getManagerByLogin(login);
         if (foundManager == null) {
             //TODO wicch exception should be thrown ?
-            throw new RestException(Manager.class, "", String.format("Account not found for login {0}", login), Response.Status.OK);
+            throw new ResourceNotFoundException(Manager.class, "login", login);
         }
 
         //This block should run within the same TX block
@@ -186,6 +186,19 @@ public class CredentialControl {
         credentialRepository.update(foundCredential);
 
         service.sendPasswordReset(foundManager.getEmail(), newPassword);
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void loginRecovery(String email) throws RestException {
+        Manager foundManager = credentialRepository.getManagerByEmail(email);
+        if (foundManager == null) {
+            //TODO wicch exception should be thrown ?
+            throw new ResourceNotFoundException(Manager.class, "email", email);
+        }
+
+        //This block should run within the same TX block
+        ManagerCredential foundCredential = credentialRepository.getManagerCredentialByManager(foundManager.getUuid());
+        service.sendLoginRecovery(foundManager.getEmail(), foundCredential.getLogin());
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

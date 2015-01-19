@@ -8,6 +8,7 @@ package com.josue.kingdom.credential;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.RestHelper;
 import com.sun.jersey.api.client.ClientResponse;
@@ -59,7 +60,7 @@ public class CredentialResourceIT {
     @Test
     public void testGetAccount() {
 
-        String testInitialEmail = "josue.eduardo206@gmail.com";
+        String testInitialEmail = "manager1@gmail.com";
         String testInitialLogin = "josueeduardo";
 
         ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, testInitialLogin);
@@ -73,17 +74,40 @@ public class CredentialResourceIT {
 
     @Test
     public void testPasswordReset() {
-        //TODO test-me
+        String testInitialUsername = "josueeduardo";
+        ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, testInitialUsername, PASSWORD_RESET);
+        RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }
 
     @Test
     public void testLoginRecover() {
-        //TODO test-me
+        String testInitialEmail = "manager1@gmail.com";
+        ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, testInitialEmail, LOGIN_RECOVER);
+        RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }
 
     @Test
     public void testCreateAccount() {
-        //TODO test-me
+        String testInitialInvToken = "b423de2d-465b-4062-889c-59f949bbe517";
+        String tstInitialInvEmail = "testmail@email.com";
+
+        String login = "newlogin";
+        String password = "psw123";
+        ManagerCredential managerCredential = new ManagerCredential(login, password);
+        Manager manager = new Manager();
+        //email is not needed
+        manager.setFirstName("new manager name");
+        manager.setLastName("a lastname");
+        managerCredential.setManager(manager);
+
+        ClientResponse response = RestHelper.doPostRequest(managerCredential, CREDENTIALS, testInitialInvToken);
+        RestHelper.assertStatusCode(Response.Status.CREATED.getStatusCode(), response);
+        ManagerCredential createdCredential = response.getEntity(new GenericType<ManagerCredential>() {
+        });
+        assertNotNull(createdCredential);
+        assertEquals(login, createdCredential.getLogin());
+        assertEquals(tstInitialInvEmail, createdCredential.getManager().getEmail());
+
     }
 
 }

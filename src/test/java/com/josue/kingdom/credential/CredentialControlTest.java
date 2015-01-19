@@ -98,12 +98,12 @@ public class CredentialControlTest {
     }
 
     @Test
-    public void testPasswordRecovery() throws Exception {
+    public void testPasswordReset() throws Exception {
         String uuid = "uuid123";
-        Manager manager = new Manager();
-        manager.setEmail("josue@email.com");
-        manager.setUuid("uuid");
-        Manager spyManager = Mockito.spy(manager);
+        Manager man = new Manager();
+        man.setEmail("josue@email.com");
+        man.setUuid("uuid");
+        Manager spyManager = Mockito.spy(man);
         when(spyManager.getUuid()).thenReturn(uuid);
 
         String login = "login";
@@ -114,7 +114,7 @@ public class CredentialControlTest {
         when(credentialRepository.getManagerByLogin(login)).thenReturn(spyManager);
         when(credentialRepository.getManagerCredentialByManager(spyManager.getUuid())).thenReturn(spyManCred);
 
-        control.passwordRecovery(login);
+        control.passwordReset(login);
 
         verify(spyManCred, times(1)).setPassword(anyString());
         verify(service, times(1)).sendPasswordReset(spyManager.getEmail(), spyManCred.getPassword());
@@ -123,10 +123,10 @@ public class CredentialControlTest {
 
     //TODO create specific ExceptionClass
     @Test(expected = RestException.class)
-    public void testPasswordRecoveryManagerNotFound() throws Exception {
+    public void testPasswordResetManagerNotFound() throws Exception {
         String login = "login";
         when(credentialRepository.getManagerByLogin(login)).thenReturn(null);
-        control.passwordRecovery(login);
+        control.passwordReset(login);
         fail();
     }
 
@@ -147,8 +147,6 @@ public class CredentialControlTest {
 
         String login = "login1";
         ManagerCredential manCred = new ManagerCredential(login, "password");
-        Manager manager = new Manager();
-        manager.setEmail("anotherWrong@email.com");
         manCred.setManager(new Manager());
 
         ManagerCredential spyManCred = Mockito.spy(manCred);
@@ -303,5 +301,28 @@ public class CredentialControlTest {
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
         verify(credMock, times(1)).setApiKey(argument.capture());
         assertTrue(argument.getValue().contains("*******"));
+    }
+
+    @Test
+    public void testLoginRecovery() throws RestException {
+        String email = "test@email.com";
+        Manager mockManager = Mockito.mock(Manager.class);
+        ManagerCredential manCred = Mockito.mock(ManagerCredential.class);
+
+        when(credentialRepository.getManagerByEmail(email)).thenReturn(mockManager);
+        when(credentialRepository.getManagerCredentialByManager(mockManager.getUuid())).thenReturn(manCred);
+
+        control.loginRecovery(email);
+        verify(service).sendLoginRecovery(email, manCred.getLogin());
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testLoginRecoveryNotFound() throws RestException {
+        String email = "test@email.com";
+
+        when(credentialRepository.getManagerByEmail(email)).thenReturn(null);
+        control.loginRecovery(email);
+        fail();
+
     }
 }

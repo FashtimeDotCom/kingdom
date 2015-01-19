@@ -59,7 +59,7 @@ public class InvitationResource {
     @Consumes(value = CONTENT_TYPE)
     public Response createInvitation(Invitation invitation) throws RestException {
         Invitation createdInvitation = control.createInvitation(invitation);
-        return ResponseUtils.buildSimpleResponse(createdInvitation, Response.Status.OK, info);
+        return ResponseUtils.buildSimpleResponse(createdInvitation, Response.Status.CREATED, info);
     }
 
 }

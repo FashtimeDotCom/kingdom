@@ -37,14 +37,14 @@ public class Invitation extends Resource {
     private String targetEmail;
 
     @NotNull
-    @OneToOne(targetEntity = Manager.class)
+    @OneToOne
     @JoinColumn(name = "author_manager_uuid")
-    private Resource authorManager;
+    private Manager authorManager;
 
     @NotNull
-    @OneToOne(targetEntity = Domain.class)
+    @OneToOne
     @JoinColumn(name = "domain_uuid")
-    private Resource domain;
+    private Domain domain;
 
     @OneToOne
     @JoinColumn(name = "domain_permission_uuid")
@@ -93,19 +93,19 @@ public class Invitation extends Resource {
         this.targetEmail = targetEmail;
     }
 
-    public Resource getAuthorManager() {
+    public Manager getAuthorManager() {
         return authorManager;
     }
 
-    public void setAuthorManager(Resource authorManager) {
+    public void setAuthorManager(Manager authorManager) {
         this.authorManager = authorManager;
     }
 
-    public Resource getDomain() {
+    public Domain getDomain() {
         return domain;
     }
 
-    public void setDomain(Resource domain) {
+    public void setDomain(Domain domain) {
         this.domain = domain;
     }
 

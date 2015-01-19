@@ -31,7 +31,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -122,14 +121,23 @@ public class DomainRepositoryIT {
 
     @Test
     public void testGetDomainCredentials() {
+        ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
+        Manager manager = domainCredential.getCredential().getManager();
 
-        fail("The test case is a prototype.");
+        List<ManagerDomainCredential> foundCredentials = repository.getDomainCredentials(manager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(1, foundCredentials.size());
+        assertEquals(domainCredential, foundCredentials.get(0));
     }
 
     @Test
     public void testGetOwnedDomain() {
+        ManagerDomainCredential domainCredential = InstanceHelper.createFullManagerDomainCredential(repository);
+        Manager manager = domainCredential.getCredential().getManager();
+        Domain domain = domainCredential.getDomain();
 
-        fail("The test case is a prototype.");
+        Domain foundDomain = repository.getOwnedDomain(domain.getUuid(), manager.getUuid());
+        assertNotNull(foundDomain);
+        assertEquals(domain, foundDomain);
     }
 
     @Test
@@ -251,7 +259,7 @@ public class DomainRepositoryIT {
         APIDomainCredential apiDomCred = InstanceHelper.createFullAPIDomainCredential(repository);
         List<APIDomainCredential> foundApiDomCred = repository.getAPIDomainCredentials(apiDomCred.getDomain().getUuid());
         assertEquals(1, foundApiDomCred.size());
-        assertEquals(apiDomCred.getCredential(), foundApiDomCred.get(0));
+        assertEquals(apiDomCred, foundApiDomCred.get(0));
     }
 
     @Test

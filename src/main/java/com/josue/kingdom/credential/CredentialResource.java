@@ -19,7 +19,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -63,26 +62,25 @@ public class CredentialResource {
 
     @GET
     @Path("{login}/password-reset")
-    public Response passwordReset(@QueryParam("login") String login) throws RestException {
-        control.passwordRecovery(login);
+    public Response passwordReset(@PathParam("login") String login) throws RestException {
+        control.passwordReset(login);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }
 
     @GET
     @Path("{email}/login-recover")
-    //TODO implement
-    public Response loginRecover(@QueryParam("email") String email) throws RestException {
-
-        throw new RuntimeException("*** NOT IMPLEMENTED YET ***");
-//        control.passwordRecovery(login);
-//        return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
+    //TODO return any body ? SHOULD THOSE ACCOUNT METHOD HAVE AN ENTITY CLASS ?
+    public Response loginRecover(@PathParam("email") String email) throws RestException {
+        control.loginRecovery(email);
+        return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }
 
     //TODO move to CredentialResource or keep it here ?
     @POST
+    @Path("{token}")
     @Produces(value = CONTENT_TYPE)
     @Consumes(value = CONTENT_TYPE)
-    public Response createAccount(@QueryParam("token") String token, ManagerCredential managerCredential) throws RestException {
+    public Response createAccount(@PathParam("token") String token, ManagerCredential managerCredential) throws RestException {
         ManagerCredential createdCredential = control.createCredential(token, managerCredential);
         return ResponseUtils.buildSimpleResponse(createdCredential, Response.Status.CREATED, info);
     }

@@ -21,7 +21,7 @@
         <insert tableName="manager">
             <column name="uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
             <column name="date_created" value="${now}"/>
-            <column name="email" value="josue.eduardo206@gmail.com"/>
+            <column name="email" value="manager1@gmail.com"/>
             <column name="first_name" value="Josue"/>
             <column name="last_name" value="Eduardo"/>
         </insert>
