@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -77,7 +78,8 @@ public class InvitationControl {
         } else {//Manager already exists, just add the Domain
             Domain joinedDomain = domainRepository.getJoinedDomain(manager.getUuid(), foundDomain.getUuid());
             if (joinedDomain != null) { //User already joined to Domain
-
+                //TODO check... should return exception for already joined manager
+                throw new RestException(Manager.class, manager.getUuid(), "Already joined to domain", Response.Status.BAD_REQUEST);
             } else {
                 //proceed with already existing manager
             }

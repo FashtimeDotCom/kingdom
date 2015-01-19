@@ -9,6 +9,7 @@ import com.josue.kingdom.credential.CredentialRepository;
 import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
+import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.invitation.entity.Invitation;
@@ -55,6 +56,9 @@ public class InvitationControlTest {
 
     @Mock
     InvitationService service;
+
+    @Mock
+    DomainRepository domainRepository;
 
     @InjectMocks
     InvitationControl control = new InvitationControl();
@@ -127,6 +131,64 @@ public class InvitationControlTest {
 
         control.createInvitation(invitation);
         fail();
+    }
+
+    @Test(expected = RestException.class)
+    public void testCreateInvitationAlreadyJoined() throws RestException {
+
+        Domain domain = Mockito.mock(Domain.class);
+        DomainPermission permission = Mockito.mock(DomainPermission.class);
+
+        Invitation invitation = Mockito.spy(new Invitation());
+        invitation.setDomain(domain);
+        invitation.setPermission(permission);
+        String targetEmail = "test@email.com";
+        invitation.setTargetEmail(targetEmail);
+
+        Manager existingManager = Mockito.mock(Manager.class);
+
+        when(domain.getOwner()).thenReturn(manager);
+        when(invitationRepository.find(Domain.class, domain.getUuid())).thenReturn(domain);
+        when(invitationRepository.find(DomainPermission.class, permission.getUuid())).thenReturn(permission);
+        //Manager already exist
+        when(credentialRepository.getManagerByEmail(targetEmail)).thenReturn(existingManager);
+        //User already joined to domain
+        when(domainRepository.getJoinedDomain(existingManager.getUuid(), domain.getUuid())).thenReturn(domain);
+        control.createInvitation(invitation);
+        fail();
+    }
+
+    @Test
+    public void testCreateInvitationExistingManager() throws RestException {
+
+        Domain domain = Mockito.mock(Domain.class);
+        DomainPermission permission = Mockito.mock(DomainPermission.class);
+
+        Invitation invitation = Mockito.spy(new Invitation());
+        invitation.setDomain(domain);
+        invitation.setPermission(permission);
+        String targetEmail = "test@email.com";
+        invitation.setTargetEmail(targetEmail);
+
+        Manager existingManager = Mockito.mock(Manager.class);
+
+        when(domain.getOwner()).thenReturn(manager);
+        when(invitationRepository.find(Domain.class, domain.getUuid())).thenReturn(domain);
+        when(invitationRepository.find(DomainPermission.class, permission.getUuid())).thenReturn(permission);
+        //Manager already exist
+        when(credentialRepository.getManagerByEmail(targetEmail)).thenReturn(existingManager);
+        //User not joined to domain yet
+        when(domainRepository.getJoinedDomain(existingManager.getUuid(), domain.getUuid())).thenReturn(null);
+
+        Invitation createdInvitation = control.createInvitation(invitation);
+        assertEquals(InvitationStatus.CREATED, createdInvitation.getStatus());
+        assertNotNull(invitation.getToken());
+        assertNotNull(invitation.getValidUntil());
+        assertEquals(targetEmail, createdInvitation.getTargetEmail());
+
+        verify(invitation, times(1)).removeNonCreatable();
+        verify(service, times(1)).sendInvitation(createdInvitation);
+
     }
 
     @Test(expected = ResourceNotFoundException.class)

@@ -205,7 +205,15 @@ public class DomainControlTest {
         when(repository.find(Domain.class, uuid)).thenReturn(mockedDomain);
         Domain joinedDomain = control.getJoinedDomain(uuid);
         assertEquals(mockedDomain, joinedDomain);
+    }
 
+    @Test(expected = ResourceNotFoundException.class)
+    public void testGetJoinedDomainNotFound() throws RestException {
+        String uuid = "123";
+
+        when(repository.find(Domain.class, uuid)).thenReturn(null);
+        control.getJoinedDomain(uuid);
+        fail();
     }
 
     @Test(expected = InvalidResourceArgException.class)

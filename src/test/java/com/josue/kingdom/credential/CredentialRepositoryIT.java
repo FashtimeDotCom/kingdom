@@ -171,4 +171,30 @@ public class CredentialRepositoryIT {
         assertEquals(man1, foundManager);
     }
 
+    @Test
+    public void testGetManagerCredentialByManager() {
+        Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
+        ManagerCredential manCred = InstanceHelper.createManagerCredential(manager);
+        repository.create(manCred);
+
+        ManagerCredential foundManagerCredential = repository.getManagerCredentialByManager(manager.getUuid());
+        assertNotNull(foundManagerCredential);
+        assertEquals(manCred, foundManagerCredential);
+    }
+
+    @Test
+    public void testGetManagerCredentialByLogin() {
+        Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
+        ManagerCredential manCred = InstanceHelper.createManagerCredential(manager);
+        repository.create(manCred);
+
+        Manager foundManager = repository.getManagerByLogin(manCred.getLogin());
+        assertNotNull(foundManager);
+        assertEquals(manager, foundManager);
+    }
+
 }
