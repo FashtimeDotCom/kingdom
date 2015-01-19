@@ -75,9 +75,7 @@ public class APICredentialRealm extends AuthorizingRealm {
             credential = (APICredential) getAvailablePrincipal(principals);
             domainCredentials = persistence.getAPIDomainCredentials(credential.getUuid());
 
-        } /*
-         Returns AuthorizationInfo for ManagerCredential based Permission Check
-         */ else if (availablePrincipal instanceof ManagerCredential) {
+        } else if (availablePrincipal instanceof ManagerCredential) { //Returns AuthorizationInfo for ManagerCredential based Permission Check
             credential = (ManagerCredential) getAvailablePrincipal(principals);
             domainCredentials = persistence.getManagerDomainCredentials(credential.getUuid());
         } else {

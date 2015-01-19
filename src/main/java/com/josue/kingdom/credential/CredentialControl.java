@@ -25,7 +25,7 @@ import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.shiro.AccessLevelPermission;
-import com.josue.kingdom.util.ListResourceUtil;
+import com.josue.kingdom.rest.ListResourceUtils;
 import com.josue.kingdom.util.cdi.Current;
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -69,7 +69,7 @@ public class CredentialControl {
         }
 
         long totalCount = credentialRepository.countAPICredential(currentCredential.getManager().getUuid(), currentCredential.getManager().getUuid());
-        return ListResourceUtil.buildListResource(apiDomainCredentials, totalCount, limit, offset);
+        return ListResourceUtils.buildListResource(apiDomainCredentials, totalCount, limit, offset);
     }
 
     //Not used yet, return all credential for all Domains
@@ -79,7 +79,7 @@ public class CredentialControl {
             obfuscateKeys(apiDomCredential.getCredential());
         }
         long totalCount = credentialRepository.countAPICredential(currentCredential.getManager().getUuid(), currentCredential.getManager().getUuid());
-        return ListResourceUtil.buildListResource(apiDomainCredentials, totalCount, limit, offset);
+        return ListResourceUtils.buildListResource(apiDomainCredentials, totalCount, limit, offset);
     }
 
     public APIDomainCredential getAPICredential(String domainUuid, String apiKeyUuid) {
@@ -166,7 +166,7 @@ public class CredentialControl {
     public ListResource<Manager> getManagers(Integer limit, Integer offset) {
         List<Manager> managers = credentialRepository.getManagers(limit, offset);
         Long totalCount = credentialRepository.count(Manager.class);
-        return ListResourceUtil.buildListResource(managers, totalCount, limit, offset);
+        return ListResourceUtils.buildListResource(managers, totalCount, limit, offset);
     }
 
     public Manager getManagerBylogin(String login) throws ResourceNotFoundException {

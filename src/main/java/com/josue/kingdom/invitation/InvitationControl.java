@@ -18,7 +18,7 @@ import com.josue.kingdom.rest.ex.AuthorizationException;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.util.ListResourceUtil;
+import com.josue.kingdom.rest.ListResourceUtils;
 import com.josue.kingdom.util.cdi.Current;
 import java.util.Calendar;
 import java.util.Date;
@@ -130,7 +130,7 @@ public class InvitationControl {
     public ListResource<Invitation> getInvitations(Integer limit, Integer offset) {
         List<Invitation> invitations = invitationRepository.getInvitations(credential.getManager().getUuid(), limit, offset);
         long invitationsCount = invitationRepository.getInvitationsCount(credential.getManager().getUuid());
-        return ListResourceUtil.buildListResource(invitations, invitationsCount, limit, offset);
+        return ListResourceUtils.buildListResource(invitations, invitationsCount, limit, offset);
     }
 
     private Date getInvitationExprirationDate() {

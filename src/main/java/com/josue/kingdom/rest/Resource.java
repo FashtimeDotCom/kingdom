@@ -84,7 +84,7 @@ public class Resource implements Serializable {
     }
 
     public Date getDateCreated() {
-        return dateCreated;
+        return new Date(dateCreated.getTime());
     }
 
     public void setDateCreated(Date dateCreated) {
@@ -92,7 +92,7 @@ public class Resource implements Serializable {
     }
 
     public Date getLastUpdate() {
-        return lastUpdate;
+        return new Date(lastUpdate.getTime());
     }
 
     public void setLastUpdate(Date lastUpdate) {

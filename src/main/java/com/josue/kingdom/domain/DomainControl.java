@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.josue.kingdom.domain;
 
 import com.josue.kingdom.credential.entity.Credential;
@@ -12,12 +7,12 @@ import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
 import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.rest.ListResource;
+import com.josue.kingdom.rest.ListResourceUtils;
 import com.josue.kingdom.rest.ex.AuthorizationException;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.util.ListResourceUtil;
 import com.josue.kingdom.util.cdi.Current;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
@@ -41,14 +36,14 @@ public class DomainControl {
     public ListResource<Domain> getOwnedDomains(Integer limit, Integer offset) {
         long totalCount = repository.countOwnedDomains(currentCredential.getManager().getUuid());
         List<Domain> ownedDomains = repository.getOwnedDomains(currentCredential.getManager().getUuid(), limit, offset);
-        return ListResourceUtil.buildListResource(ownedDomains, totalCount, limit, offset);
+        return ListResourceUtils.buildListResource(ownedDomains, totalCount, limit, offset);
     }
 
     public ListResource<Domain> getJoinedDomains(Integer limit, Integer offset) {
         List<Domain> joinedDomains = repository.getJoinedDomains(currentCredential.getManager().getUuid(), limit, offset);
 
         long totalCount = repository.countDomainCredentials(currentCredential.getManager().getUuid());
-        return ListResourceUtil.buildListResource(joinedDomains, totalCount, limit, offset);
+        return ListResourceUtils.buildListResource(joinedDomains, totalCount, limit, offset);
     }
 
     public Domain getJoinedDomain(String domainUuid) throws RestException {
@@ -188,7 +183,7 @@ public class DomainControl {
 
     public ListResource<DomainPermission> getDomainPermissions(String domainUuid) {
         List<DomainPermission> permissions = repository.getDomainPermissions(domainUuid);
-        return ListResourceUtil.buildListResource(permissions, permissions.size(), permissions.size(), 0);
+        return ListResourceUtils.buildListResource(permissions, permissions.size(), permissions.size(), 0);
     }
 
     //Created a simple method because its important responsability

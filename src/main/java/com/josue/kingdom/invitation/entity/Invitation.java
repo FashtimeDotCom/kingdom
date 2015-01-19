@@ -68,9 +68,6 @@ public class Invitation extends Resource {
         this.validUntil = null;
         this.status = null;
         this.authorManager = null;
-        if (authorManager != null) {
-            authorManager.removeNonCreatable();
-        }
         if (domain != null) {
             domain.removeNonCreatable();
         }
@@ -126,7 +123,7 @@ public class Invitation extends Resource {
     }
 
     public Date getValidUntil() {
-        return validUntil;
+        return new Date(validUntil.getTime());
     }
 
     public void setValidUntil(Date validUntil) {

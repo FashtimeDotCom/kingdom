@@ -20,7 +20,7 @@ public class AuthorizationException extends RestException {
     }
 
     public AuthorizationException(DomainPermission permission) {
-        super(null, "", String.format("Requires permission {0}", permission.getName()), Response.Status.BAD_REQUEST);
+        super(null, "", String.format("Requires permission %s", permission.getName()), Response.Status.BAD_REQUEST);
     }
 
     public AuthorizationException(String message) {

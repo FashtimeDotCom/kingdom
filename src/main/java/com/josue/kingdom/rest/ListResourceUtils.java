@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.util;
+package com.josue.kingdom.rest;
 
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.PaginationUtils;
@@ -14,7 +14,11 @@ import java.util.List;
  *
  * @author Josue
  */
-public class ListResourceUtil {
+public class ListResourceUtils {
+
+    private ListResourceUtils() {
+
+    }
 
     public static <T extends Resource> ListResource<T> buildListResource(List<T> resources, long totalCount, Integer limit, Integer offset) {
         ListResource<T> listResource = new ListResource<>(resources);

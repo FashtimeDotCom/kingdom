@@ -11,6 +11,10 @@ public class ResponseUtils {
     public static final String DEFAULT_LIMIT = "50";
     public static final String DEFAULT_OFFSET = "0";
 
+    private ResponseUtils() {
+
+    }
+
     public static Response buildSimpleResponse(Resource resource,
             Response.Status status, UriInfo uriInfo) {
 

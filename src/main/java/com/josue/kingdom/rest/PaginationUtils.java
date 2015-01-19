@@ -14,7 +14,7 @@ public class PaginationUtils {
     }
 
     public PaginationUtils(int limit, int offset) {
-        this(limit, new Long(offset));
+        this(limit, Long.valueOf(offset));
     }
 
     public void fillPagination(ListResource<? extends Resource> res,
@@ -24,6 +24,7 @@ public class PaginationUtils {
             long first = 0;
             long previous = offset - limit;
             long next = offset + limit;
+            totalCount = 0L;
             if (previous < 0) {
                 previous = 0;
             }
