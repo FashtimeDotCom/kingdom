@@ -202,17 +202,29 @@ public class InvitationControlTest {
         fail();
     }
 
+    @Test
     public void testUpdateInvitation() throws RestException {
 
         String invitationUuid = "uuid-123";
         Invitation invitation = Mockito.mock(Invitation.class);
         Invitation foundInvitation = Mockito.mock(Invitation.class);
+        Invitation updatedInvitation = Mockito.mock(Invitation.class);
 
         when(invitationRepository.find(Invitation.class, invitationUuid)).thenReturn(foundInvitation);
-        Invitation updatedInvitation = control.updateInvitation(invitationUuid, invitation);
+        when(invitationRepository.update(foundInvitation)).thenReturn(updatedInvitation);
+        Invitation invResponse = control.updateInvitation(invitationUuid, invitation);
         verify(foundInvitation).copyUpdatable(invitation);
         verify(invitationRepository).update(foundInvitation);
-        assertEquals(foundInvitation, updatedInvitation);
+        assertNotNull(invResponse);
+        assertEquals(updatedInvitation, invResponse);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testGetInvitationNotFound() throws RestException {
+        String invitationUuid = "inv-123";
+        when(invitationRepository.find(Invitation.class, invitationUuid)).thenReturn(null);
+        control.getInvitation(invitationUuid);
+        fail();
     }
 
     @Test
@@ -235,6 +247,14 @@ public class InvitationControlTest {
         Invitation foundInvitation = control.getInvitationByToken(token);
         verify(invitationRepository).getInvitationByToken(token);
         assertEquals(invitation, foundInvitation);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testGetInvitationByTokenNotFound() throws RestException {
+        String token = "inv-123";
+        when(invitationRepository.getInvitationByToken(token)).thenReturn(null);
+        control.getInvitationByToken(token);
+        fail();
     }
 
     @Test

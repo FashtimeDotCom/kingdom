@@ -34,6 +34,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.Permission;
 
 /**
  *
@@ -49,7 +50,7 @@ public class CredentialControl {
     CredentialRepository credentialRepository;
 
     @Inject
-    DomainRepository permissionRepository;
+    DomainRepository domainRepository;
 
     @Inject
     CredentialService service;
@@ -93,13 +94,12 @@ public class CredentialControl {
             throw new ResourceNotFoundException(APICredential.class, credentialUuid);
         }
 
-        DomainPermission foundPermission = permissionRepository.getDomainPermission(domainUuid, domainCredential.getPermission().getName());
+        DomainPermission foundPermission = domainRepository.getDomainPermission(domainUuid, domainCredential.getPermission().getName());
         if (foundPermission == null) {
             throw new InvalidResourceArgException(APICredential.class, "Permission name", domainCredential.getPermission().getName());
         }
 
-        //Check permission for create API Permission level
-        if (!SecurityUtils.getSubject().isPermitted(new AccessLevelPermission(domainUuid, foundPermission))) {
+        if (!isPermitted(new AccessLevelPermission(domainUuid, foundPermission))) {
             throw new AuthorizationException(domainCredential.getPermission());
         }
 
@@ -110,16 +110,23 @@ public class CredentialControl {
 
     }
 
+    //TODO should change to a specific class ???
+    //Encapsules thrity party (Shiro)... for testing purposes
+    protected boolean isPermitted(Permission permission) {
+        return SecurityUtils.getSubject().isPermitted(permission);
+
+    }
+
     public APIDomainCredential createAPICredential(String domainUuid, APIDomainCredential domainCredential) throws RestException {
 
         domainCredential.removeNonCreatable();
-        DomainPermission foundPermission = permissionRepository.getDomainPermission(domainUuid, domainCredential.getPermission().getName());
+        DomainPermission foundPermission = domainRepository.getDomainPermission(domainUuid, domainCredential.getPermission().getName());
         if (foundPermission == null) {
             throw new InvalidResourceArgException(APICredential.class, "Permission name", domainCredential.getPermission().getName());
         }
 
         //Check permission for create API Permission level
-        if (!SecurityUtils.getSubject().isPermitted(new AccessLevelPermission(domainUuid, foundPermission))) {
+        if (!isPermitted(new AccessLevelPermission(domainUuid, foundPermission))) {
             throw new AuthorizationException(domainCredential.getPermission());
         }
 
@@ -130,7 +137,7 @@ public class CredentialControl {
 
         domainCredential.setPermission(foundPermission);
         domainCredential.setDomain(currentDomain);
-        domainCredential.getCredential().setApiKey(generateAPIKey());
+        domainCredential.setCredential(new APICredential(generateAPIKey()));
         domainCredential.getCredential().setStatus(CredentialStatus.ACTIVE);
         domainCredential.getCredential().setManager(currentCredential.getManager());
 

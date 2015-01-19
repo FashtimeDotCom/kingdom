@@ -9,6 +9,7 @@ import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.CredentialStatus;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
+import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
@@ -17,12 +18,14 @@ import com.josue.kingdom.invitation.InvitationRepository;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.rest.ListResource;
+import com.josue.kingdom.rest.ex.AuthorizationException;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import org.apache.shiro.authz.Permission;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -36,6 +39,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -57,6 +61,9 @@ public class CredentialControlTest {
     @Mock
     InvitationRepository invRepository;
 
+    @Mock
+    DomainRepository domainRespository;
+
     @Spy
     ManagerCredential currentCredential = new ManagerCredential();
 
@@ -64,7 +71,7 @@ public class CredentialControlTest {
     Manager manager = new Manager();
 
     @InjectMocks
-    CredentialControl control = new CredentialControl();
+    CredentialControl control = Mockito.spy(new CredentialControl());
 
     @Before
     public void init() {
@@ -98,7 +105,7 @@ public class CredentialControlTest {
     }
 
     @Test
-    public void testPasswordReset() throws Exception {
+    public void testPasswordReset() throws RestException {
         String uuid = "uuid123";
         Manager man = new Manager();
         man.setEmail("josue@email.com");
@@ -123,7 +130,7 @@ public class CredentialControlTest {
 
     //TODO create specific ExceptionClass
     @Test(expected = RestException.class)
-    public void testPasswordResetManagerNotFound() throws Exception {
+    public void testPasswordResetManagerNotFound() throws RestException {
         String login = "login";
         when(credentialRepository.getManagerByLogin(login)).thenReturn(null);
         control.passwordReset(login);
@@ -234,7 +241,7 @@ public class CredentialControlTest {
     }
 
     @Test
-    public void testGetApiCredentials() {
+    public void testGetAPICredentialsByDomain() {
         APIDomainCredential apiCredMock = mock(APIDomainCredential.class, Mockito.RETURNS_DEEP_STUBS);
         List<APIDomainCredential> realList = Arrays.asList(apiCredMock, apiCredMock, apiCredMock);
 
@@ -324,5 +331,179 @@ public class CredentialControlTest {
         control.loginRecovery(email);
         fail();
 
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testUpdateAPICredentialNotFound() throws RestException {
+        String domainUuid = "domain-uuid";
+        String credentialUuid = "cred-uuid";
+
+        when(credentialRepository.find(APIDomainCredential.class, credentialUuid)).thenReturn(null);
+        control.updateAPICredential(domainUuid, credentialUuid, null);
+        fail();
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testUpdateAPICredentialInvalidResource() throws RestException {
+        String domainUuid = "domain-uuid";
+        String credentialUuid = "cred-uuid";
+        APIDomainCredential apiDomCred = Mockito.mock(APIDomainCredential.class);
+        DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
+
+        when(credentialRepository.find(APIDomainCredential.class, credentialUuid)).thenReturn(apiDomCred);
+        when(apiDomCred.getPermission()).thenReturn(domainPerm);
+        when(domainRespository.getDomainPermission(domainUuid, domainPerm.getName())).thenReturn(null);
+        control.updateAPICredential(domainUuid, credentialUuid, apiDomCred);
+        fail();
+    }
+
+    @Test(expected = AuthorizationException.class)
+    public void testUpdateAPICredentialNotAuthorized() throws RestException {
+        String domainUuid = "domain-uuid";
+        String credentialUuid = "cred-uuid";
+        APIDomainCredential apiDomCred = Mockito.mock(APIDomainCredential.class);
+        DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
+
+        when(credentialRepository.find(APIDomainCredential.class, credentialUuid)).thenReturn(apiDomCred);
+        when(apiDomCred.getPermission()).thenReturn(domainPerm);
+        when(domainRespository.getDomainPermission(domainUuid, domainPerm.getName())).thenReturn(domainPerm);
+        doReturn(false).when(control).isPermitted(any(Permission.class));
+        control.updateAPICredential(domainUuid, credentialUuid, apiDomCred);
+        fail();
+    }
+
+    @Test
+    public void testUpdateAPICredential() throws RestException {
+        String domainUuid = "domain-uuid";
+        String credentialUuid = "cred-uuid";
+        APIDomainCredential apiDomCred = Mockito.mock(APIDomainCredential.class);
+        APIDomainCredential foundApiDomCred = Mockito.mock(APIDomainCredential.class);
+
+        DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
+
+        when(credentialRepository.find(APIDomainCredential.class, credentialUuid)).thenReturn(foundApiDomCred);
+        when(apiDomCred.getPermission()).thenReturn(domainPerm);
+        when(domainRespository.getDomainPermission(domainUuid, domainPerm.getName())).thenReturn(domainPerm);
+        doReturn(true).when(control).isPermitted(any(Permission.class));
+        when(credentialRepository.update(foundApiDomCred)).thenReturn(foundApiDomCred);
+
+        APIDomainCredential updatedDomCred = control.updateAPICredential(domainUuid, credentialUuid, apiDomCred);
+
+        verify(foundApiDomCred).copyUpdatable(apiDomCred);
+        verify(credentialRepository).update(foundApiDomCred);
+        assertEquals(foundApiDomCred, updatedDomCred);
+
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testCreateAPICredentialPermissionNotFound() throws RestException {
+        String domainUuid = "domain-123";
+        APIDomainCredential apiDomCred = Mockito.mock(APIDomainCredential.class);
+        DomainPermission mockedDomPerm = Mockito.mock(DomainPermission.class);
+
+        when(apiDomCred.getPermission()).thenReturn(mockedDomPerm);
+        when(domainRespository.getDomainPermission(domainUuid, mockedDomPerm.getName())).thenReturn(null);
+
+        control.createAPICredential(domainUuid, apiDomCred);
+        fail();
+    }
+
+    @Test(expected = AuthorizationException.class)
+    public void testCreateAPICredentialNotAuthorized() throws RestException {
+        String domainUuid = "domain-123";
+        APIDomainCredential apiDomCred = Mockito.mock(APIDomainCredential.class);
+        DomainPermission mockedDomPerm = Mockito.mock(DomainPermission.class);
+
+        when(apiDomCred.getPermission()).thenReturn(mockedDomPerm);
+        when(domainRespository.getDomainPermission(domainUuid, mockedDomPerm.getName())).thenReturn(mockedDomPerm);
+        doReturn(false).when(control).isPermitted(any(Permission.class));
+
+        control.createAPICredential(domainUuid, apiDomCred);
+        fail();
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testCreateAPICredentialDomainNotFound() throws RestException {
+        String domainUuid = "domain-123";
+        APIDomainCredential apiDomCred = Mockito.mock(APIDomainCredential.class);
+        DomainPermission mockedDomPerm = Mockito.mock(DomainPermission.class);
+
+        when(apiDomCred.getPermission()).thenReturn(mockedDomPerm);
+        when(domainRespository.getDomainPermission(domainUuid, mockedDomPerm.getName())).thenReturn(mockedDomPerm);
+        doReturn(true).when(control).isPermitted(any(Permission.class));
+        when(credentialRepository.find(Domain.class, domainUuid)).thenReturn(null);
+
+        control.createAPICredential(domainUuid, apiDomCred);
+        fail();
+    }
+
+    @Test
+    public void testCreateAPICredential() throws RestException {
+        String domainUuid = "domain-123";
+        Domain mockedDomain = Mockito.mock(Domain.class);
+        APIDomainCredential apiDomCred = Mockito.spy(new APIDomainCredential());
+        DomainPermission mockedDomPerm = Mockito.mock(DomainPermission.class);
+        apiDomCred.setPermission(mockedDomPerm);
+
+        when(domainRespository.getDomainPermission(domainUuid, mockedDomPerm.getName())).thenReturn(mockedDomPerm);
+        doReturn(true).when(control).isPermitted(any(Permission.class));
+        when(credentialRepository.find(Domain.class, domainUuid)).thenReturn(mockedDomain);
+
+        APIDomainCredential createdAPiDomCred = control.createAPICredential(domainUuid, apiDomCred);
+
+        verify(apiDomCred).removeNonCreatable();
+        verify(credentialRepository).create(apiDomCred.getCredential());
+        verify(credentialRepository).create(apiDomCred);
+        assertEquals(mockedDomain, createdAPiDomCred.getDomain());
+        assertNotNull(createdAPiDomCred.getCredential());
+        assertNotNull(createdAPiDomCred.getCredential().getApiKey());
+        assertEquals(CredentialStatus.ACTIVE, createdAPiDomCred.getCredential().getStatus());
+        assertEquals(currentCredential.getManager(), createdAPiDomCred.getCredential().getManager());
+
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testDeleteAPICredentialNotFound() throws RestException {
+        String domainUuid = "domain-123";
+        String domainCredentialUuid = "dom-cred-123";
+
+        when(credentialRepository.find(APIDomainCredential.class, domainCredentialUuid)).thenReturn(null);
+
+        control.deleteAPICredential(domainUuid, domainCredentialUuid);
+        fail();
+    }
+
+    @Test
+    public void testDeleteAPICredential() throws RestException {
+        String domainUuid = "domain-123";
+        String domainCredentialUuid = "dom-cred-123";
+        APIDomainCredential apiDomCred = Mockito.mock(APIDomainCredential.class);
+        APICredential apiCredential = Mockito.mock(APICredential.class);
+
+        when(credentialRepository.find(APIDomainCredential.class, domainCredentialUuid)).thenReturn(apiDomCred);
+        when(apiDomCred.getCredential()).thenReturn(apiCredential);
+
+        control.deleteAPICredential(domainUuid, domainCredentialUuid);
+        verify(credentialRepository).delete(apiDomCred);
+        verify(credentialRepository).delete(apiCredential);
+
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testGetManagerByloginNotFound() throws RestException {
+        String login = "login-123";
+        when(credentialRepository.getManagerByLogin(login)).thenReturn(null);
+        control.getManagerBylogin(login);
+        fail();
+    }
+
+    @Test
+    public void testGetManagerBylogin() throws RestException {
+        String login = "login-123";
+        Manager mockManager = Mockito.mock(Manager.class);
+
+        when(credentialRepository.getManagerByLogin(login)).thenReturn(mockManager);
+        Manager foundManager = control.getManagerBylogin(login);
+        assertEquals(mockManager, foundManager);
     }
 }
