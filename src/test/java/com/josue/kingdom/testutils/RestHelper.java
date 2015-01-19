@@ -27,7 +27,7 @@ import org.junit.Assert;
  */
 public class RestHelper {
 
-    private static final String BASE_URI = "http://localhost:8080/kingdom-test/api";
+    private static final String BASE_URI = "http://localhost:9080/kingdom-test/api";
     public static final String API_KEY = "ApiKey";
     public static final String MEDIA_TYPE = "application/json;charset=utf-8";
 
