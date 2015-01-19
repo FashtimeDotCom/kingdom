@@ -154,27 +154,28 @@ public class DomainControl {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(foundDomain);
         List<DomainPermission> domainPermissions = repository.getDomainPermissions(domainUuid);
+        if (domainPermissions.size() == 1) {
+            throw new RestException(DomainPermission.class, domainUuid, "A domain should have at least one permission", Response.Status.BAD_REQUEST);
+        }
+
         DomainPermission foundPermission = null;
         DomainPermission foundReplacementPermission = null;
         for (DomainPermission r : domainPermissions) { //reusing the result
             if (r.getUuid().equals(permissionUuid)) {
                 foundPermission = r;
             }
-            //here r.getUuid() will never be null, so its safe to simply compare
             if (r.getUuid().equals(replacementUuid)) {
                 foundReplacementPermission = r;
             }
         }
-        if (domainPermissions.size() == 1) {
-            throw new RestException(DomainPermission.class, domainUuid, "A domain should have at least one permission", Response.Status.BAD_REQUEST);
-        }
+
         if (foundPermission == null) {
             throw new ResourceNotFoundException(DomainPermission.class, permissionUuid);
         }
         //TODO this block should run inside the same transaction
         if (replacementUuid != null) {
             if (foundReplacementPermission == null) {
-                //replacement permission doenst exists
+                //replacement permission doesnt exists
                 //not using ResourceNotFound because its an optional param
                 throw new RestException(DomainPermission.class, replacementUuid, "", Response.Status.BAD_REQUEST);
             } else {

@@ -16,6 +16,7 @@ import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -331,16 +332,128 @@ public class DomainControlTest {
 
     }
 
-    @Test
-    public void testDeleteDomainPermission() throws RestException {
+    @Test(expected = RestException.class)
+    public void testDeleteDomainPermissionSinglePerm() throws RestException {
+        String domainUuid = "domain-123";
+        int permissionsCount = 1;
 
-        fail("The test case is a prototype.");
+        Domain foundDomain = Mockito.mock(Domain.class);
+
+        List<DomainPermission> permissions = Mockito.mock(List.class);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermissions(domainUuid)).thenReturn(permissions);
+        when(permissions.size()).thenReturn(permissionsCount);
+
+        control.deleteDomainPermission(domainUuid, null, null);
+        fail();
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testDeleteDomainPermissionNotFound() throws RestException {
+        String domainUuid = "domain-123";
+
+        Domain foundDomain = Mockito.mock(Domain.class);
+        DomainPermission mockedDomainPerm = Mockito.mock(DomainPermission.class);
+        List<DomainPermission> permissions = Mockito.spy(new ArrayList<DomainPermission>());
+        permissions.add(mockedDomainPerm);
+        permissions.add(mockedDomainPerm);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermissions(domainUuid)).thenReturn(permissions);
+        when(mockedDomainPerm.getUuid()).thenReturn(""); //if (r.getUuid().equals(permissionUuid)) ** FALSE **
+
+        control.deleteDomainPermission(domainUuid, null, null);
+
+        fail();
+    }
+
+    @Test
+    public void testDeleteDomainPermissionNoReplacement() throws RestException {
+        String domainUuid = "domain-123";
+        String domPermUuid = "dom-perm-123";
+
+        Domain foundDomain = Mockito.mock(Domain.class);
+        DomainPermission mockedDomainPerm = Mockito.mock(DomainPermission.class);
+
+        List<DomainPermission> permissions = Mockito.spy(new ArrayList<DomainPermission>());
+        permissions.add(mockedDomainPerm);
+        permissions.add(mockedDomainPerm);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermissions(domainUuid)).thenReturn(permissions);
+        when(mockedDomainPerm.getUuid()).thenReturn(domPermUuid); //if (r.getUuid().equals(permissionUuid)) ** TRUE **
+
+        control.deleteDomainPermission(domainUuid, domPermUuid, null);
+        verify(repository).delete(mockedDomainPerm);
+    }
+
+    @Test(expected = RestException.class)
+    public void testDeleteDomainPermission() throws RestException {
+        String domainUuid = "domain-123";
+        String domPermUuid = "dom-perm-123";
+        String replacementDomPermUuid = "replace-dom-perm-123";
+
+        Domain foundDomain = Mockito.mock(Domain.class);
+        DomainPermission mockedDomainPerm = Mockito.spy(new DomainPermission());
+        mockedDomainPerm.setUuid(domPermUuid);
+
+        List<DomainPermission> permissions = Mockito.spy(new ArrayList<DomainPermission>());
+        permissions.add(mockedDomainPerm);
+        permissions.add(mockedDomainPerm);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermissions(domainUuid)).thenReturn(permissions);
+        //replacement
+        when(mockedDomainPerm.getUuid()).thenReturn(domPermUuid); //if (r.getUuid().equals(permissionUuid)) ** TRUE **
+
+        control.deleteDomainPermission(domainUuid, domPermUuid, replacementDomPermUuid);
+        verify(repository).delete(mockedDomainPerm);
+    }
+
+    @Test
+    public void testDeleteDomainPermissionWithValidReplacement() throws RestException {
+        String domainUuid = "domain-123";
+        String domPermUuid = "dom-perm-123";
+        String replacementDomPermUuid = "replace-dom-perm-123";
+
+        Domain foundDomain = Mockito.mock(Domain.class);
+        DomainPermission mockedDomainPerm = Mockito.spy(new DomainPermission());
+        mockedDomainPerm.setUuid(domPermUuid);
+
+        DomainPermission mockedReplacementDomainPerm = Mockito.spy(new DomainPermission());
+        mockedReplacementDomainPerm.setUuid(replacementDomPermUuid);
+
+        List<DomainPermission> permissions = Mockito.spy(new ArrayList<DomainPermission>());
+        permissions.add(mockedDomainPerm);
+        permissions.add(mockedReplacementDomainPerm);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermissions(domainUuid)).thenReturn(permissions);
+        //replacement
+        when(mockedDomainPerm.getUuid()).thenReturn(domPermUuid); //if (r.getUuid().equals(permissionUuid)) ** TRUE **
+        when(mockedReplacementDomainPerm.getUuid()).thenReturn(replacementDomPermUuid);
+
+        control.deleteDomainPermission(domainUuid, domPermUuid, replacementDomPermUuid);
+        //TODO improve IMPl and this test... not fully working
+        verify(repository).delete(mockedDomainPerm);
     }
 
     @Test
     public void testGetDomainPermissions() {
-
-        fail("The test case is a prototype.");
+        String domainUuid = "domain-123";
+        List<DomainPermission> permissions = Mockito.mock(List.class);
+        int listSize = 10;
+        when(repository.getDomainPermissions(domainUuid)).thenReturn(permissions);
+        when(permissions.size()).thenReturn(listSize);
+        ListResource<DomainPermission> domainPermissions = control.getDomainPermissions(domainUuid);
+        assertEquals(permissions, domainPermissions.getItems());
+        assertEquals(listSize, domainPermissions.getTotalCount());
     }
 
     @Test
