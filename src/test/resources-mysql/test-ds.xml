@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>    
-    <datasource jndi-name="java:jboss/datasources/kingdom-testDS" pool-name="CredentialTestPool" enabled="true" use-java-context="true">
+    <datasource jndi-name="java:jboss/datasources/kingdom-testDS" pool-name="KingdomTestPool" enabled="true" use-java-context="true">
         <connection-url>jdbc:mysql://localhost:3306/kingdom_test</connection-url>
         <driver>mysql</driver>
         <security>
