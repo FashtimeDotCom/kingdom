@@ -8,9 +8,12 @@ package com.josue.kingdom.domain;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.Domain;
+import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
-import com.josue.kingdom.domain.entity.ManagerDomainCredential;
 import com.josue.kingdom.rest.ListResource;
+import com.josue.kingdom.rest.ex.AuthorizationException;
+import com.josue.kingdom.rest.ex.InvalidResourceArgException;
+import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import java.util.Arrays;
@@ -181,7 +184,7 @@ public class DomainControlTest {
         when(mockedDomain.getOwner()).thenReturn(manager);
 
         control.deleteDomain(domainUuid);
-        verify(repository, times(1)).delete(mockedDomain);
+        verify(repository, times(1)).purgeDomain(mockedDomain);
     }
 
     @Test(expected = RestException.class)
@@ -197,28 +200,139 @@ public class DomainControlTest {
     public void testGetJoinedDomain() throws RestException {
         String uuid = "123";
 
-        ManagerDomainCredential manDomCred = Mockito.spy(new ManagerDomainCredential());
-        when(repository.find(ManagerDomainCredential.class, uuid)).thenReturn(manDomCred);
+        Domain mockedDomain = Mockito.mock(Domain.class);
+        when(repository.find(Domain.class, uuid)).thenReturn(mockedDomain);
+        Domain joinedDomain = control.getJoinedDomain(uuid);
+        assertEquals(mockedDomain, joinedDomain);
 
-        control.getJoinedDomain(uuid);
+    }
 
-        verify(manDomCred, times(1)).setCredential(null);
+    @Test(expected = InvalidResourceArgException.class)
+    public void testCreateDomainPermissionLevelZero() throws RestException {
+        String domainUuid = "domain-123";
+        int permissionLevel = 0;
+
+        Domain spyDomain = Mockito.spy(new Domain());
+        spyDomain.setOwner(manager);
+
+        DomainPermission domPerm = Mockito.mock(DomainPermission.class);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(spyDomain);
+        when(domPerm.getLevel()).thenReturn(permissionLevel);
+        control.createDomainPermission(domainUuid, domPerm);
+        fail();
+    }
+
+    @Test(expected = ResourceAlreadyExistsException.class)
+    public void testCreateDomainPermissionAlreadyExists() throws RestException {
+        String domainUuid = "domain-123";
+        int permissionLevel = 1;
+        Domain spyDomain = Mockito.spy(new Domain());
+        spyDomain.setOwner(manager);
+
+        DomainPermission domPerm = Mockito.mock(DomainPermission.class);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(spyDomain);
+        when(domPerm.getLevel()).thenReturn(1);
+        when(repository.getDomainPermission(domainUuid, permissionLevel)).thenReturn(new DomainPermission());
+        control.createDomainPermission(domainUuid, domPerm);
+        fail();
+
     }
 
     @Test
-    public void testCreateDomainPermission() throws Exception {
+    public void testCreateDomainPermission() throws RestException {
+        String domainUuid = "domain-123";
+        int permissionLevel = 1;
+        Domain spyDomain = Mockito.spy(new Domain());
+        spyDomain.setOwner(manager);
 
-        fail("The test case is a prototype.");
+        DomainPermission spyDomPerm = Mockito.spy(new DomainPermission());
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(spyDomain);
+        when(spyDomPerm.getLevel()).thenReturn(1);
+        when(repository.getDomainPermission(domainUuid, permissionLevel)).thenReturn(null);
+
+        control.createDomainPermission(domainUuid, spyDomPerm);
+
+        verify(spyDomPerm).removeNonCreatable();
+        verify(repository).create(spyDomPerm);
+        assertEquals(spyDomain, spyDomPerm.getDomain());
+
+    }
+
+    @Test(expected = ResourceAlreadyExistsException.class)
+    public void testUpdateDomainPermissionAlreadyExists() throws RestException {
+        String domainUuid = "domain-123";
+
+        Domain foundDomain = Mockito.mock(Domain.class);
+        DomainPermission domPerm = Mockito.mock(DomainPermission.class);
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermission(domainUuid, domPerm.getLevel())).thenReturn(domPerm);
+        control.updateDomainPermission(domainUuid, null, domPerm);
+        fail();
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testUpdateDomainPermissionInvalidLevel() throws RestException {
+        String domainUuid = "domain-123";
+        int permLevel = 0;
+
+        Domain foundDomain = Mockito.mock(Domain.class);
+        DomainPermission domPerm = Mockito.mock(DomainPermission.class);
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermission(domainUuid, domPerm.getLevel())).thenReturn(null);
+        when(domPerm.getLevel()).thenReturn(permLevel);
+
+        control.updateDomainPermission(domainUuid, null, domPerm);
+        fail();
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void testUpdateDomainPermissionNotFound() throws RestException {
+        String domainUuid = "domain-123";
+        String permissionUuid = "perm-123";
+        int permLevel = 1;
+
+        Domain foundDomain = Mockito.mock(Domain.class);
+        DomainPermission domPerm = Mockito.mock(DomainPermission.class);
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermission(domainUuid, domPerm.getLevel())).thenReturn(null);
+        when(domPerm.getLevel()).thenReturn(permLevel);
+        when(repository.find(DomainPermission.class, permissionUuid)).thenReturn(null);
+
+        control.updateDomainPermission(domainUuid, permissionUuid, domPerm);
+        fail();
     }
 
     @Test
-    public void testUpdateDomainPermission() throws Exception {
+    public void testUpdateDomainPermission() throws RestException {
+        String domainUuid = "domain-123";
+        String permissionUuid = "perm-123";
+        int permLevel = 1;
 
-        fail("The test case is a prototype.");
+        Domain foundDomain = Mockito.mock(Domain.class);
+        DomainPermission domPerm = Mockito.mock(DomainPermission.class);
+        DomainPermission foundDomainPermission = Mockito.mock(DomainPermission.class);
+
+        when(repository.find(Domain.class, domainUuid)).thenReturn(foundDomain);
+        when(foundDomain.getOwner()).thenReturn(manager);
+        when(repository.getDomainPermission(domainUuid, domPerm.getLevel())).thenReturn(null);
+        when(domPerm.getLevel()).thenReturn(permLevel);
+        when(repository.find(DomainPermission.class, permissionUuid)).thenReturn(foundDomainPermission);
+
+        control.updateDomainPermission(domainUuid, permissionUuid, domPerm);
+
+        verify(foundDomainPermission).copyUpdatable(domPerm);
+        verify(repository).update(foundDomainPermission);
+
     }
 
     @Test
-    public void testDeleteDomainPermission() throws Exception {
+    public void testDeleteDomainPermission() throws RestException {
 
         fail("The test case is a prototype.");
     }
@@ -230,14 +344,35 @@ public class DomainControlTest {
     }
 
     @Test
-    public void testCheckOwnerAccess() throws Exception {
+    public void testCheckOwnerAccess() throws RestException {
+        Domain spyDomain = Mockito.spy(new Domain());
+        spyDomain.setOwner(manager);
 
-        fail("The test case is a prototype.");
+        control.checkOwnerAccess(spyDomain);
+        verify(manager).equals(currentCredential.getManager());
+
+    }
+
+    @Test(expected = AuthorizationException.class)
+    public void testCheckOwnerAccessNotOwner() throws RestException {
+        Domain mockDomain = Mockito.mock(Domain.class);
+        when(mockDomain.getOwner()).thenReturn(new Manager());
+        control.checkOwnerAccess(mockDomain);
+        fail();
+
     }
 
     @Test
-    public void testCheckDomainExists() throws Exception {
+    public void testCheckDomainExists() throws RestException {
+        String domainUuid = "domain-123";
+        when(repository.find(Domain.class, domainUuid)).thenReturn(new Domain());
+        control.checkDomainExists(domainUuid);
+    }
 
-        fail("The test case is a prototype.");
+    @Test(expected = ResourceNotFoundException.class)
+    public void testCheckDomainExistsNot() throws RestException {
+        String domainUuid = "domain-123";
+        when(repository.find(Domain.class, domainUuid)).thenReturn(null);
+        control.checkDomainExists(domainUuid);
     }
 }

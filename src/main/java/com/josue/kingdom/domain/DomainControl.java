@@ -5,8 +5,8 @@
  */
 package com.josue.kingdom.domain;
 
-import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.Credential;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
@@ -132,9 +132,6 @@ public class DomainControl {
         DomainPermission permissionByUuid = repository.find(DomainPermission.class, permissionUuid);
         if (permissionByUuid == null) {
             throw new ResourceNotFoundException(DomainPermission.class, permissionUuid);
-        }
-        if (foundPermission != null) { //Permission level already exists
-            throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
         }
 
         permissionByUuid.copyUpdatable(domainPermission);
