@@ -51,9 +51,6 @@ public class InvitationControl {
     DomainRepository domainRepository;
 
     @Inject
-    InvitationService service;
-
-    @Inject
     Event<Invitation> invitatioEvent;
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -78,15 +75,11 @@ public class InvitationControl {
         invitation.setToken(UUID.randomUUID().toString());
 
         Manager manager = credentialRepository.getManagerByEmail(invitation.getTargetEmail());
-        if (manager == null) {
-            //Manager should fill form before acion completes
-        } else {//Manager already exists, just add the Domain
+        if (manager != null) {
             Domain joinedDomain = domainRepository.getJoinedDomain(manager.getUuid(), foundDomain.getUuid());
             if (joinedDomain != null) { //User already joined to Domain
                 //TODO check... should return exception for already joined manager
                 throw new RestException(Manager.class, manager.getUuid(), "Already joined to domain", Response.Status.BAD_REQUEST);
-            } else {
-                //proceed with already existing manager
             }
         }
 
