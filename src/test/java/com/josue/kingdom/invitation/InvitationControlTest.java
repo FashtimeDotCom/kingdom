@@ -20,6 +20,7 @@ import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import java.util.List;
+import javax.enterprise.event.Event;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -60,6 +61,9 @@ public class InvitationControlTest {
     @Mock
     DomainRepository domainRepository;
 
+    @Mock
+    Event<Invitation> invitatioEvent;
+
     @InjectMocks
     InvitationControl control = new InvitationControl();
 
@@ -95,7 +99,7 @@ public class InvitationControlTest {
         assertEquals(targetEmail, createdInvitation.getTargetEmail());
 
         verify(invitation, times(1)).removeNonCreatable();
-        verify(service, times(1)).sendInvitation(createdInvitation);
+        verify(invitatioEvent).fire(createdInvitation);
 
     }
 
@@ -187,7 +191,7 @@ public class InvitationControlTest {
         assertEquals(targetEmail, createdInvitation.getTargetEmail());
 
         verify(invitation, times(1)).removeNonCreatable();
-        verify(service, times(1)).sendInvitation(createdInvitation);
+        verify(invitatioEvent).fire(createdInvitation);
 
     }
 

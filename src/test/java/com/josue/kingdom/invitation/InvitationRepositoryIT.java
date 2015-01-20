@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
  * @author Josue
  */
 @RunWith(Arquillian.class)
-@Transactional(TransactionMode.ROLLBACK)
+@Transactional(TransactionMode.DISABLED)
 public class InvitationRepositoryIT {
 
     @Inject
@@ -85,5 +85,4 @@ public class InvitationRepositoryIT {
         long count = repository.getInvitationsCount(manDomCred.getCredential().getManager().getUuid());
         assertEquals(1, count);
     }
-
 }

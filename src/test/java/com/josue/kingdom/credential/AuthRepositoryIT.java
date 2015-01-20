@@ -5,8 +5,8 @@
  */
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.APICredential;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
  * @author Josue
  */
 @RunWith(Arquillian.class)
-@Transactional(TransactionMode.ROLLBACK)
+@Transactional(TransactionMode.DISABLED)
 public class AuthRepositoryIT {
 
     @Deployment

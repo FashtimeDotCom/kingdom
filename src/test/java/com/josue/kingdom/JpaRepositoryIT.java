@@ -5,8 +5,8 @@
  */
 package com.josue.kingdom;
 
-import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.AuthRepository;
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.testutils.ArquillianTestBase;
@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
  */
 @Logged
 @RunWith(Arquillian.class)
-@Transactional(TransactionMode.ROLLBACK)
+@Transactional(TransactionMode.DISABLED)
 public class JpaRepositoryIT {
 
     @PersistenceContext

@@ -7,8 +7,10 @@ package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.CredentialStatus;
+import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
+import com.josue.kingdom.credential.entity.PasswordResetEvent;
 import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
@@ -124,7 +126,7 @@ public class CredentialControlTest {
         control.passwordReset(login);
 
         verify(spyManCred, times(1)).setPassword(anyString());
-        verify(service, times(1)).sendPasswordReset(spyManager.getEmail(), spyManCred.getPassword());
+        verify(service).sendPasswordReset(new PasswordResetEvent(spyManager.getEmail(), spyManCred.getPassword()));
 
     }
 
@@ -320,7 +322,7 @@ public class CredentialControlTest {
         when(credentialRepository.getManagerCredentialByManager(mockManager.getUuid())).thenReturn(manCred);
 
         control.loginRecovery(email);
-        verify(service).sendLoginRecovery(email, manCred.getLogin());
+        verify(service).sendLoginRecovery(new LoginRecoveryEvent(email, manCred.getLogin()));
     }
 
     @Test(expected = ResourceNotFoundException.class)

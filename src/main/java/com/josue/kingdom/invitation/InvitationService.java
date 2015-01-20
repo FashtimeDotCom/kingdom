@@ -8,6 +8,8 @@ package com.josue.kingdom.invitation;
 import com.josue.kingdom.MailService;
 import com.josue.kingdom.invitation.entity.Invitation;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
 
 /**
  *
@@ -16,7 +18,7 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class InvitationService extends MailService {
 
-    public void sendInvitation(Invitation invitation) {
+    public void sendInvitation(@Observes(during = TransactionPhase.AFTER_SUCCESS) Invitation invitation) {
 
         String message = "You were invited to join Domain ...TODO... <br /> click the below to accept: <br /> " + getInvitationHref(invitation);
         String subject = "Password reset";

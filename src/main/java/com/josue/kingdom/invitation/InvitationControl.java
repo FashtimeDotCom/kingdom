@@ -14,18 +14,20 @@ import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.rest.ListResource;
+import com.josue.kingdom.rest.ListResourceUtils;
 import com.josue.kingdom.rest.ex.AuthorizationException;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.rest.ListResourceUtils;
 import com.josue.kingdom.util.cdi.Current;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 
 /**
@@ -51,7 +53,10 @@ public class InvitationControl {
     @Inject
     InvitationService service;
 
-    //TODO make this application robust using validator, here we have several possibles NPE, fix this ASAP
+    @Inject
+    Event<Invitation> invitatioEvent;
+
+    @Transactional(Transactional.TxType.REQUIRED)
     public Invitation createInvitation(Invitation invitation) throws RestException {
         if (invitation.getDomain() == null) {
             throw new InvalidResourceArgException(Invitation.class, "domain", null);
@@ -87,7 +92,8 @@ public class InvitationControl {
 
         //TODO this should run within the same TX... check CDI observer for event on commit success !!!
         invitationRepository.create(invitation);
-        service.sendInvitation(invitation);
+        invitatioEvent.fire(invitation);
+
         return invitation;
     }
 

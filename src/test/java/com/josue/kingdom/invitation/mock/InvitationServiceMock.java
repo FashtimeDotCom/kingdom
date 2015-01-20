@@ -9,6 +9,8 @@ import com.josue.kingdom.invitation.InvitationService;
 import com.josue.kingdom.invitation.entity.Invitation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
 import javax.enterprise.inject.Specializes;
 
 /**
@@ -21,7 +23,7 @@ public class InvitationServiceMock extends InvitationService {
     private static final Logger logger = Logger.getLogger(InvitationServiceMock.class.getName());
 
     @Override
-    public void sendInvitation(Invitation invitation) {
+    public void sendInvitation(@Observes(during = TransactionPhase.AFTER_SUCCESS) Invitation invitation) {
         //DO nothing
         logger.info("******** MOCKED INVITATION SERVICE ***********");
         logger.log(Level.INFO, "TARGET EMAIL: {0}", invitation.getTargetEmail());

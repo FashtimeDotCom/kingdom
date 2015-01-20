@@ -6,8 +6,12 @@
 package com.josue.kingdom.credential.mock;
 
 import com.josue.kingdom.credential.CredentialService;
+import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
+import com.josue.kingdom.credential.entity.PasswordResetEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.event.Observes;
+import javax.enterprise.event.TransactionPhase;
 import javax.enterprise.inject.Specializes;
 
 /**
@@ -19,18 +23,20 @@ public class CredentialServiceMock extends CredentialService {
 
     private static final Logger logger = Logger.getLogger(CredentialServiceMock.class.getName());
 
+    //TODO load from template
     @Override
-    public void sendLoginRecovery(String targetEmail, String login) {
+    public void sendPasswordReset(@Observes(during = TransactionPhase.AFTER_SUCCESS) PasswordResetEvent event) {
         logger.info("************ CREDENTIALSERVICE MOCK - sendLoginRecovery()************");
-        logger.log(Level.INFO, "TARGET EMAIL: {0}", targetEmail);
-        logger.log(Level.INFO, "LOGIN: {0}", login);
+        logger.log(Level.INFO, "TARGET EMAIL: {0}", event.getTargetEmail());
+        logger.log(Level.INFO, "LOGIN: {0}", event.getNewPassword());
+
     }
 
     @Override
-    public void sendPasswordReset(String targetEmail, String newPassword) {
+    public void sendLoginRecovery(@Observes(during = TransactionPhase.AFTER_SUCCESS) LoginRecoveryEvent event) {
         logger.info("************ CREDENTIALSERVICE MOCK - sendPasswordReset() ************");
-        logger.log(Level.INFO, "TARGET EMAIL: {0}", targetEmail);
-        logger.log(Level.INFO, "NEW PASSWORD: {0}", newPassword);
+        logger.log(Level.INFO, "TARGET EMAIL: {0}", event.getTargetEmail());
+        logger.log(Level.INFO, "NEW PASSWORD: {0}", event.getLogin());
 
     }
 

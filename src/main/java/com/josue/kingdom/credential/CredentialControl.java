@@ -7,6 +7,7 @@ package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Credential;
+import com.josue.kingdom.credential.entity.PasswordResetEvent;
 import com.josue.kingdom.credential.entity.CredentialStatus;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.ManagerCredential;
@@ -19,18 +20,19 @@ import com.josue.kingdom.invitation.InvitationRepository;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.rest.ListResource;
+import com.josue.kingdom.rest.ListResourceUtils;
 import com.josue.kingdom.rest.ex.AuthorizationException;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.shiro.AccessLevelPermission;
-import com.josue.kingdom.rest.ListResourceUtils;
 import com.josue.kingdom.util.cdi.Current;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import org.apache.shiro.SecurityUtils;
@@ -53,7 +55,7 @@ public class CredentialControl {
     DomainRepository domainRepository;
 
     @Inject
-    CredentialService service;
+    Event<PasswordResetEvent> event;
 
     @Inject
     @Current
@@ -192,7 +194,7 @@ public class CredentialControl {
         foundCredential.setPassword(newPassword);
         credentialRepository.update(foundCredential);
 
-        service.sendPasswordReset(foundManager.getEmail(), newPassword);
+        event.fire(new PasswordResetEvent(foundManager.getEmail(), newPassword));
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -205,7 +207,7 @@ public class CredentialControl {
 
         //This block should run within the same TX block
         ManagerCredential foundCredential = credentialRepository.getManagerCredentialByManager(foundManager.getUuid());
-        service.sendLoginRecovery(foundManager.getEmail(), foundCredential.getLogin());
+        event.fire(new PasswordResetEvent(foundManager.getEmail(), foundCredential.getLogin()));
     }
 
     @Transactional(Transactional.TxType.REQUIRED)

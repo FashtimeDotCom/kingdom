@@ -26,14 +26,17 @@ public class JpaRepository {
     @PersistenceContext
     protected EntityManager em;
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public <T> void create(T entity) {
         em.persist(entity);
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public <T> T update(T entity) {
         return em.merge(entity);
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public <T> void delete(T entity) {
         em.remove(em.merge(entity));
     }
