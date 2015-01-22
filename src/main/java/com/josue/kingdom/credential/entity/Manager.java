@@ -6,13 +6,17 @@
 package com.josue.kingdom.credential.entity;
 
 import com.josue.kingdom.rest.Resource;
+import com.josue.kingdom.rest.TenantResource;
 import com.josue.kingdom.util.validation.Email;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import org.apache.shiro.authc.AuthenticationToken;
 
 /**
  *
@@ -20,11 +24,13 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "manager", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"email"})
+    @UniqueConstraint(columnNames = {"uuid", "application_uuid"}),
+    @UniqueConstraint(columnNames = {"email", "application_uuid"}),
+    @UniqueConstraint(columnNames = {"username", "application_uuid"})
 })
-public class Manager extends Resource {
+public class Manager extends TenantResource implements AuthenticationToken {
 
-    @NotNull//TODO check JSRs @NotNull on jaxrs
+    @NotNull
     @Column(name = "first_name")
     private String firstName;
 
@@ -35,12 +41,22 @@ public class Manager extends Resource {
     @Email
     private String email;
 
+    private String username;
+
+    @NotNull
+    private String password;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status;
+
     @Override
     public void copyUpdatable(Resource newData) {
         if (newData instanceof Manager) {
             Manager manager = (Manager) newData;
             firstName = manager.firstName == null ? firstName : manager.firstName;
             lastName = manager.lastName == null ? lastName : manager.lastName;
+            //TODO how to update password ?
         }
     }
 
@@ -68,12 +84,39 @@ public class Manager extends Resource {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public AccountStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AccountStatus status) {
+        this.status = status;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.firstName);
-        hash = 53 * hash + Objects.hashCode(this.lastName);
-        hash = 53 * hash + Objects.hashCode(this.email);
+        int hash = 3;
+        hash = 17 * hash + Objects.hashCode(this.firstName);
+        hash = 17 * hash + Objects.hashCode(this.lastName);
+        hash = 17 * hash + Objects.hashCode(this.email);
+        hash = 17 * hash + Objects.hashCode(this.username);
+        hash = 17 * hash + Objects.hashCode(this.password);
+        hash = 17 * hash + Objects.hashCode(this.status);
         return hash;
     }
 
@@ -95,7 +138,29 @@ public class Manager extends Resource {
         if (!Objects.equals(this.email, other.email)) {
             return false;
         }
+        if (!Objects.equals(this.username, other.username)) {
+            return false;
+        }
+        if (!Objects.equals(this.password, other.password)) {
+            return false;
+        }
+        if (this.status != other.status) {
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public Object getPrincipal() {
+        if (email == null) {
+            return username;
+        }
+        return email;
+    }
+
+    @Override
+    public Object getCredentials() {
+        return password;
     }
 
 }

@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom.invitation;
 
-import com.josue.kingdom.MailService;
+import com.josue.kingdom.util.MailService;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import javax.enterprise.context.ApplicationScoped;

@@ -7,16 +7,15 @@ package com.josue.kingdom.testutils;
 
 import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.credential.entity.APICredential;
-import com.josue.kingdom.credential.entity.CredentialStatus;
+import com.josue.kingdom.credential.entity.AccountStatus;
 import com.josue.kingdom.credential.entity.Manager;
-import com.josue.kingdom.credential.entity.ManagerCredential;
-import com.josue.kingdom.domain.entity.APIDomainCredential;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
-import com.josue.kingdom.domain.entity.ManagerDomainCredential;
+import com.josue.kingdom.domain.entity.ManagerMembership;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
+import com.josue.kingdom.rest.Resource;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Calendar;
@@ -32,6 +31,8 @@ public abstract class InstanceHelper {
 
     private static final SecureRandom random = new SecureRandom();
 
+    public static final String APP_ID = "926caa10-43a4-11e4-916c-0800200c9a66";
+
     public static Date mysqlMilliSafeTimestamp() {
 
         //TIP: http://www.coderanch.com/t/530003/java/java/Comparing-Date-Timestamp-unexpected-result
@@ -43,6 +44,12 @@ public abstract class InstanceHelper {
         return cal.getTime();
     }
 
+    public static Resource getDefaultTestApplication() {
+        Resource res = new Resource();
+        res.setUuid(APP_ID);
+        return res;
+    }
+
     //#### Permission ####
     public static DomainPermission createPermission(Domain domain) {
         DomainPermission permission = new DomainPermission();
@@ -50,34 +57,33 @@ public abstract class InstanceHelper {
         permission.setLevel(new Random().nextInt());
         permission.setName(new BigInteger(130, random).toString(8));
         permission.setDomain(domain);
+        permission.setApplication(getDefaultTestApplication());
         return permission;
     }
 
     //#### APICredential ###
-    public static APICredential createAPICredential(Manager manager) {
+    public static APICredential createAPICredential(ManagerMembership membership) {
         APICredential apiCredential = new APICredential();
+        apiCredential.setApplication(getDefaultTestApplication());
+        apiCredential.setName("API-TEST-NAME");
         apiCredential.setApiKey(new BigInteger(130, random).toString(32));
-        apiCredential.setManager(manager);
-        apiCredential.setStatus(CredentialStatus.ACTIVE);
-        return apiCredential;
-    }
+        apiCredential.setStatus(AccountStatus.ACTIVE);
+        apiCredential.setMembership(membership);
 
-    //#### ManagerCredential ####
-    public static ManagerCredential createManagerCredential(Manager manager) {
-        ManagerCredential credential = new ManagerCredential();
-        credential.setLogin(UUID.randomUUID().toString());
-        credential.setPassword("password-123");
-        credential.setStatus(CredentialStatus.ACTIVE);
-        credential.setManager(manager);
-        return credential;
+        return apiCredential;
     }
 
     //#### Manager ####
     public static Manager createManager() {
+        String rand = Long.toHexString(Double.doubleToLongBits(Math.random()));
         Manager manager = new Manager();
-        manager.setEmail(Long.toHexString(Double.doubleToLongBits(Math.random())) + "@email.com");
+        manager.setEmail(rand + "@email.com");
         manager.setFirstName("josue");
         manager.setLastName("Eduardo");
+        manager.setUsername(rand);
+        manager.setPassword("pass123");
+        manager.setStatus(AccountStatus.ACTIVE);
+        manager.setApplication(getDefaultTestApplication());
         return manager;
     }
 
@@ -88,26 +94,8 @@ public abstract class InstanceHelper {
         domain.setStatus(DomainStatus.ACTIVE);
         domain.setDescription("Description 123");
         domain.setOwner(owner);
+        domain.setApplication(getDefaultTestApplication());
         return domain;
-    }
-
-    //#### ManagerDomainCredential ###
-    public static ManagerDomainCredential createManagerDomainCredential(Domain domain, ManagerCredential credential, DomainPermission permission) {
-        ManagerDomainCredential domainCredential = new ManagerDomainCredential();
-        domainCredential.setDomain(domain);
-        domainCredential.setCredential(credential);
-        domainCredential.setPermission(permission);
-        return domainCredential;
-    }
-
-    //#### ManagerDomainCredential ###
-    public static APIDomainCredential createAPIDomainCredential(Domain domain, APICredential credential, DomainPermission permission) {
-        APIDomainCredential domainCredential = new APIDomainCredential();
-        domainCredential.setName("api-key-name");
-        domainCredential.setDomain(domain);
-        domainCredential.setCredential(credential);
-        domainCredential.setPermission(permission);
-        return domainCredential;
     }
 
     //#### Invitation ###
@@ -119,6 +107,7 @@ public abstract class InstanceHelper {
         invitation.setTargetEmail(Long.toHexString(Double.doubleToLongBits(Math.random())) + "@email.com");
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setToken(UUID.randomUUID().toString());
+        invitation.setApplication(getDefaultTestApplication());
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(mysqlMilliSafeTimestamp());
@@ -128,49 +117,42 @@ public abstract class InstanceHelper {
         return invitation;
     }
 
-    //#### FULL ENTITY TREE CREATION ####
-    public static APIDomainCredential createFullAPIDomainCredential(JpaRepository repository) {
-        Manager manager = InstanceHelper.createManager();
-        repository.create(manager);
+    //#### Domain ####
+    public static ManagerMembership createManagerMembership(Manager manager, Domain domain, DomainPermission permission) {
+        ManagerMembership membership = new ManagerMembership();
+        membership.setDomain(domain);
+        membership.setManager(manager);
+        membership.setPermission(permission);
+        membership.setApplication(getDefaultTestApplication());
+        return membership;
 
-        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
-        repository.create(credential);
-
-        Domain domain = InstanceHelper.createDomain(manager);
-        repository.create(domain);
-
-        APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
-        repository.create(credapiCredential);
-
-        DomainPermission permission = InstanceHelper.createPermission(domain);
-        repository.create(permission);
-
-        APIDomainCredential domainCredential = InstanceHelper.createAPIDomainCredential(domain, credapiCredential, permission);
-        repository.create(domainCredential);
-
-        return domainCredential;
     }
 
-    public static ManagerDomainCredential createFullManagerDomainCredential(JpaRepository repository) {
+    //#### FULL ENTITY TREE CREATION ####
+    public static ManagerMembership createFullManagerMembership(JpaRepository repository) {
         Manager manager = InstanceHelper.createManager();
         repository.create(manager);
-
-        ManagerCredential credential = InstanceHelper.createManagerCredential(manager);
-        repository.create(credential);
 
         Domain domain = InstanceHelper.createDomain(manager);
         repository.create(domain);
 
-        APICredential credapiCredential = InstanceHelper.createAPICredential(manager);
-        repository.create(credapiCredential);
-
         DomainPermission permission = InstanceHelper.createPermission(domain);
         repository.create(permission);
 
-        ManagerDomainCredential domainCredential = InstanceHelper.createManagerDomainCredential(domain, credential, permission);
-        repository.create(domainCredential);
+        ManagerMembership membership = InstanceHelper.createManagerMembership(manager, domain, permission);
+        repository.create(membership);
 
-        return domainCredential;
+        return membership;
+    }
+
+    //#### FULL ENTITY TREE CREATION ####
+    public static APICredential createFullManagerMembershipAPICredential(JpaRepository repository) {
+        ManagerMembership membership = createFullManagerMembership(repository);
+
+        APICredential apiCredential = InstanceHelper.createAPICredential(membership);
+        repository.create(apiCredential);
+
+        return apiCredential;
     }
 
 }

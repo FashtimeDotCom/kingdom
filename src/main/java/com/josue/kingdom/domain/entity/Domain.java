@@ -7,6 +7,7 @@ package com.josue.kingdom.domain.entity;
 
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.rest.Resource;
+import com.josue.kingdom.rest.TenantResource;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,9 +23,10 @@ import javax.validation.constraints.NotNull;
  * @author Josue
  */
 @Entity
-@Table(name = "domain", uniqueConstraints
-        = @UniqueConstraint(columnNames = {"uuid", "owner_uuid"}))
-public class Domain extends Resource {
+@Table(name = "domain", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"uuid", "application_uuid"}),
+    @UniqueConstraint(columnNames = {"application_uuid", "uuid", "owner_uuid"})})
+public class Domain extends TenantResource {
 
     private String name;
     private String description;
@@ -33,7 +35,7 @@ public class Domain extends Resource {
     @Enumerated(EnumType.STRING)
     private DomainStatus status = DomainStatus.ACTIVE;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "owner_uuid")
     private Manager owner;
 
@@ -87,10 +89,10 @@ public class Domain extends Resource {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + Objects.hashCode(this.name);
-        hash = 83 * hash + Objects.hashCode(this.description);
-        hash = 83 * hash + Objects.hashCode(this.status);
-        hash = 83 * hash + Objects.hashCode(this.owner);
+        hash = 89 * hash + Objects.hashCode(this.name);
+        hash = 89 * hash + Objects.hashCode(this.description);
+        hash = 89 * hash + Objects.hashCode(this.status);
+        hash = 89 * hash + Objects.hashCode(this.owner);
         return hash;
     }
 
@@ -112,7 +114,10 @@ public class Domain extends Resource {
         if (this.status != other.status) {
             return false;
         }
-        return Objects.equals(this.owner, other.owner);
+        if (!Objects.equals(this.owner, other.owner)) {
+            return false;
+        }
+        return true;
     }
 
 }

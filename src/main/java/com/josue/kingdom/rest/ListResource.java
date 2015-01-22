@@ -3,7 +3,7 @@ package com.josue.kingdom.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListResource<T extends Resource> extends Resource {
+public class ListResource<T extends Resource> extends TenantResource {
 
     private long totalCount;
     private long offset;

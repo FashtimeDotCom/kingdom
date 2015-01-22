@@ -6,7 +6,6 @@
 package com.josue.kingdom.invitation;
 
 import com.josue.kingdom.credential.CredentialRepository;
-import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.Domain;
@@ -39,7 +38,7 @@ public class InvitationControl {
 
     @Inject
     @Current
-    Credential credential;
+    Manager currentManager;
 
     @Inject
     InvitationRepository invitationRepository;
@@ -58,23 +57,23 @@ public class InvitationControl {
         if (invitation.getDomain() == null) {
             throw new InvalidResourceArgException(Invitation.class, "domain", null);
         }
-        Domain foundDomain = invitationRepository.find(Domain.class, invitation.getDomain().getUuid());
+        Domain foundDomain = invitationRepository.find(Domain.class, currentManager.getApplication().getUuid(), invitation.getDomain().getUuid());
         if (foundDomain == null) {
             throw new ResourceNotFoundException(Domain.class, invitation.getDomain().getUuid());
-        } else if (!foundDomain.getOwner().equals(credential.getManager())) {
+        } else if (!foundDomain.getOwner().equals(currentManager)) {
             throw new AuthorizationException("You must be the Domain owner to invite someone");
         }
-        DomainPermission permission = invitationRepository.find(DomainPermission.class, invitation.getPermission().getUuid());
+        DomainPermission permission = invitationRepository.find(DomainPermission.class, currentManager.getApplication().getUuid(), invitation.getPermission().getUuid());
 
         invitation.removeNonCreatable();
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setValidUntil(getInvitationExprirationDate());
         invitation.setDomain(foundDomain);
-        invitation.setAuthorManager(credential.getManager());
+        invitation.setAuthorManager(currentManager);
         invitation.setPermission(permission);
         invitation.setToken(UUID.randomUUID().toString());
 
-        Manager manager = credentialRepository.getManagerByEmail(invitation.getTargetEmail());
+        Manager manager = credentialRepository.getManagerByEmail(foundDomain.getApplication().getUuid(), invitation.getTargetEmail());
         if (manager != null) {
             Domain joinedDomain = domainRepository.getJoinedDomain(manager.getUuid(), foundDomain.getUuid());
             if (joinedDomain != null) { //User already joined to Domain
@@ -92,7 +91,7 @@ public class InvitationControl {
 
     //Internal only, theres no reason for user update an invitation
     public Invitation updateInvitation(String uuid, Invitation inv) throws RestException {
-        Invitation invitation = invitationRepository.find(Invitation.class, uuid);
+        Invitation invitation = invitationRepository.find(Invitation.class, currentManager.getApplication().getUuid(), uuid);
         if (invitation == null) {
             throw new ResourceNotFoundException(Invitation.class, uuid);
         }
@@ -103,7 +102,7 @@ public class InvitationControl {
     }
 
     public Invitation getInvitation(String uuid) throws RestException {
-        Invitation foundInvitation = invitationRepository.find(Invitation.class, uuid);
+        Invitation foundInvitation = invitationRepository.find(Invitation.class, currentManager.getApplication().getUuid(), uuid);
         if (foundInvitation == null) {
             throw new ResourceNotFoundException(Invitation.class, uuid);
         }
@@ -122,13 +121,13 @@ public class InvitationControl {
     public boolean isSignup(String token) throws RestException {
         //Here invitation can return null for non existing tokens
         Invitation invitation = getInvitationByToken(token);
-        Manager foundManager = credentialRepository.getManagerByEmail(invitation.getTargetEmail());
+        Manager foundManager = credentialRepository.getManagerByEmail(invitation.getApplication().getUuid(), invitation.getTargetEmail());
         return foundManager == null;
     }
 
     public ListResource<Invitation> getInvitations(Integer limit, Integer offset) {
-        List<Invitation> invitations = invitationRepository.getInvitations(credential.getManager().getUuid(), limit, offset);
-        long invitationsCount = invitationRepository.getInvitationsCount(credential.getManager().getUuid());
+        List<Invitation> invitations = invitationRepository.getInvitations(currentManager.getUuid(), limit, offset);
+        long invitationsCount = invitationRepository.getInvitationsCount(currentManager.getUuid());
         return ListResourceUtils.buildListResource(invitations, invitationsCount, limit, offset);
     }
 

@@ -5,12 +5,11 @@
  */
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.Manager;
-import com.josue.kingdom.credential.entity.ManagerCredential;
 import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
 import com.josue.kingdom.rest.ex.RestException;
+import com.josue.kingdom.util.cdi.Current;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -22,8 +21,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 
 /**
  *
@@ -39,6 +36,10 @@ public class CredentialResource {
     @Inject
     CredentialControl control;
 
+    @Current
+    @Inject
+    Manager currentManager;
+
     /*
      returns the ManagerCredential for the login
      */
@@ -46,10 +47,7 @@ public class CredentialResource {
     @Path("current")
     @Produces(value = CONTENT_TYPE)
     public Response getCurrentCredential() {
-        Subject subject = SecurityUtils.getSubject();
-        //TODO remove password - login / apikey
-        Credential credential = (Credential) subject.getPrincipal();
-        return ResponseUtils.buildSimpleResponse(credential, Response.Status.OK, info);
+        return ResponseUtils.buildSimpleResponse(currentManager, Response.Status.OK, info);
     }
 
     @GET
@@ -80,8 +78,8 @@ public class CredentialResource {
     @Path("{token}")
     @Produces(value = CONTENT_TYPE)
     @Consumes(value = CONTENT_TYPE)
-    public Response createAccount(@PathParam("token") String token, ManagerCredential managerCredential) throws RestException {
-        ManagerCredential createdCredential = control.createCredential(token, managerCredential);
-        return ResponseUtils.buildSimpleResponse(createdCredential, Response.Status.CREATED, info);
+    public Response createManager(@PathParam("token") String token, Manager managerCredential) throws RestException {
+        Manager createdManager = control.createManager(token, managerCredential);
+        return ResponseUtils.buildSimpleResponse(createdManager, Response.Status.CREATED, info);
     }
 }

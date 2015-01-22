@@ -18,6 +18,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  *
@@ -29,7 +30,10 @@ public class Resource implements Serializable {
 
     @Id
     private String uuid;
+
+    @Transient
     private String href;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_created", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date dateCreated;
@@ -53,6 +57,17 @@ public class Resource implements Serializable {
         Resource res = new Resource();
         res.setHref(href);
         return res;
+    }
+
+    public static Resource fromResource(Resource resource) {
+        if (resource != null) {
+            Resource res = new Resource();
+            res.setUuid(resource.getUuid());
+            res.setHref(resource.getHref());
+            res.setLastUpdate(resource.getLastUpdate());
+            res.setDateCreated(resource.getDateCreated());
+        }
+        return null;
     }
 
     protected void copyUpdatable(Resource newData) {

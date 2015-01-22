@@ -6,12 +6,14 @@
 package com.josue.kingdom.domain.entity;
 
 import com.josue.kingdom.rest.Resource;
+import com.josue.kingdom.rest.TenantResource;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -19,10 +21,10 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "domain_permission", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"level", "domain_uuid"}),
-    @UniqueConstraint(columnNames = {"name", "domain_uuid"})})
-//TODO extend from Resource
-public class DomainPermission extends Resource {
+    @UniqueConstraint(columnNames = {"uuid", "application_uuid"}),
+    @UniqueConstraint(columnNames = {"level", "domain_uuid", "application_uuid"}),
+    @UniqueConstraint(columnNames = {"name", "domain_uuid", "application_uuid"})})
+public class DomainPermission extends TenantResource {
 
     public DomainPermission() {
     }
@@ -31,6 +33,7 @@ public class DomainPermission extends Resource {
         this.level = level;
     }
 
+    @NotNull
     private Integer level;
     private String name;
     private String description;

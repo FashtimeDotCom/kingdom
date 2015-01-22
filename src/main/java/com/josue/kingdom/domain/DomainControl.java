@@ -1,11 +1,10 @@
 package com.josue.kingdom.domain;
 
-import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
-import com.josue.kingdom.domain.entity.ManagerDomainCredential;
+import com.josue.kingdom.domain.entity.ManagerMembership;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ListResourceUtils;
 import com.josue.kingdom.rest.ex.AuthorizationException;
@@ -31,25 +30,25 @@ public class DomainControl {
 
     @Inject
     @Current
-    Credential currentCredential;
+    Manager currentManager;
 
     public ListResource<Domain> getOwnedDomains(Integer limit, Integer offset) {
-        long totalCount = repository.countOwnedDomains(currentCredential.getManager().getUuid());
-        List<Domain> ownedDomains = repository.getOwnedDomains(currentCredential.getManager().getUuid(), limit, offset);
+        long totalCount = repository.countOwnedDomains(currentManager.getUuid());
+        List<Domain> ownedDomains = repository.getOwnedDomains(currentManager.getUuid(), limit, offset);
         return ListResourceUtils.buildListResource(ownedDomains, totalCount, limit, offset);
     }
 
     public ListResource<Domain> getJoinedDomains(Integer limit, Integer offset) {
-        List<Domain> joinedDomains = repository.getJoinedDomains(currentCredential.getManager().getUuid(), limit, offset);
+        List<Domain> joinedDomains = repository.getJoinedDomains(currentManager.getUuid(), limit, offset);
 
-        long totalCount = repository.countDomainCredentials(currentCredential.getManager().getUuid());
+        long totalCount = repository.countDomainCredentials(currentManager.getUuid());
         return ListResourceUtils.buildListResource(joinedDomains, totalCount, limit, offset);
     }
 
     public Domain getJoinedDomain(String domainUuid) throws RestException {
-        Domain joinedDomain = repository.find(Domain.class, domainUuid);
+        Domain joinedDomain = repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid);
         if (joinedDomain == null) {
-            throw new ResourceNotFoundException(ManagerDomainCredential.class, domainUuid);
+            throw new ResourceNotFoundException(ManagerMembership.class, domainUuid);
         }
         return joinedDomain;
     }
@@ -64,7 +63,7 @@ public class DomainControl {
         //removes not allowed user input
         domain.removeNonCreatable();
         domain.setStatus(DomainStatus.ACTIVE);
-        Manager actualManager = repository.find(Manager.class, currentCredential.getManager().getUuid());
+        Manager actualManager = repository.find(Manager.class, currentManager.getApplication().getUuid(), currentManager.getUuid());
         Domain foundDomain = repository.getDomainByName(domain.getName());
         if (foundDomain != null) {
             //do throw exception
@@ -124,7 +123,7 @@ public class DomainControl {
         if (domainPermission.getLevel() == 0) {
             throw new InvalidResourceArgException(DomainPermission.class, "level", "0");
         }
-        DomainPermission permissionByUuid = repository.find(DomainPermission.class, permissionUuid);
+        DomainPermission permissionByUuid = repository.find(DomainPermission.class, currentManager.getApplication().getUuid(), permissionUuid);
         if (permissionByUuid == null) {
             throw new ResourceNotFoundException(DomainPermission.class, permissionUuid);
         }
@@ -189,14 +188,14 @@ public class DomainControl {
     //Created a simple method because its important responsability
     //Returns true if a the actual credential can update the domain
     protected void checkOwnerAccess(Domain domain) throws RestException {
-        if (!domain.getOwner().equals(currentCredential.getManager())) {
+        if (!domain.getOwner().equals(currentManager)) {
             throw new AuthorizationException();
         }
     }
 
     //returns an existent domain, if none found, throw a exception
     protected Domain checkDomainExists(String domainUuid) throws RestException {
-        Domain foundDomain = repository.find(Domain.class, domainUuid);
+        Domain foundDomain = repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid);
         if (foundDomain == null) {
             throw new ResourceNotFoundException(Domain.class, domainUuid);
         }

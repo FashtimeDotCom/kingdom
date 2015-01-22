@@ -5,8 +5,8 @@
  */
 package com.josue.kingdom.util.cdi;
 
-import com.josue.kingdom.credential.entity.Credential;
 import com.josue.kingdom.credential.CredentialRepository;
+import com.josue.kingdom.credential.entity.Manager;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
@@ -27,12 +27,12 @@ public class CurrentManager {
     @Produces
     @Current
     @SessionScoped
-    public Credential currentCredential() {
+    public Manager current() {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null) {
-            if (subject.getPrincipal() instanceof Credential) {
-                return (Credential) subject.getPrincipal();
-            }
+            Manager manager = (Manager) subject;
+            return manager;
+
         }
         throw new RuntimeException("Could not load credential, check for credential type");
     }

@@ -5,11 +5,17 @@
  */
 package com.josue.kingdom;
 
+import com.josue.kingdom.application.entity.Application;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
@@ -41,30 +47,33 @@ public class JpaRepository {
         em.remove(em.merge(entity));
     }
 
-    public <T> T find(Class<T> clazz, Object id) {
-        return em.find(clazz, id);
+    public <T> T find(Class<T> clazz, String appUuid, Object id) {
+        CriteriaBuilder qb = em.getCriteriaBuilder();
+        CriteriaQuery<T> c = qb.createQuery(clazz);
+        Root<T> root = c.from(clazz);
+        Join<T, Application> owner = root.join("application");
+
+        Predicate condition1 = qb.equal(root.get("uuid"), id);
+        Predicate condition2 = qb.equal(owner.get("uuid"), appUuid);
+        c.where(condition1).where(condition2);
+        TypedQuery<T> q = em.createQuery(c);
+        List<T> result = q.getResultList();
+        return extractSingleResultFromList(result);
     }
 
-    public <T> List<T> findAll(Class<T> clazz) {
+    public <T> List<T> findAll(Class<T> clazz, String appUuid) {
         CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         cq.select(cq.from(clazz));
         return em.createQuery(cq).getResultList();
     }
 
-    public <T> List<T> findRange(Class<T> clazz, int limit, int offset) {
+    public <T> long count(Class<T> clazz, String appUuid) {
         CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-        cq.select(cq.from(clazz));
+        Root<T> root = cq.from(clazz);
+        ParameterExpression<String> param = em.getCriteriaBuilder().parameter(String.class);
+        cq.select(em.getCriteriaBuilder().count(em.getCriteriaBuilder().equal(root.get("application"), param)));
         Query q = em.createQuery(cq);
-        q.setMaxResults(limit);
-        q.setFirstResult(offset);
-        return q.getResultList();
-    }
-
-    public <T> long count(Class<T> clazz) {
-        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-        Root<T> rt = cq.from(clazz);
-        cq.select(em.getCriteriaBuilder().count(rt));
-        Query q = em.createQuery(cq);
+        q.setParameter(param, appUuid);
         return (long) q.getSingleResult();
     }
 

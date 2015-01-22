@@ -5,7 +5,7 @@
  */
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.MailService;
+import com.josue.kingdom.util.MailService;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.PasswordResetEvent;
 import javax.enterprise.context.ApplicationScoped;

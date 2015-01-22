@@ -9,6 +9,8 @@ import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.rest.Resource;
+import com.josue.kingdom.rest.TenantResource;
+import com.josue.kingdom.util.validation.Email;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -20,6 +22,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -27,32 +31,33 @@ import javax.validation.constraints.NotNull;
  * @author Josue
  */
 @Entity
-@Table(name = "invitation")
+@Table(name = "invitation", uniqueConstraints
+        = @UniqueConstraint(columnNames = {"uuid", "application_uuid"}))
 //TODO change to Invitation
-public class Invitation extends Resource {
+public class Invitation extends TenantResource {
 
     @NotNull
+    @Email
     @Column(name = "target_email")
-    //TODO create validator
     private String targetEmail;
 
-    @NotNull
-    @OneToOne
+    @OneToOne(optional = false)
     @JoinColumn(name = "author_manager_uuid")
     private Manager authorManager;
 
-    @NotNull
-    @OneToOne
+    @OneToOne(optional = false)
     @JoinColumn(name = "domain_uuid")
     private Domain domain;
 
-    @OneToOne
+    @OneToOne(optional = false)
     @JoinColumn(name = "domain_permission_uuid")
     private DomainPermission permission;
 
     @NotNull
     private String token;
 
+    @NotNull
+    @Future
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "valid_until", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date validUntil;
