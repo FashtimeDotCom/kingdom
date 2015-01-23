@@ -201,9 +201,9 @@ public class CredentialControl {
         loginRecoveryEvent.fire(new LoginRecoveryEvent(foundManager.getEmail(), foundManager.getUsername()));
     }
 
-    @Transactional(Transactional.TxType.REQUIRED)
+    @Transactional(Transactional.TxType.REQUIRED)//TODO update all logic... manager is now created on invitation submit
     public Manager createManager(String token, Manager manager) throws RestException {
-        Invitation invitationByToken = invRepository.getInvitationByToken(token);
+        Invitation invitationByToken = invRepository.getInvitationByToken(currentManager.getApplication().getUuid(), token);
         if (invitationByToken == null) {
             throw new ResourceNotFoundException(Invitation.class, "token", token, "Invalid invitation token, the domain still exists ? check with the Domain manager");
         }
@@ -222,7 +222,7 @@ public class CredentialControl {
 
         manager.removeNonCreatable();
         //Email should be the same from invitation
-        manager.setEmail(invitationByToken.getTargetEmail());
+        manager.setEmail(invitationByToken.getTargetManager().getEmail());
         manager.setStatus(AccountStatus.ACTIVE);
         accountRepository.create(manager);
 

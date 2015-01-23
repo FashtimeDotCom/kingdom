@@ -26,7 +26,7 @@ public class InvitationServiceMock extends InvitationService {
     public void sendInvitation(@Observes(during = TransactionPhase.AFTER_SUCCESS) Invitation invitation) {
         //DO nothing
         logger.info("******** MOCKED INVITATION SERVICE ***********");
-        logger.log(Level.INFO, "TARGET EMAIL: {0}", invitation.getTargetEmail());
+        logger.log(Level.INFO, "TARGET EMAIL: {0}", invitation.getTargetManager().getEmail());
         logger.log(Level.INFO, "DOMAIN UUID : {0}", invitation.getDomain().getUuid());
         logger.log(Level.INFO, "TOKEN : {0}", invitation.getToken());
         logger.log(Level.INFO, "AUTHOR MANAGER : {0}", invitation.getAuthorManager().getUuid());

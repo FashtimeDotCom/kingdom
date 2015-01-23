@@ -38,7 +38,7 @@ public class SignupServlet extends HttpServlet {
                 Invitation invitationByToken = control.getInvitationByToken(token);
 
                 request.getSession().setAttribute("token", token);
-                request.getSession().setAttribute("email", invitationByToken.getTargetEmail());
+                request.getSession().setAttribute("email", invitationByToken.getTargetManager().getEmail());
                 request.getRequestDispatcher("/signup.jsp").forward(request, response);
             } else {
                 //TODO manager already exists

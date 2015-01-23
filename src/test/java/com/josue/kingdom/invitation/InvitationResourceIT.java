@@ -82,7 +82,10 @@ public class InvitationResourceIT {
         invitation.setAuthorManager(testCreatedAuthorManager);
         invitation.setDomain(testCreatedDomain);
         invitation.setPermission(testCreatedPermission);
-        invitation.setTargetEmail("josue.eduardo206@gmail.com");
+
+        Manager manager = new Manager();
+        manager.setEmail("test@email.com");
+        invitation.setTargetManager(manager);
 
         ClientResponse getDomainsResponse = RestHelper.doPostRequest(invitation, INVITATIONS);
         RestHelper.assertStatusCode(Response.Status.CREATED.getStatusCode(), getDomainsResponse);

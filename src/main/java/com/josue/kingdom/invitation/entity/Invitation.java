@@ -10,7 +10,6 @@ import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.rest.Resource;
 import com.josue.kingdom.rest.TenantResource;
-import com.josue.kingdom.util.validation.Email;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -32,14 +31,13 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "invitation", uniqueConstraints
-        = @UniqueConstraint(columnNames = {"target_email", "domain_uuid", "application_uuid"}))
+        = @UniqueConstraint(columnNames = {"target_manager_uuid", "domain_uuid", "application_uuid"}))
 public class Invitation extends TenantResource {
 
     //TODO change to an pre created manager
-    @NotNull
-    @Email
-    @Column(name = "target_email")
-    private String targetEmail;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "target_manager_uuid")
+    private Manager targetManager;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "author_manager_uuid")
@@ -87,12 +85,12 @@ public class Invitation extends TenantResource {
         }
     }
 
-    public String getTargetEmail() {
-        return targetEmail;
+    public Manager getTargetManager() {
+        return targetManager;
     }
 
-    public void setTargetEmail(String targetEmail) {
-        this.targetEmail = targetEmail;
+    public void setTargetManager(Manager targetManager) {
+        this.targetManager = targetManager;
     }
 
     public Manager getAuthorManager() {
@@ -128,7 +126,7 @@ public class Invitation extends TenantResource {
     }
 
     public Date getValidUntil() {
-        return new Date(validUntil.getTime());
+        return validUntil;
     }
 
     public void setValidUntil(Date validUntil) {
@@ -145,8 +143,8 @@ public class Invitation extends TenantResource {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + Objects.hashCode(this.targetEmail);
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.targetManager);
         hash = 37 * hash + Objects.hashCode(this.authorManager);
         hash = 37 * hash + Objects.hashCode(this.domain);
         hash = 37 * hash + Objects.hashCode(this.permission);
@@ -165,7 +163,7 @@ public class Invitation extends TenantResource {
             return false;
         }
         final Invitation other = (Invitation) obj;
-        if (!Objects.equals(this.targetEmail, other.targetEmail)) {
+        if (!Objects.equals(this.targetManager, other.targetManager)) {
             return false;
         }
         if (!Objects.equals(this.authorManager, other.authorManager)) {
@@ -183,10 +181,7 @@ public class Invitation extends TenantResource {
         if (!Objects.equals(this.validUntil, other.validUntil)) {
             return false;
         }
-        if (this.status != other.status) {
-            return false;
-        }
-        return true;
+        return this.status == other.status;
     }
 
 }

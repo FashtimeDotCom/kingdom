@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.invitation;
 
+import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import org.junit.Test;
@@ -27,7 +28,9 @@ public class InvitationServiceTest {
 
         String targetEmail = "target@email.com";
         Invitation invitation = Mockito.spy(new Invitation());
-        invitation.setTargetEmail(targetEmail);
+        Manager targetManager = Mockito.spy(new Manager());
+        targetManager.setEmail(targetEmail);
+        invitation.setTargetManager(targetManager);
 
         doNothing().when(invitationService).send(eq(targetEmail), any(String.class), any(String.class));
         invitationService.sendInvitation(invitation);

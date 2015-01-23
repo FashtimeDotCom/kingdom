@@ -29,11 +29,9 @@ import org.apache.shiro.authc.AuthenticationToken;
 })
 public class Manager extends TenantResource implements AuthenticationToken {
 
-    @NotNull
     @Column(name = "first_name")
     private String firstName;
 
-    @NotNull
     @Column(name = "last_name")
     private String lastName;
 

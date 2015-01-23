@@ -5,9 +5,9 @@
  */
 package com.josue.kingdom.invitation;
 
-import com.josue.kingdom.util.MailService;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
+import com.josue.kingdom.util.MailService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
@@ -27,7 +27,7 @@ public class InvitationService extends MailService {
 
         String message = "You were invited to join Domain ...TODO... <br /> click the below to accept: <br /> " + getInvitationHref(invitation);
         String subject = "Password reset";
-        send(invitation.getTargetEmail(), subject, message);
+        send(invitation.getTargetManager().getEmail(), subject, message);
         updateInvitationStatus(invitation);
     }
 

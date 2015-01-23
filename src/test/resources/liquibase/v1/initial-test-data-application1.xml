@@ -131,11 +131,19 @@
     </changeSet>
     
     <changeSet author="Josue" id="initial-test-data-7" runAlways="true">
+        <insert tableName="manager">
+            <column name="uuid" value="9b7ddc20-569e-4b1d-be38-b9a35ec9022f"/>
+            <column name="date_created" valueDate="${now}"/>
+            <column name="email" value="manager3@gmail.com"/>
+            <column name="password" value="8939ing938ng3984"/>
+            <column name="status" value="PROVISIONING"/>
+            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+        </insert>
         <insert tableName="invitation">
             <column name="uuid" value="3e68d3e1-d0fd-48af-81ca-1cd10e1a92f7"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="status" value="CREATED"/>
-            <column name="target_email" value="manager3@email.com"/>
+            <column name="target_manager_uuid" value="9b7ddc20-569e-4b1d-be38-b9a35ec9022f"/>
             <column name="token" value="93f52dc9-496d-46bc-a2f8-ba7394fca966"/>
             <column name="author_manager_uuid" value="cdbd57b8-3dc2-4370-b8a6-65e674a430d6"/>
             <column name="domain_uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>

@@ -74,11 +74,15 @@ public class CredentialControlTest {
     @InjectMocks
     CredentialControl control = Mockito.spy(new CredentialControl());
 
+    String applicationUuid;
+
     @Before
     public void init() {
         Resource app = new Application();
         app.setUuid("application-uuid");
         currentManager.setApplication(app);
+        applicationUuid = currentManager.getApplication().getUuid();
+
         MockitoAnnotations.initMocks(this);
     }
 
@@ -87,8 +91,8 @@ public class CredentialControlTest {
         long totalCount = 50;
 
         List<Manager> managers = Mockito.mock(List.class);
-        when(credentialRepository.getManagers(currentManager.getApplication().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(managers);
-        when(credentialRepository.count(Manager.class, currentManager.getApplication().getUuid())).thenReturn(totalCount);
+        when(credentialRepository.getManagers(applicationUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(managers);
+        when(credentialRepository.count(Manager.class, applicationUuid)).thenReturn(totalCount);
 
         ListResource<Manager> foundManagers = control.getManagers(DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(totalCount, foundManagers.getTotalCount());
@@ -107,7 +111,7 @@ public class CredentialControlTest {
         man.setPassword("pass123");
         Manager spyManager = Mockito.spy(man);
 
-        when(credentialRepository.getManagerByUsername(currentManager.getApplication().getUuid(), man.getUsername())).thenReturn(spyManager);
+        when(credentialRepository.getManagerByUsername(applicationUuid, man.getUsername())).thenReturn(spyManager);
         control.passwordReset(man.getUsername());
 
         verify(spyManager).setPassword(anyString());
@@ -119,7 +123,7 @@ public class CredentialControlTest {
     @Test(expected = RestException.class)
     public void testPasswordResetManagerNotFound() throws RestException {
         String login = "login";
-        when(credentialRepository.getManagerByUsername(currentManager.getApplication().getUuid(), login)).thenReturn(null);
+        when(credentialRepository.getManagerByUsername(applicationUuid, login)).thenReturn(null);
         control.passwordReset(login);
         fail();
     }
@@ -137,7 +141,8 @@ public class CredentialControlTest {
         Invitation invitation = new Invitation();
         invitation.setDomain(domain);
         invitation.setPermission(permission);
-        invitation.setTargetEmail("target@email.com");
+        invitation.setTargetManager(new Manager());
+        invitation.getTargetManager().setEmail("target@email.com");
         Invitation spyInvitation = Mockito.spy(invitation);
 
         Manager managerCreate = new Manager();
@@ -149,16 +154,16 @@ public class CredentialControlTest {
 
         Manager spyManager = Mockito.spy(managerCreate);
 
-        when(invRepository.getInvitationByToken(token)).thenReturn(spyInvitation);
-        when(credentialRepository.find(Domain.class, currentManager.getApplication().getUuid(), spyInvitation.getDomain().getUuid())).thenReturn(domain);
-        when(credentialRepository.find(DomainPermission.class, currentManager.getApplication().getUuid(), spyInvitation.getPermission().getUuid())).thenReturn(permission);
-        when(credentialRepository.getManagerByEmail(currentManager.getApplication().getUuid(), managerCreate.getEmail())).thenReturn(null);
+        when(invRepository.getInvitationByToken(applicationUuid, token)).thenReturn(spyInvitation);
+        when(credentialRepository.find(Domain.class, applicationUuid, spyInvitation.getDomain().getUuid())).thenReturn(domain);
+        when(credentialRepository.find(DomainPermission.class, applicationUuid, spyInvitation.getPermission().getUuid())).thenReturn(permission);
+        when(credentialRepository.getManagerByEmail(applicationUuid, managerCreate.getEmail())).thenReturn(null);
 
         Manager createdManager = control.createManager(token, spyManager);
         verify(spyManager, times(1)).removeNonCreatable();
         verify(credentialRepository, times(1)).create(spyManager);
 
-        assertEquals(spyInvitation.getTargetEmail(), createdManager.getEmail());
+        assertEquals(spyInvitation.getTargetManager().getEmail(), createdManager.getEmail());
         assertEquals(AccountStatus.ACTIVE, createdManager.getStatus());
 
         //Verify if this object is being saved
@@ -175,7 +180,7 @@ public class CredentialControlTest {
     public void testCreateManagerTokenNotFound() throws RestException {
         String token = "token-123";
 
-        when(invRepository.getInvitationByToken(token)).thenReturn(null);
+        when(invRepository.getInvitationByToken(applicationUuid, token)).thenReturn(null);
         control.createManager(token, null);
         fail();
     }
@@ -185,8 +190,8 @@ public class CredentialControlTest {
         String token = "token";
         Manager manager = Mockito.mock(Manager.class);
 
-        when(invRepository.getInvitationByToken(eq(token))).thenReturn(new Invitation());
-        when(credentialRepository.getManagerByEmail(currentManager.getApplication().getUuid(), manager.getEmail())).thenReturn(manager);
+        when(invRepository.getInvitationByToken(eq(applicationUuid), eq(token))).thenReturn(new Invitation());
+        when(credentialRepository.getManagerByEmail(applicationUuid, manager.getEmail())).thenReturn(manager);
         control.createManager(token, manager);
     }
 
@@ -199,7 +204,7 @@ public class CredentialControlTest {
 
         Invitation spyInvitation = Mockito.spy(invitation);
 
-        when(invRepository.getInvitationByToken(eq(token))).thenReturn(spyInvitation);
+        when(invRepository.getInvitationByToken(eq(applicationUuid), eq(token))).thenReturn(spyInvitation);
         control.createManager(token, null);
         fail();
     }
@@ -213,7 +218,7 @@ public class CredentialControlTest {
 
         Invitation spyInvitation = Mockito.spy(invitation);
 
-        when(invRepository.getInvitationByToken(eq(token))).thenReturn(spyInvitation);
+        when(invRepository.getInvitationByToken(eq(applicationUuid), eq(token))).thenReturn(spyInvitation);
         control.createManager(token, null);
         fail();
     }
@@ -227,7 +232,7 @@ public class CredentialControlTest {
 
         Invitation spyInvitation = Mockito.spy(invitation);
 
-        when(invRepository.getInvitationByToken(eq(token))).thenReturn(spyInvitation);
+        when(invRepository.getInvitationByToken(eq(applicationUuid), eq(token))).thenReturn(spyInvitation);
         control.createManager(token, null);
         fail();
     }
@@ -243,7 +248,7 @@ public class CredentialControlTest {
 
         String domainUuid = "uuid-123";
 
-        when(credentialRepository.getAPICredentials(currentManager.getApplication().getUuid(), domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
+        when(credentialRepository.getAPICredentials(applicationUuid, domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
 
         ListResource<APICredential> apiCredentials = control.getAPICredentials(domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(realList.size(), apiCredentials.getItems().size());
@@ -263,7 +268,7 @@ public class CredentialControlTest {
         APICredential apiCredential = Mockito.mock(APICredential.class, Mockito.RETURNS_DEEP_STUBS);
         List<APICredential> realList = Arrays.asList(apiCredential);
 
-        when(credentialRepository.getAPICredentials(currentManager.getApplication().getUuid(), domainUuid, currentManager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
+        when(credentialRepository.getAPICredentials(applicationUuid, domainUuid, currentManager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(realList);
         when(apiCredential.getApiKey()).thenReturn(UUID.randomUUID().toString());
 
         ListResource<APICredential> apiCredentials = control.getAPICredentialsByDomainAndManager(domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET);
@@ -282,7 +287,7 @@ public class CredentialControlTest {
         String apiKeyUuid = "apikey-uuid-123";
         APICredential apiCredential = Mockito.mock(APICredential.class, Mockito.RETURNS_DEEP_STUBS);
 
-        when(credentialRepository.getAPICredential(currentManager.getApplication().getUuid(), apiKeyUuid)).thenReturn(apiCredential);
+        when(credentialRepository.getAPICredential(applicationUuid, apiKeyUuid)).thenReturn(apiCredential);
         when(apiCredential.getApiKey()).thenReturn(UUID.randomUUID().toString());
 
         APICredential foundAPICredential = control.getAPICredential(apiKeyUuid);
@@ -299,7 +304,7 @@ public class CredentialControlTest {
         String email = "test@email.com";
         Manager foundManager = Mockito.mock(Manager.class);
 
-        when(credentialRepository.getManagerByEmail(currentManager.getApplication().getUuid(), email)).thenReturn(foundManager);
+        when(credentialRepository.getManagerByEmail(applicationUuid, email)).thenReturn(foundManager);
 
         control.loginRecovery(email);
         verify(mockEvent).fire(new LoginRecoveryEvent(email, foundManager.getUsername()));
@@ -309,7 +314,7 @@ public class CredentialControlTest {
     public void testLoginRecoveryNotFound() throws RestException {
         String email = "test@email.com";
 
-        when(credentialRepository.getManagerByEmail(currentManager.getApplication().getUuid(), email)).thenReturn(null);
+        when(credentialRepository.getManagerByEmail(applicationUuid, email)).thenReturn(null);
         control.loginRecovery(email);
         fail();
 
@@ -320,7 +325,7 @@ public class CredentialControlTest {
         String domainUuid = "domain-uuid";
         String credentialUuid = "cred-uuid";
 
-        when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), credentialUuid)).thenReturn(null);
+        when(credentialRepository.find(APICredential.class, applicationUuid, credentialUuid)).thenReturn(null);
         control.updateAPICredential(domainUuid, credentialUuid, null);
         fail();
     }
@@ -335,8 +340,8 @@ public class CredentialControlTest {
 
         DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
 
-        when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), credentialUuid)).thenReturn(apiCredential);
-        when(domainRespository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPerm.getName())).thenReturn(null);
+        when(credentialRepository.find(APICredential.class, applicationUuid, credentialUuid)).thenReturn(apiCredential);
+        when(domainRespository.getDomainPermission(applicationUuid, domainUuid, domainPerm.getName())).thenReturn(null);
         control.updateAPICredential(domainUuid, credentialUuid, apiCredential);
         fail();
     }
@@ -351,8 +356,8 @@ public class CredentialControlTest {
 
         DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
 
-        when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), credentialUuid)).thenReturn(apiCredential);
-        when(domainRespository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPerm.getName())).thenReturn(domainPerm);
+        when(credentialRepository.find(APICredential.class, applicationUuid, credentialUuid)).thenReturn(apiCredential);
+        when(domainRespository.getDomainPermission(applicationUuid, domainUuid, domainPerm.getName())).thenReturn(domainPerm);
         doReturn(false).when(control).isPermitted(any(Permission.class));
         control.updateAPICredential(domainUuid, credentialUuid, apiCredential);
         fail();
@@ -370,8 +375,8 @@ public class CredentialControlTest {
 
         DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
 
-        when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), credentialUuid)).thenReturn(foundAPICredential);
-        when(domainRespository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPerm.getName())).thenReturn(domainPerm);
+        when(credentialRepository.find(APICredential.class, applicationUuid, credentialUuid)).thenReturn(foundAPICredential);
+        when(domainRespository.getDomainPermission(applicationUuid, domainUuid, domainPerm.getName())).thenReturn(domainPerm);
         doReturn(true).when(control).isPermitted(any(Permission.class));
         when(credentialRepository.update(foundAPICredential)).thenReturn(foundAPICredential);
 
@@ -389,7 +394,7 @@ public class CredentialControlTest {
         APICredential apiCreedntial = Mockito.mock(APICredential.class);
         DomainPermission mockedDomPerm = Mockito.mock(DomainPermission.class);
 
-        when(domainRespository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, mockedDomPerm.getName())).thenReturn(null);
+        when(domainRespository.getDomainPermission(applicationUuid, domainUuid, mockedDomPerm.getName())).thenReturn(null);
 
         control.createAPICredential(domainUuid, apiCreedntial);
         fail();
@@ -404,7 +409,7 @@ public class CredentialControlTest {
         apiCredential.getMembership().setDomain(new Domain());
 
 //        AccessLevelPermission mockPerm = Mockito.spy(new AccessLevelPermission(apiCredential.getMembership().getDomain().getUuid(), apiCredential.getMembership().getPermission()));
-        when(credentialRepository.getManagerMembership(currentManager.getApplication().getUuid(), domainUuid, currentManager.getUuid())).thenReturn(new ManagerMembership());
+        when(credentialRepository.getManagerMembership(applicationUuid, domainUuid, currentManager.getUuid())).thenReturn(new ManagerMembership());
         doReturn(false).when(control).isPermitted(any(Permission.class));
 
         control.createAPICredential(domainUuid, apiCredential);
@@ -417,7 +422,7 @@ public class CredentialControlTest {
         APICredential apiCredential = Mockito.spy(new APICredential());
 
         doReturn(true).when(control).isPermitted(any(Permission.class));
-        when(credentialRepository.getManagerMembership(currentManager.getApplication().getUuid(), domainUuid, currentManager.getUuid())).thenReturn(null);
+        when(credentialRepository.getManagerMembership(applicationUuid, domainUuid, currentManager.getUuid())).thenReturn(null);
 
         control.createAPICredential(domainUuid, apiCredential);
         fail();
@@ -430,7 +435,7 @@ public class CredentialControlTest {
 
         ManagerMembership foundMembership = Mockito.mock(ManagerMembership.class);
 
-        when(credentialRepository.getManagerMembership(currentManager.getApplication().getUuid(), domainUuid, currentManager.getUuid())).thenReturn(foundMembership);
+        when(credentialRepository.getManagerMembership(applicationUuid, domainUuid, currentManager.getUuid())).thenReturn(foundMembership);
         doReturn(true).when(control).isPermitted(any(Permission.class));
 
         APICredential createdAPiDomCred = control.createAPICredential(domainUuid, apiCredential);
@@ -449,7 +454,7 @@ public class CredentialControlTest {
         String domainUuid = "domain-123";
         String domainCredentialUuid = "dom-cred-123";
 
-        when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), domainCredentialUuid)).thenReturn(null);
+        when(credentialRepository.find(APICredential.class, applicationUuid, domainCredentialUuid)).thenReturn(null);
 
         control.deleteAPICredential(domainUuid, domainCredentialUuid);
         fail();
@@ -461,7 +466,7 @@ public class CredentialControlTest {
         String domainCredentialUuid = "dom-cred-123";
         APICredential apiCredential = Mockito.mock(APICredential.class);
 
-        when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), domainCredentialUuid)).thenReturn(apiCredential);
+        when(credentialRepository.find(APICredential.class, applicationUuid, domainCredentialUuid)).thenReturn(apiCredential);
 
         control.deleteAPICredential(domainUuid, domainCredentialUuid);
         verify(credentialRepository).delete(apiCredential);
@@ -471,7 +476,7 @@ public class CredentialControlTest {
     @Test(expected = ResourceNotFoundException.class)
     public void testGetManagerByloginNotFound() throws RestException {
         String login = "login-123";
-        when(credentialRepository.getManagerByUsername(currentManager.getApplication().getUuid(), login)).thenReturn(null);
+        when(credentialRepository.getManagerByUsername(applicationUuid, login)).thenReturn(null);
         control.getManagerBylogin(login);
         fail();
     }
@@ -481,7 +486,7 @@ public class CredentialControlTest {
         String login = "login-123";
         Manager mockManager = Mockito.mock(Manager.class);
 
-        when(credentialRepository.getManagerByUsername(currentManager.getApplication().getUuid(), login)).thenReturn(mockManager);
+        when(credentialRepository.getManagerByUsername(applicationUuid, login)).thenReturn(mockManager);
         Manager foundManager = control.getManagerBylogin(login);
         assertEquals(mockManager, foundManager);
     }

@@ -87,6 +87,18 @@ public abstract class InstanceHelper {
         return manager;
     }
 
+    public static Manager createInvitationManager() {
+        String rand = Long.toHexString(Double.doubleToLongBits(Math.random()));
+        Manager manager = new Manager();
+        manager.setEmail(rand + "@email.com");
+        manager.setFirstName("josue");
+        manager.setLastName("Eduardo");
+        manager.setPassword("984j4nf9084345b3tjh");
+        manager.setStatus(AccountStatus.PROVISIONING);
+        manager.setApplication(getDefaultTestApplication());
+        return manager;
+    }
+
     //#### Domain ####
     public static Domain createDomain(Manager owner) {
         Domain domain = new Domain();
@@ -104,14 +116,14 @@ public abstract class InstanceHelper {
         invitation.setDomain(domain);
         invitation.setPermission(permission);
         invitation.setAuthorManager(author);
-        invitation.setTargetEmail(Long.toHexString(Double.doubleToLongBits(Math.random())) + "@email.com");
+        invitation.setTargetManager(createInvitationManager());
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setToken(UUID.randomUUID().toString());
         invitation.setApplication(getDefaultTestApplication());
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(mysqlMilliSafeTimestamp());
-        cal.set(Calendar.DAY_OF_MONTH, 2);
+        cal.add(Calendar.DAY_OF_MONTH, 2);
         invitation.setValidUntil(cal.getTime());
 
         return invitation;
