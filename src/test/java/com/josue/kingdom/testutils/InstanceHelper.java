@@ -118,7 +118,7 @@ public abstract class InstanceHelper {
     }
 
     //#### Domain ####
-    public static ManagerMembership createManagerMembership(Manager manager, Domain domain, DomainPermission permission) {
+    public static ManagerMembership createManagerMembership(Domain domain, Manager manager, DomainPermission permission) {
         ManagerMembership membership = new ManagerMembership();
         membership.setDomain(domain);
         membership.setManager(manager);
@@ -139,7 +139,7 @@ public abstract class InstanceHelper {
         DomainPermission permission = InstanceHelper.createPermission(domain);
         repository.create(permission);
 
-        ManagerMembership membership = InstanceHelper.createManagerMembership(manager, domain, permission);
+        ManagerMembership membership = InstanceHelper.createManagerMembership(domain, manager, permission);
         repository.create(membership);
 
         return membership;

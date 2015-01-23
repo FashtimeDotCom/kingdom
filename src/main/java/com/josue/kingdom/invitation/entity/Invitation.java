@@ -32,10 +32,10 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "invitation", uniqueConstraints
-        = @UniqueConstraint(columnNames = {"uuid", "application_uuid"}))
-//TODO change to Invitation
+        = @UniqueConstraint(columnNames = {"target_email", "domain_uuid", "application_uuid"}))
 public class Invitation extends TenantResource {
 
+    //TODO change to an pre created manager
     @NotNull
     @Email
     @Column(name = "target_email")

@@ -33,15 +33,15 @@ public class DomainControl {
     Manager currentManager;
 
     public ListResource<Domain> getOwnedDomains(Integer limit, Integer offset) {
-        long totalCount = repository.countOwnedDomains(currentManager.getUuid());
-        List<Domain> ownedDomains = repository.getOwnedDomains(currentManager.getUuid(), limit, offset);
+        long totalCount = repository.countOwnedDomains(currentManager.getApplication().getUuid(), currentManager.getUuid());
+        List<Domain> ownedDomains = repository.getOwnedDomains(currentManager.getApplication().getUuid(), currentManager.getUuid(), limit, offset);
         return ListResourceUtils.buildListResource(ownedDomains, totalCount, limit, offset);
     }
 
     public ListResource<Domain> getJoinedDomains(Integer limit, Integer offset) {
-        List<Domain> joinedDomains = repository.getJoinedDomains(currentManager.getUuid(), limit, offset);
+        List<Domain> joinedDomains = repository.getJoinedDomains(currentManager.getApplication().getUuid(), currentManager.getUuid(), limit, offset);
 
-        long totalCount = repository.countDomainCredentials(currentManager.getUuid());
+        long totalCount = repository.countJoinedDomains(currentManager.getApplication().getUuid(), currentManager.getUuid());
         return ListResourceUtils.buildListResource(joinedDomains, totalCount, limit, offset);
     }
 
@@ -58,18 +58,10 @@ public class DomainControl {
         return foundDomain;
     }
 
-    //TODO add test case
     public Domain createDomain(Domain domain) throws RestException {
-        //removes not allowed user input
         domain.removeNonCreatable();
         domain.setStatus(DomainStatus.ACTIVE);
-        Manager actualManager = repository.find(Manager.class, currentManager.getApplication().getUuid(), currentManager.getUuid());
-        Domain foundDomain = repository.getDomainByName(domain.getName());
-        if (foundDomain != null) {
-            //do throw exception
-            throw new RestException(Domain.class, foundDomain.getUuid(), "Domain already exists with name '" + domain.getName() + "'", Response.Status.BAD_REQUEST);
-        }
-        domain.setOwner(actualManager);
+        domain.setOwner(currentManager);
 
         //TODO this should run inside the TX
         repository.create(domain);
@@ -91,7 +83,7 @@ public class DomainControl {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(foundDomain);
         //TODO improve business logic:... deactivate all docs and clean everything
-        repository.purgeDomain(foundDomain);
+        repository.purgeDomain(currentManager.getApplication().getUuid(), foundDomain.getUuid());
     }
 
     public DomainPermission createDomainPermission(String domainUuid, DomainPermission domainPermission) throws RestException {
@@ -103,7 +95,7 @@ public class DomainControl {
             throw new InvalidResourceArgException(DomainPermission.class, "level", "0");
         }
 
-        DomainPermission foundPermission = repository.getDomainPermission(domainUuid, domainPermission.getLevel());
+        DomainPermission foundPermission = repository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPermission.getLevel());
         if (foundPermission != null) { //Permission level already exists
             throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
         }
@@ -116,7 +108,7 @@ public class DomainControl {
     public DomainPermission updateDomainPermission(String domainUuid, String permissionUuid, DomainPermission domainPermission) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(foundDomain);
-        DomainPermission foundPermission = repository.getDomainPermission(domainUuid, domainPermission.getLevel());
+        DomainPermission foundPermission = repository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPermission.getLevel());
         if (foundPermission != null) { //Permission level already exists
             throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
         }
@@ -147,7 +139,8 @@ public class DomainControl {
     public void deleteDomainPermission(String domainUuid, String permissionUuid, String replacementUuid) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(foundDomain);
-        List<DomainPermission> domainPermissions = repository.getDomainPermissions(domainUuid);
+        // fixed limit, we just need to know if its size is equal to 1
+        List<DomainPermission> domainPermissions = repository.getDomainPermissions(currentManager.getApplication().getUuid(), domainUuid, 50, 0);
         if (domainPermissions.size() == 1) {
             throw new RestException(DomainPermission.class, domainUuid, "A domain should have at least one permission", Response.Status.BAD_REQUEST);
         }
@@ -180,8 +173,8 @@ public class DomainControl {
         repository.delete(foundPermission);
     }
 
-    public ListResource<DomainPermission> getDomainPermissions(String domainUuid) {
-        List<DomainPermission> permissions = repository.getDomainPermissions(domainUuid);
+    public ListResource<DomainPermission> getDomainPermissions(String domainUuid, Integer limit, Integer offset) {
+        List<DomainPermission> permissions = repository.getDomainPermissions(currentManager.getApplication().getUuid(), domainUuid, limit, offset);
         return ListResourceUtils.buildListResource(permissions, permissions.size(), permissions.size(), 0);
     }
 

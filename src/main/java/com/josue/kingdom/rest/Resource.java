@@ -99,7 +99,10 @@ public class Resource implements Serializable {
     }
 
     public Date getDateCreated() {
-        return new Date(dateCreated.getTime());
+        if (dateCreated != null) {
+            return new Date(dateCreated.getTime());
+        }
+        return null;
     }
 
     public void setDateCreated(Date dateCreated) {
@@ -107,7 +110,10 @@ public class Resource implements Serializable {
     }
 
     public Date getLastUpdate() {
-        return new Date(lastUpdate.getTime());
+        if (dateCreated != null) {
+            return new Date(lastUpdate.getTime());
+        }
+        return null;
     }
 
     public void setLastUpdate(Date lastUpdate) {

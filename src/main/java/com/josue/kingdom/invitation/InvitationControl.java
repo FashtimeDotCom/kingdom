@@ -52,6 +52,9 @@ public class InvitationControl {
     @Inject
     Event<Invitation> invitatioEvent;
 
+    //TODO add use cases:
+    //a manager can invite a given email for a given domain once, he can resend the the invitation a number of times (e.g. 3)
+    //a manager can invite the same email for different domains, each invite will be a separated process
     @Transactional(Transactional.TxType.REQUIRED)
     public Invitation createInvitation(Invitation invitation) throws RestException {
         if (invitation.getDomain() == null) {
@@ -75,7 +78,7 @@ public class InvitationControl {
 
         Manager manager = credentialRepository.getManagerByEmail(foundDomain.getApplication().getUuid(), invitation.getTargetEmail());
         if (manager != null) {
-            Domain joinedDomain = domainRepository.getJoinedDomain(manager.getUuid(), foundDomain.getUuid());
+            Domain joinedDomain = domainRepository.getJoinedDomain(currentManager.getApplication().getUuid(), manager.getUuid(), foundDomain.getUuid());
             if (joinedDomain != null) { //User already joined to Domain
                 //TODO check... should return exception for already joined manager
                 throw new RestException(Manager.class, manager.getUuid(), "Already joined to domain", Response.Status.BAD_REQUEST);

@@ -5,10 +5,10 @@
  */
 package com.josue.kingdom;
 
-import com.josue.kingdom.shiro.AuthRepository;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
+import com.josue.kingdom.shiro.AuthRepository;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
@@ -44,9 +44,6 @@ public class JpaRepositoryIT {
     @Inject
     AuthRepository repo;
 
-    //PROVIDED BY INITIAL TEST DATA
-    private final String APPLICATION_UUID = "";
-
     @Deployment
     @TargetsContainer("wildfly-managed")
     public static WebArchive createDeployment() {
@@ -69,7 +66,7 @@ public class JpaRepositoryIT {
     public void testCreate() {
         DomainPermission permission = simpleCreate(repo);
 
-        DomainPermission foundPermission = repo.find(DomainPermission.class, APPLICATION_UUID, permission.getUuid());
+        DomainPermission foundPermission = repo.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
         assertNotNull(foundPermission);
     }
 
@@ -91,7 +88,7 @@ public class JpaRepositoryIT {
         DomainPermission permission = simpleCreate(repo);
 
         repo.delete(permission);
-        DomainPermission foundPermission = repo.find(DomainPermission.class, APPLICATION_UUID, permission.getUuid());
+        DomainPermission foundPermission = repo.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
         assertNull(foundPermission);
     }
 
@@ -99,7 +96,7 @@ public class JpaRepositoryIT {
     public void testFind() {
 
         DomainPermission permission = simpleCreate(repo);
-        DomainPermission foundPermission = repo.find(DomainPermission.class, APPLICATION_UUID, permission.getUuid());
+        DomainPermission foundPermission = repo.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
         assertEquals(permission, foundPermission);
     }
 
@@ -111,7 +108,7 @@ public class JpaRepositoryIT {
             simpleCreate(repo);
         }
 
-        Long count = repo.count(DomainPermission.class, APPLICATION_UUID);
+        Long count = repo.count(DomainPermission.class, InstanceHelper.APP_ID);
         assertTrue(count >= total);
     }
 

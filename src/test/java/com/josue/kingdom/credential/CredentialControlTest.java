@@ -336,7 +336,7 @@ public class CredentialControlTest {
         DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
 
         when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), credentialUuid)).thenReturn(apiCredential);
-        when(domainRespository.getDomainPermission(domainUuid, domainPerm.getName())).thenReturn(null);
+        when(domainRespository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPerm.getName())).thenReturn(null);
         control.updateAPICredential(domainUuid, credentialUuid, apiCredential);
         fail();
     }
@@ -352,7 +352,7 @@ public class CredentialControlTest {
         DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
 
         when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), credentialUuid)).thenReturn(apiCredential);
-        when(domainRespository.getDomainPermission(domainUuid, domainPerm.getName())).thenReturn(domainPerm);
+        when(domainRespository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPerm.getName())).thenReturn(domainPerm);
         doReturn(false).when(control).isPermitted(any(Permission.class));
         control.updateAPICredential(domainUuid, credentialUuid, apiCredential);
         fail();
@@ -371,7 +371,7 @@ public class CredentialControlTest {
         DomainPermission domainPerm = Mockito.mock(DomainPermission.class);
 
         when(credentialRepository.find(APICredential.class, currentManager.getApplication().getUuid(), credentialUuid)).thenReturn(foundAPICredential);
-        when(domainRespository.getDomainPermission(domainUuid, domainPerm.getName())).thenReturn(domainPerm);
+        when(domainRespository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPerm.getName())).thenReturn(domainPerm);
         doReturn(true).when(control).isPermitted(any(Permission.class));
         when(credentialRepository.update(foundAPICredential)).thenReturn(foundAPICredential);
 
@@ -389,7 +389,7 @@ public class CredentialControlTest {
         APICredential apiCreedntial = Mockito.mock(APICredential.class);
         DomainPermission mockedDomPerm = Mockito.mock(DomainPermission.class);
 
-        when(domainRespository.getDomainPermission(domainUuid, mockedDomPerm.getName())).thenReturn(null);
+        when(domainRespository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, mockedDomPerm.getName())).thenReturn(null);
 
         control.createAPICredential(domainUuid, apiCreedntial);
         fail();

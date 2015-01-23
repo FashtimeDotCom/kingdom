@@ -18,7 +18,6 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "manager_membership", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"uuid", "application_uuid"}),
     @UniqueConstraint(columnNames = {"domain_uuid", "manager_uuid", "application_uuid"})})
 //http://stackoverflow.com/questions/5127129/mapping-many-to-many-association-table-with-extra-columns
 public class ManagerMembership extends TenantResource {

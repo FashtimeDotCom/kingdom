@@ -29,8 +29,7 @@ import org.apache.shiro.authc.AuthenticationToken;
  */
 @Entity
 @Table(name = "application", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"app_key"}),
-    @UniqueConstraint(columnNames = {"email"})
+    @UniqueConstraint(columnNames = {"app_key"})
 })
 public class Application extends Resource implements AuthenticationToken {
 

@@ -14,7 +14,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
@@ -55,7 +54,8 @@ public class JpaRepository {
 
         Predicate condition1 = qb.equal(root.get("uuid"), id);
         Predicate condition2 = qb.equal(owner.get("uuid"), appUuid);
-        c.where(condition1).where(condition2);
+        Predicate predicate = qb.and(condition1, condition2);
+        c.where(predicate);
         TypedQuery<T> q = em.createQuery(c);
         List<T> result = q.getResultList();
         return extractSingleResultFromList(result);
@@ -70,10 +70,12 @@ public class JpaRepository {
     public <T> long count(Class<T> clazz, String appUuid) {
         CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         Root<T> root = cq.from(clazz);
-        ParameterExpression<String> param = em.getCriteriaBuilder().parameter(String.class);
-        cq.select(em.getCriteriaBuilder().count(em.getCriteriaBuilder().equal(root.get("application"), param)));
+
+        Join<T, Application> owner = root.join("application");
+        Predicate appPredicate = em.getCriteriaBuilder().equal(owner.get("uuid"), appUuid);
+
+        cq.select(em.getCriteriaBuilder().count(root)).where(appPredicate);
         Query q = em.createQuery(cq);
-        q.setParameter(param, appUuid);
         return (long) q.getSingleResult();
     }
 

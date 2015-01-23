@@ -24,7 +24,6 @@ import org.apache.shiro.authc.AuthenticationToken;
  */
 @Entity
 @Table(name = "manager", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"uuid", "application_uuid"}),
     @UniqueConstraint(columnNames = {"email", "application_uuid"}),
     @UniqueConstraint(columnNames = {"username", "application_uuid"})
 })
@@ -144,10 +143,7 @@ public class Manager extends TenantResource implements AuthenticationToken {
         if (!Objects.equals(this.password, other.password)) {
             return false;
         }
-        if (this.status != other.status) {
-            return false;
-        }
-        return true;
+        return this.status == other.status;
     }
 
     @Override

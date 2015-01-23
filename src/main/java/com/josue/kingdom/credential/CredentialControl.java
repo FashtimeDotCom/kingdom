@@ -100,7 +100,7 @@ public class CredentialControl {
             throw new ResourceNotFoundException(APICredential.class, credentialUuid);
         }
 
-        DomainPermission foundPermission = domainRepository.getDomainPermission(domainUuid, apiCredential.getMembership().getPermission().getName());
+        DomainPermission foundPermission = domainRepository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, apiCredential.getMembership().getPermission().getName());
         if (foundPermission == null) {
             throw new InvalidResourceArgException(APICredential.class, "Permission name", apiCredential.getMembership().getPermission().getName());
         }

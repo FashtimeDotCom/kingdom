@@ -117,19 +117,21 @@ public class CredentialRepository extends JpaRepository {
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public List<ManagerMembership> getManagerMembershipByManager(String appUuid, String managerUuid) {
+    public List<ManagerMembership> getManagerMembershipByManager(String appUuid, String managerUuid, Integer limit, Integer offset) {
         TypedQuery<ManagerMembership> query = em.createQuery("SELECT man FROM ManagerMembership man WHERE man.application.uuid = :appUuid AND man.manager.uuid = :managerUuid", ManagerMembership.class);
         query.setParameter("appUuid", appUuid);
         query.setParameter("managerUuid", managerUuid);
+        query.setMaxResults(limit).setFirstResult(offset);
         List<ManagerMembership> memberships = query.getResultList();
         return memberships;
     }
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public List<ManagerMembership> getManagerMembershipByDomain(String appUuid, String domainUuid) {
+    public List<ManagerMembership> getManagerMembershipByDomain(String appUuid, String domainUuid, Integer limit, Integer offset) {
         TypedQuery<ManagerMembership> query = em.createQuery("SELECT man FROM ManagerMembership man WHERE man.application.uuid = :appUuid AND man.domain.uuid = :domainUuid", ManagerMembership.class);
         query.setParameter("appUuid", appUuid);
         query.setParameter("domainUuid", domainUuid);
+        query.setMaxResults(limit).setFirstResult(offset);
         List<ManagerMembership> memberships = query.getResultList();
         return memberships;
     }

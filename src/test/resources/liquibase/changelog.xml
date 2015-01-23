@@ -9,7 +9,7 @@
 
     <!-- Should be only links to per-version cumulative changelog files. -->
     <include file="v1/credential-manager-changelog.xml" relativeToChangelogFile="true"/>
-    <include file="v1/initial-test-data.xml" relativeToChangelogFile="true"/>
+    <include file="v1/initial-test-data-application1.xml" relativeToChangelogFile="true"/>
     <!--
    <include file="v-2.0/changelog-v.2.0-cumulative.xml" relativeToChangelogFile="true"/>
     -->

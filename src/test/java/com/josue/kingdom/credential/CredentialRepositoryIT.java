@@ -153,7 +153,7 @@ public class CredentialRepositoryIT {
     @Test
     public void testGetManagerMembershipByManager() {
         ManagerMembership membership = InstanceHelper.createFullManagerMembership(repository);
-        List<ManagerMembership> foundMemberships = repository.getManagerMembershipByManager(InstanceHelper.APP_ID, membership.getManager().getUuid());
+        List<ManagerMembership> foundMemberships = repository.getManagerMembershipByManager(InstanceHelper.APP_ID, membership.getManager().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundMemberships.size());
         assertEquals(membership, foundMemberships.get(0));
     }
@@ -161,7 +161,7 @@ public class CredentialRepositoryIT {
     @Test
     public void testGetManagerMembershipByDomain() {
         ManagerMembership membership = InstanceHelper.createFullManagerMembership(repository);
-        List<ManagerMembership> foundMemberships = repository.getManagerMembershipByDomain(InstanceHelper.APP_ID, membership.getDomain().getUuid());
+        List<ManagerMembership> foundMemberships = repository.getManagerMembershipByDomain(InstanceHelper.APP_ID, membership.getDomain().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundMemberships.size());
         assertEquals(membership, foundMemberships.get(0));
     }

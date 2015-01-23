@@ -23,8 +23,9 @@ import org.apache.shiro.authc.AuthenticationToken;
  * A Manager can have multiple APICredentials, but only one Credential... see Credential class
  */
 @Entity
-@Table(name = "api_credential", uniqueConstraints
-        = @UniqueConstraint(columnNames = {"application_uuid", "api_key", "membership_uuid"}))
+@Table(name = "api_credential", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"application_uuid", "api_key"}),
+    @UniqueConstraint(columnNames = {"application_uuid", "api_key", "membership_uuid"})})
 public class APICredential extends TenantResource implements AuthenticationToken {
 
     private String name;

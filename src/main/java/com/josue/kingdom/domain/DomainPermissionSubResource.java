@@ -9,10 +9,13 @@ import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
+import static com.josue.kingdom.rest.ResponseUtils.DEFAULT_LIMIT;
+import static com.josue.kingdom.rest.ResponseUtils.DEFAULT_OFFSET;
 import com.josue.kingdom.rest.ex.RestException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -42,14 +45,21 @@ public class DomainPermissionSubResource {
     @GET
     @Produces(value = CONTENT_TYPE)
     //TODO add limit offset ? is it needed ?
-    public Response getGrantedDomainPermissions(@PathParam("domainUuid") String domainUuid) {
-        ListResource<DomainPermission> domainPermissions = control.getDomainPermissions(domainUuid);
+    public Response getGrantedDomainPermissions(
+            @QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset,
+            @PathParam("domainUuid") String domainUuid) {
+
+        ListResource<DomainPermission> domainPermissions = control.getDomainPermissions(domainUuid, limit, offset);
         return ResponseUtils.buildSimpleResponse(domainPermissions, Response.Status.OK, info);
     }
 
     @POST
     @Produces(value = CONTENT_TYPE)
-    public Response createDomainPermission(@PathParam("domainUuid") String domainUuid, DomainPermission domainPermission) throws RestException {
+    public Response createDomainPermission(
+            @PathParam("domainUuid") String domainUuid,
+            DomainPermission domainPermission) throws RestException {
+
         DomainPermission createdDomainPermission = control.createDomainPermission(domainUuid, domainPermission);
         return ResponseUtils.buildSimpleResponse(createdDomainPermission, Response.Status.OK, info);
     }
@@ -57,8 +67,11 @@ public class DomainPermissionSubResource {
     @PUT
     @Path("{permissionUuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response updateDomainPermission(@PathParam("domainUuid") String domainUuid,
-            @PathParam("permissionUuid") String permissionUuid, DomainPermission domainPermission) throws RestException {
+    public Response updateDomainPermission(
+            @PathParam("domainUuid") String domainUuid,
+            @PathParam("permissionUuid") String permissionUuid,
+            DomainPermission domainPermission) throws RestException {
+
         DomainPermission updatedDomainPermission = control.updateDomainPermission(domainUuid, permissionUuid, domainPermission);
         return ResponseUtils.buildSimpleResponse(updatedDomainPermission, Response.Status.OK, info);
     }
@@ -66,7 +79,8 @@ public class DomainPermissionSubResource {
     @DELETE
     @Path("{permissionUuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response deleteDomainPermission(@PathParam("domainUuid") String domainUuid,
+    public Response deleteDomainPermission(
+            @PathParam("domainUuid") String domainUuid,
             @PathParam("permissionUuid") String permissionUuid,
             @QueryParam("replacement") String replacementPermissionUuid,
             DomainPermission domainPermission) throws RestException {

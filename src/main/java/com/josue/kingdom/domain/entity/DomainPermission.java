@@ -21,7 +21,6 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "domain_permission", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"uuid", "application_uuid"}),
     @UniqueConstraint(columnNames = {"level", "domain_uuid", "application_uuid"}),
     @UniqueConstraint(columnNames = {"name", "domain_uuid", "application_uuid"})})
 public class DomainPermission extends TenantResource {
