@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.shiro;
+package com.josue.kingdom.shiro.application;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -12,6 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.DatatypeConverter;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -25,7 +26,8 @@ import org.apache.shiro.web.util.WebUtils;
 public class ApplicationFilter extends BasicHttpAuthenticationFilter {
 
     //TODO this should be able to be changed on shiro.ini
-    private static final String APP_ID = "app_id";
+    private static final String KINGDOM_HEADER = "Kingdom";
+    private static final String CREDENTIAL_SEPARATOR = ":";
 
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
@@ -42,10 +44,15 @@ public class ApplicationFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpRequest = WebUtils.toHttp(request);
-        String appId = httpRequest.getHeader(APP_ID);
+        //TODO improve.... check null, etc
+        String appCredentials = httpRequest.getHeader(KINGDOM_HEADER);
+        String parsedHeader = new String(DatatypeConverter.parseBase64Binary(appCredentials));
+        String key = parsedHeader.split(CREDENTIAL_SEPARATOR)[0];
+        char[] value = parsedHeader.split(CREDENTIAL_SEPARATOR)[1].toCharArray();
 
         AuthenticationToken authToken = super.createToken(request, response);
-        KingdomAuthToken apiToken = new KingdomAuthToken(authToken.getPrincipal(), authToken.getCredentials(), appId);
+        //TODO validate if its an email or a username
+        ApplicationToken apiToken = new ApplicationToken(authToken.getPrincipal(), authToken.getCredentials(), new ManagerToken(key, null, value));
         return apiToken;
     }
 

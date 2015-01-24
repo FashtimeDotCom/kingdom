@@ -6,6 +6,7 @@
 package com.josue.kingdom.shiro;
 
 import com.josue.kingdom.JpaRepository;
+import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.ManagerMembership;
@@ -50,6 +51,15 @@ public class AuthRepository extends JpaRepository {
         query.setParameter("apiKey", apiKey);
         query.setParameter("appUuid", appUuid);
         List<APICredential> apiCredentials = query.getResultList();
+        return extractSingleResultFromList(apiCredentials);
+    }
+
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public Application getApplication(String appKey, String appSecret) {
+        TypedQuery<Application> query = em.createQuery("SELECT app FROM Application app WHERE app.appKey = :appKey AND app.secret = :appSecret", Application.class);
+        query.setParameter("appKey", appKey);
+        query.setParameter("appSecret", appSecret);
+        List<Application> apiCredentials = query.getResultList();
         return extractSingleResultFromList(apiCredentials);
     }
 }

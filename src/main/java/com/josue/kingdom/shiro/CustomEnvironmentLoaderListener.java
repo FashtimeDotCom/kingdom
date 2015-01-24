@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.shiro;
 
+import com.josue.kingdom.shiro.application.ApplicationlRealm;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;

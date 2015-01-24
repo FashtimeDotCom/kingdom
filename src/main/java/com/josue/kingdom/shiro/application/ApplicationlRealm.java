@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.shiro;
+package com.josue.kingdom.shiro.application;
 
+import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerMembership;
+import com.josue.kingdom.shiro.AccessLevelPermission;
+import com.josue.kingdom.shiro.AuthRepository;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,17 +45,22 @@ public class ApplicationlRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {
 
-        KingdomAuthToken kingdomToken = (KingdomAuthToken) authToken;
-        String login = (String) kingdomToken.getPrincipal();
-        String password = (String) kingdomToken.getCredentials();
-        String appKey = kingdomToken.getAppKey();
-        Manager foundManager = persistence.getManager(appKey, login, password);
+        ApplicationToken appToken = (ApplicationToken) authToken;
+        Application foundApp = persistence.getApplication((String) appToken.getPrincipal(), new String((char[]) appToken.getCredentials())); //TODO this and down here
 
-        if (foundManager != null) {
+        if (foundApp != null) {
+            Manager foundManager = null;
+            if (appToken.getManagerToken() != null) {
+                //TODO search for email or username
+                foundManager = persistence.getManager(appToken.getPrincipal().toString(), appToken.getManagerToken().getPrincipal().toString(), new String((char[]) appToken.getManagerToken().getCredentials()));
+                //TODO throw exception ? or just leave null ?
+            }
+
+            KingdomSecurity security = new KingdomSecurity(foundApp, foundManager);
             //Here we put the entire APICredential class, so we can fetch it using Subject subject = SecurityUtils.getSubject();
-            return new SimpleAuthenticationInfo(foundManager, foundManager.getPassword(), getName());
+            return new SimpleAuthenticationInfo(security, foundApp.getSecret(), getName());
         }
-        throw new AuthenticationException("Invalid username or password, APP: " + appKey);
+        throw new AuthenticationException("Invalid username or password, APP: " + appToken.getPrincipal());
     }
     /*
      This method actually validate the TWO available credentials:
@@ -83,7 +91,7 @@ public class ApplicationlRealm extends AuthorizingRealm {
 
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof KingdomAuthToken;
+        return token instanceof ApplicationToken;
     }
 
 }

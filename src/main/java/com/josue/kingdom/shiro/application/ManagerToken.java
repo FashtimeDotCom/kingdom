@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.shiro;
+package com.josue.kingdom.shiro.application;
 
 import org.apache.shiro.authc.AuthenticationToken;
 
@@ -11,30 +11,29 @@ import org.apache.shiro.authc.AuthenticationToken;
  *
  * @author Josue
  */
-public class KingdomAuthToken implements AuthenticationToken {
+public class ManagerToken implements AuthenticationToken {
 
-    private final Object login;
-    private final Object password;
-    private final String appKey;
+    private final String username;
+    private final String email;
+    private final char[] password;
 
-    public KingdomAuthToken(Object login, Object password, String appKey) {
-        this.login = login;
+    public ManagerToken(String username, String email, char[] password) {
+        this.username = username;
+        this.email = email;
         this.password = password;
-        this.appKey = appKey;
     }
 
     @Override
     public Object getPrincipal() {
-        return login;
+        if (email == null) {
+            return username;
+        }
+        return email;
     }
 
     @Override
     public Object getCredentials() {
         return password;
-    }
-
-    public String getAppKey() {
-        return appKey;
     }
 
 }
