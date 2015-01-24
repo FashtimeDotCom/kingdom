@@ -14,11 +14,12 @@ import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.rest.ListResource;
-import com.josue.kingdom.rest.Resource;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
+import com.josue.kingdom.security.KingdomSecurity;
 import java.util.List;
+import java.util.UUID;
 import javax.enterprise.event.Event;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -44,7 +45,7 @@ import org.mockito.Spy;
 public class InvitationControlTest {
 
     @Spy
-    Manager currentManager = new Manager();
+    KingdomSecurity security;
 
     @Mock
     InvitationRepository invitationRepository;
@@ -64,14 +65,27 @@ public class InvitationControlTest {
     @InjectMocks
     InvitationControl control = new InvitationControl();
 
-    String applicationUuid;
+    private Manager currentManager;
+    private Application currentApplication;
 
     @Before
     public void init() {
-        Resource app = new Application();
-        app.setUuid("application-uuid");
-        applicationUuid = app.getUuid();
-        currentManager.setApplication(app);
+        Application currentApp = new Application();
+        currentApp.setUuid("application-uuid");
+
+        Manager currentMan = new Manager();
+        currentMan.setUuid(UUID.randomUUID().toString());
+        currentMan.setEmail("current-manager@email.com");
+        currentMan.setFirstName("Current");
+        currentMan.setLastName("Manager");
+        currentMan.setPassword("current-manager-psw");
+        currentMan.setStatus(AccountStatus.ACTIVE);
+        currentMan.setUsername("current-manager");
+        currentMan.setApplication(currentApp);
+
+        security = new KingdomSecurity(currentApp, currentMan);
+        currentManager = currentMan;
+        currentApplication = currentApp;
 
         MockitoAnnotations.initMocks(this);
 
@@ -116,7 +130,7 @@ public class InvitationControlTest {
         invitation.setTargetManager(new Manager());
         invitation.getTargetManager().setEmail("test@email.com");
 
-        when(invitationRepository.find(Domain.class, applicationUuid, invitation.getDomain().getUuid())).thenReturn(null);
+        when(invitationRepository.find(Domain.class, currentApplication.getUuid(), invitation.getDomain().getUuid())).thenReturn(null);
         control.createInvitation(invitation);
         fail();
     }
@@ -127,7 +141,7 @@ public class InvitationControlTest {
         String invitationUuid = "uuid-123";
         Invitation invitation = Mockito.mock(Invitation.class);
 
-        when(invitationRepository.find(Invitation.class, applicationUuid, invitationUuid)).thenReturn(null);
+        when(invitationRepository.find(Invitation.class, currentApplication.getUuid(), invitationUuid)).thenReturn(null);
         control.updateInvitation(invitationUuid, invitation);
         fail();
     }
@@ -136,7 +150,7 @@ public class InvitationControlTest {
     public void testCreateInvitationAreadyJoined() throws RestException {
         Domain domain = Mockito.spy(new Domain());
         domain.setOwner(currentManager);
-        domain.setApplication(currentManager.getApplication());
+        domain.setApplication(security.getCurrentApplication());
 
         Manager targetManager = Mockito.spy(new Manager());
 
@@ -144,12 +158,12 @@ public class InvitationControlTest {
         invitation.setDomain(domain);
         invitation.setTargetManager(targetManager);
         invitation.getTargetManager().setEmail("test@email.com");
-        invitation.setApplication(currentManager.getApplication());
+        invitation.setApplication(security.getCurrentApplication());
         invitation.setPermission(new DomainPermission());
 
-        when(invitationRepository.find(Domain.class, applicationUuid, invitation.getDomain().getUuid())).thenReturn(domain);
-        when(credentialRepository.getManagerByEmail(applicationUuid, targetManager.getEmail())).thenReturn(targetManager);
-        when(domainRepository.getJoinedDomain(applicationUuid, targetManager.getUuid(), domain.getUuid())).thenReturn(new Domain());//already joined
+        when(invitationRepository.find(Domain.class, currentApplication.getUuid(), invitation.getDomain().getUuid())).thenReturn(domain);
+        when(credentialRepository.getManagerByEmail(currentApplication.getUuid(), targetManager.getEmail())).thenReturn(targetManager);
+        when(domainRepository.getJoinedDomain(currentApplication.getUuid(), targetManager.getUuid(), domain.getUuid())).thenReturn(new Domain());//already joined
         control.createInvitation(invitation);
         fail();
     }
@@ -158,7 +172,7 @@ public class InvitationControlTest {
     public void testCreateInvitationExistentManager() throws RestException {
         Domain domain = Mockito.spy(new Domain());
         domain.setOwner(currentManager);
-        domain.setApplication(currentManager.getApplication());
+        domain.setApplication(security.getCurrentApplication());
 
         Manager targetManager = Mockito.spy(new Manager());
 
@@ -166,12 +180,12 @@ public class InvitationControlTest {
         invitation.setDomain(domain);
         invitation.setTargetManager(targetManager);
         invitation.getTargetManager().setEmail("test@email.com");
-        invitation.setApplication(currentManager.getApplication());
+        invitation.setApplication(security.getCurrentApplication());
         invitation.setPermission(new DomainPermission());
 
-        when(invitationRepository.find(Domain.class, applicationUuid, invitation.getDomain().getUuid())).thenReturn(domain);
-        when(credentialRepository.getManagerByEmail(applicationUuid, targetManager.getEmail())).thenReturn(targetManager);
-        when(domainRepository.getJoinedDomain(applicationUuid, targetManager.getUuid(), domain.getUuid())).thenReturn(null);
+        when(invitationRepository.find(Domain.class, currentApplication.getUuid(), invitation.getDomain().getUuid())).thenReturn(domain);
+        when(credentialRepository.getManagerByEmail(currentApplication.getUuid(), targetManager.getEmail())).thenReturn(targetManager);
+        when(domainRepository.getJoinedDomain(currentApplication.getUuid(), targetManager.getUuid(), domain.getUuid())).thenReturn(null);
 
         control.createInvitation(invitation);
 
@@ -187,7 +201,7 @@ public class InvitationControlTest {
     public void testCreateInvitationNewManager() throws RestException {
         Domain domain = Mockito.spy(new Domain());
         domain.setOwner(currentManager);
-        domain.setApplication(currentManager.getApplication());
+        domain.setApplication(security.getCurrentApplication());
 
         Manager targetManager = Mockito.spy(new Manager());
 
@@ -195,11 +209,11 @@ public class InvitationControlTest {
         invitation.setDomain(domain);
         invitation.setTargetManager(targetManager);
         invitation.getTargetManager().setEmail("test@email.com");
-        invitation.setApplication(currentManager.getApplication());
+        invitation.setApplication(security.getCurrentApplication());
         invitation.setPermission(new DomainPermission());
 
-        when(invitationRepository.find(Domain.class, applicationUuid, invitation.getDomain().getUuid())).thenReturn(domain);
-        when(credentialRepository.getManagerByEmail(applicationUuid, targetManager.getEmail())).thenReturn(null);
+        when(invitationRepository.find(Domain.class, currentApplication.getUuid(), invitation.getDomain().getUuid())).thenReturn(domain);
+        when(credentialRepository.getManagerByEmail(currentApplication.getUuid(), targetManager.getEmail())).thenReturn(null);
 
         control.createInvitation(invitation);
 
@@ -222,7 +236,7 @@ public class InvitationControlTest {
         Invitation foundInvitation = Mockito.mock(Invitation.class);
         Invitation updatedInvitation = Mockito.mock(Invitation.class);
 
-        when(invitationRepository.find(Invitation.class, applicationUuid, invitationUuid)).thenReturn(foundInvitation);
+        when(invitationRepository.find(Invitation.class, currentApplication.getUuid(), invitationUuid)).thenReturn(foundInvitation);
         when(invitationRepository.update(foundInvitation)).thenReturn(updatedInvitation);
         Invitation invResponse = control.updateInvitation(invitationUuid, invitation);
         verify(foundInvitation).copyUpdatable(invitation);
@@ -234,7 +248,7 @@ public class InvitationControlTest {
     @Test(expected = ResourceNotFoundException.class)
     public void testGetInvitationNotFound() throws RestException {
         String invitationUuid = "inv-123";
-        when(invitationRepository.find(Invitation.class, applicationUuid, invitationUuid)).thenReturn(null);
+        when(invitationRepository.find(Invitation.class, currentApplication.getUuid(), invitationUuid)).thenReturn(null);
         control.getInvitation(invitationUuid);
         fail();
     }
@@ -244,9 +258,9 @@ public class InvitationControlTest {
         Invitation invitation = Mockito.mock(Invitation.class);
         String invitationUuid = "inv-123";
 
-        when(invitationRepository.find(Invitation.class, applicationUuid, invitationUuid)).thenReturn(invitation);
+        when(invitationRepository.find(Invitation.class, currentApplication.getUuid(), invitationUuid)).thenReturn(invitation);
         Invitation foundInvitation = control.getInvitation(invitationUuid);
-        verify(invitationRepository).find(Invitation.class, applicationUuid, invitationUuid);
+        verify(invitationRepository).find(Invitation.class, currentApplication.getUuid(), invitationUuid);
         assertEquals(invitation, foundInvitation);
     }
 
@@ -255,16 +269,16 @@ public class InvitationControlTest {
         Invitation invitation = Mockito.mock(Invitation.class);
         String token = "inv-123";
 
-        when(invitationRepository.getInvitationByToken(applicationUuid, token)).thenReturn(invitation);
+        when(invitationRepository.getInvitationByToken(currentApplication.getUuid(), token)).thenReturn(invitation);
         Invitation foundInvitation = control.getInvitationByToken(token);
-        verify(invitationRepository).getInvitationByToken(applicationUuid, token);
+        verify(invitationRepository).getInvitationByToken(currentApplication.getUuid(), token);
         assertEquals(invitation, foundInvitation);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void testGetInvitationByTokenNotFound() throws RestException {
         String token = "inv-123";
-        when(invitationRepository.getInvitationByToken(applicationUuid, token)).thenReturn(null);
+        when(invitationRepository.getInvitationByToken(currentApplication.getUuid(), token)).thenReturn(null);
         control.getInvitationByToken(token);
         fail();
     }
@@ -280,7 +294,7 @@ public class InvitationControlTest {
         Application application = Mockito.mock(Application.class);
         invitation.setApplication(application);
 
-        when(invitationRepository.getInvitationByToken(applicationUuid, token)).thenReturn(invitation);
+        when(invitationRepository.getInvitationByToken(currentApplication.getUuid(), token)).thenReturn(invitation);
         when(credentialRepository.getManagerByEmail(invitation.getApplication().getUuid(), invitation.getTargetManager().getEmail())).thenReturn(foundManager);
         when(foundManager.getStatus()).thenReturn(AccountStatus.ACTIVE);
 
@@ -294,15 +308,15 @@ public class InvitationControlTest {
     }
 
     @Test
-    public void testGetInvitations() {
+    public void testGetInvitations() throws RestException {
 
         int limit = 15;
         int offset = 0;
 
         long count = 10;
         List<Invitation> invitations = Mockito.mock(List.class);
-        when(invitationRepository.getInvitations(applicationUuid, currentManager.getUuid(), limit, offset)).thenReturn(invitations);
-        when(invitationRepository.getInvitationsCount(applicationUuid, currentManager.getUuid())).thenReturn(count);
+        when(invitationRepository.getInvitations(currentApplication.getUuid(), currentManager.getUuid(), limit, offset)).thenReturn(invitations);
+        when(invitationRepository.getInvitationsCount(currentApplication.getUuid(), currentManager.getUuid())).thenReturn(count);
 
         ListResource<Invitation> foundInvitations = control.getInvitations(limit, offset);
         assertEquals(count, foundInvitations.getTotalCount());

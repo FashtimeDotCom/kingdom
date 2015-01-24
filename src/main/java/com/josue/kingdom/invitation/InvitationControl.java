@@ -20,7 +20,8 @@ import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.util.cdi.Current;
+import com.josue.kingdom.security.Current;
+import com.josue.kingdom.security.KingdomSecurity;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Calendar;
@@ -42,7 +43,7 @@ public class InvitationControl {
 
     @Inject
     @Current
-    Manager currentManager;
+    KingdomSecurity security;
 
     @Inject
     InvitationRepository invitationRepository;
@@ -74,33 +75,33 @@ public class InvitationControl {
             throw new InvalidResourceArgException(Manager.class, "targetManager.email", null);
         }
 
-        Domain foundDomain = invitationRepository.find(Domain.class, currentManager.getApplication().getUuid(), invitation.getDomain().getUuid());
+        Domain foundDomain = invitationRepository.find(Domain.class, security.getCurrentApplication().getUuid(), invitation.getDomain().getUuid());
         if (foundDomain == null) {
             throw new ResourceNotFoundException(Domain.class, invitation.getDomain().getUuid());
-        } else if (!foundDomain.getOwner().equals(currentManager)) {
+        } else if (!foundDomain.getOwner().equals(security.getCurrentManager())) {
             throw new AuthorizationException("You must be the Domain owner to invite someone");
         }
-        Invitation existingInvitation = invitationRepository.getInvitation(currentManager.getApplication().getUuid(), invitation.getDomain().getUuid(), invitation.getTargetManager().getUuid());
+        Invitation existingInvitation = invitationRepository.getInvitation(security.getCurrentApplication().getUuid(), invitation.getDomain().getUuid(), invitation.getTargetManager().getUuid());
         if (existingInvitation != null) {//already exist an invitation for this domain of the same targetemail... resend ?
             throw new ResourceAlreadyExistsException(Invitation.class, "targetEmail", invitation.getTargetManager().getEmail());
         }
 
         //TODO validate another if null ??? bean validation ?
-        DomainPermission permission = invitationRepository.find(DomainPermission.class, currentManager.getApplication().getUuid(), invitation.getPermission().getUuid());
+        DomainPermission permission = invitationRepository.find(DomainPermission.class, security.getCurrentApplication().getUuid(), invitation.getPermission().getUuid());
 
         invitation.removeNonCreatable();
         invitation.setStatus(InvitationStatus.CREATED);
         invitation.setValidUntil(getInvitationExprirationDate());
         invitation.setDomain(foundDomain);
-        invitation.setAuthorManager(currentManager);
+        invitation.setAuthorManager(security.getCurrentManager());
         invitation.setPermission(permission);
         invitation.setToken(UUID.randomUUID().toString());
-        invitation.setApplication(currentManager.getApplication());
+        invitation.setApplication(security.getCurrentApplication());
 
         Manager manager = credentialRepository.getManagerByEmail(foundDomain.getApplication().getUuid(), invitation.getTargetManager().getEmail());
         if (manager != null) {// manager or 'empty invitation manager' already exist
             invitation.setTargetManager(manager);
-            Domain joinedDomain = domainRepository.getJoinedDomain(currentManager.getApplication().getUuid(), manager.getUuid(), foundDomain.getUuid());
+            Domain joinedDomain = domainRepository.getJoinedDomain(security.getCurrentApplication().getUuid(), manager.getUuid(), foundDomain.getUuid());
             if (joinedDomain != null) { //User already joined to Domain
                 throw new RestException(Manager.class, manager.getUuid(), "Already joined to domain", Response.Status.BAD_REQUEST);
             }
@@ -108,7 +109,7 @@ public class InvitationControl {
             invitation.getTargetManager().removeNonCreatable();
             invitation.getTargetManager().setPassword(new BigInteger(130, new SecureRandom()).toString(16));
             invitation.getTargetManager().setStatus(AccountStatus.PROVISIONING);
-            invitation.getTargetManager().setApplication(currentManager.getApplication());
+            invitation.getTargetManager().setApplication(security.getCurrentApplication());
             invitationRepository.create(invitation.getTargetManager());
         }
 
@@ -121,7 +122,7 @@ public class InvitationControl {
 
     //Internal only, theres no reason for user update an invitation
     public Invitation updateInvitation(String uuid, Invitation inv) throws RestException {
-        Invitation invitation = invitationRepository.find(Invitation.class, currentManager.getApplication().getUuid(), uuid);
+        Invitation invitation = invitationRepository.find(Invitation.class, security.getCurrentApplication().getUuid(), uuid);
         if (invitation == null) {
             throw new ResourceNotFoundException(Invitation.class, uuid);
         }
@@ -132,7 +133,7 @@ public class InvitationControl {
     }
 
     public Invitation getInvitation(String uuid) throws RestException {
-        Invitation foundInvitation = invitationRepository.find(Invitation.class, currentManager.getApplication().getUuid(), uuid);
+        Invitation foundInvitation = invitationRepository.find(Invitation.class, security.getCurrentApplication().getUuid(), uuid);
         if (foundInvitation == null) {
             throw new ResourceNotFoundException(Invitation.class, uuid);
         }
@@ -141,7 +142,7 @@ public class InvitationControl {
 
     //TODO update how to get an appUuid, specially for resources that dont require an authenticated user
     public Invitation getInvitationByToken(String token) throws RestException {
-        Invitation foundInvitation = invitationRepository.getInvitationByToken(currentManager.getApplication().getUuid(), token);
+        Invitation foundInvitation = invitationRepository.getInvitationByToken(security.getCurrentApplication().getUuid(), token);
         if (foundInvitation == null) {
             throw new ResourceNotFoundException(Invitation.class, "token", token);
         }
@@ -156,9 +157,9 @@ public class InvitationControl {
         return foundManager.getStatus().equals(AccountStatus.PROVISIONING);
     }
 
-    public ListResource<Invitation> getInvitations(Integer limit, Integer offset) {
-        List<Invitation> invitations = invitationRepository.getInvitations(currentManager.getApplication().getUuid(), currentManager.getUuid(), limit, offset);
-        long invitationsCount = invitationRepository.getInvitationsCount(currentManager.getApplication().getUuid(), currentManager.getUuid());
+    public ListResource<Invitation> getInvitations(Integer limit, Integer offset) throws RestException {
+        List<Invitation> invitations = invitationRepository.getInvitations(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid(), limit, offset);
+        long invitationsCount = invitationRepository.getInvitationsCount(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid());
         return ListResourceUtils.buildListResource(invitations, invitationsCount, limit, offset);
     }
 

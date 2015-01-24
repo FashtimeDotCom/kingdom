@@ -8,7 +8,7 @@ package com.josue.kingdom;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
-import com.josue.kingdom.shiro.AuthRepository;
+import com.josue.kingdom.security.AuthRepository;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;

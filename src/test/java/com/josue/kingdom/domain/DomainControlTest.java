@@ -6,21 +6,23 @@
 package com.josue.kingdom.domain;
 
 import com.josue.kingdom.application.entity.Application;
+import com.josue.kingdom.credential.entity.AccountStatus;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
 import com.josue.kingdom.rest.ListResource;
-import com.josue.kingdom.rest.Resource;
 import com.josue.kingdom.rest.ex.AuthorizationException;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
+import com.josue.kingdom.security.KingdomSecurity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -52,30 +54,45 @@ public class DomainControlTest {
     DomainRepository repository;
 
     @Spy
-    Manager currentManager = new Manager();
+    KingdomSecurity security;
 
     @InjectMocks
     DomainControl control = new DomainControl();
 
-    private String applicationUuid;
+    private Manager currentManager;
+    private Application currentApplication;
 
     @Before
-    public void init() {
-        Resource app = new Application();
-        app.setUuid("application-uuid");
-        applicationUuid = app.getUuid();
+    public void init() throws RestException {
 
-        currentManager.setApplication(app);
+        Application currentApp = new Application();
+        currentApp.setUuid("application-uuid");
+
+        Manager currentMan = new Manager();
+        currentMan.setUuid(UUID.randomUUID().toString());
+        currentMan.setEmail("current-manager@email.com");
+        currentMan.setFirstName("Current");
+        currentMan.setLastName("Manager");
+        currentMan.setPassword("current-manager-psw");
+        currentMan.setStatus(AccountStatus.ACTIVE);
+        currentMan.setUsername("current-manager");
+        currentMan.setApplication(currentApp);
+
+        security = new KingdomSecurity(currentApp, currentMan);
+
+        currentManager = currentMan;
+        currentApplication = currentApp;
+
         MockitoAnnotations.initMocks(this);
     }
 
     @Test//TODO implement logic
-    public void testGetOwnedDomains() {
+    public void testGetOwnedDomains() throws RestException {
         List<Domain> mockedDomains = Arrays.asList(Mockito.mock(Domain.class));
 
-        when(repository.getOwnedDomains(applicationUuid, currentManager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(mockedDomains);
+        when(repository.getOwnedDomains(currentApplication.getUuid(), currentManager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(mockedDomains);
         ListResource<Domain> ownedDomains = control.getOwnedDomains(DEFAULT_LIMIT, DEFAULT_OFFSET);
-        verify(repository, times(1)).getOwnedDomains(applicationUuid, currentManager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        verify(repository, times(1)).getOwnedDomains(currentApplication.getUuid(), currentManager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(mockedDomains.size(), ownedDomains.getItems().size());
     }
 
@@ -89,7 +106,7 @@ public class DomainControlTest {
         domain.setDateCreated(new Date());
         domain.setOwner(new Manager());
 
-        when(repository.find(Manager.class, currentManager.getApplication().getUuid(), currentManager.getUuid())).thenReturn(currentManager);
+        when(repository.find(Manager.class, currentApplication.getUuid(), currentManager.getUuid())).thenReturn(currentManager);
 
         Domain createdDomain = control.createDomain(domain);
         assertEquals(createdDomain.getOwner(), currentManager);
@@ -127,9 +144,9 @@ public class DomainControlTest {
         man1.setEmail("man2@email.com");
         userInput.setOwner(man2);
 
-        when(repository.find(Manager.class, currentManager.getApplication().getUuid(), currentManager.getUuid())).thenReturn(currentManager);
+        when(repository.find(Manager.class, currentApplication.getUuid(), currentManager.getUuid())).thenReturn(currentManager);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(actualDomainStub);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(actualDomainStub);
         when(repository.update(actualDomainStub)).thenReturn(actualDomainStub);
 
         Domain updatedDomain = control.updateDomain(domainUuid, userInput);
@@ -147,8 +164,8 @@ public class DomainControlTest {
         Domain domain = Mockito.mock(Domain.class);
         String domainUuid = "uuid-123";
 
-        when(repository.find(Manager.class, currentManager.getApplication().getUuid(), currentManager.getUuid())).thenReturn(currentManager);
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(null);
+        when(repository.find(Manager.class, currentApplication.getUuid(), currentManager.getUuid())).thenReturn(currentManager);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(null);
         control.updateDomain(domainUuid, domain);
         fail("ResourceNotFoundException should be thrown");
     }
@@ -158,18 +175,18 @@ public class DomainControlTest {
         String domainUuid = "domain-123";
         Domain mockedDomain = Mockito.mock(Domain.class);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(mockedDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(mockedDomain);
         when(mockedDomain.getOwner()).thenReturn(currentManager);
 
         control.deleteDomain(domainUuid);
-        verify(repository, times(1)).purgeDomain(applicationUuid, mockedDomain.getUuid());
+        verify(repository, times(1)).purgeDomain(currentApplication.getUuid(), mockedDomain.getUuid());
     }
 
     @Test(expected = RestException.class)
     public void testDeleteDomainNotFound() throws RestException {
         String domainUuid = "domain-123";
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(null);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(null);
         control.deleteDomain(domainUuid);
         fail();
     }
@@ -179,7 +196,7 @@ public class DomainControlTest {
         String uuid = "123";
 
         Domain mockedDomain = Mockito.mock(Domain.class);
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), uuid)).thenReturn(mockedDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), uuid)).thenReturn(mockedDomain);
         Domain joinedDomain = control.getJoinedDomain(uuid);
         assertEquals(mockedDomain, joinedDomain);
     }
@@ -188,7 +205,7 @@ public class DomainControlTest {
     public void testGetJoinedDomainNotFound() throws RestException {
         String uuid = "123";
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), uuid)).thenReturn(null);
+        when(repository.find(Domain.class, currentApplication.getUuid(), uuid)).thenReturn(null);
         control.getJoinedDomain(uuid);
         fail();
     }
@@ -203,7 +220,7 @@ public class DomainControlTest {
 
         DomainPermission domPerm = Mockito.mock(DomainPermission.class);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(spyDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(spyDomain);
         when(domPerm.getLevel()).thenReturn(permissionLevel);
         control.createDomainPermission(domainUuid, domPerm);
         fail();
@@ -218,9 +235,9 @@ public class DomainControlTest {
 
         DomainPermission domPerm = Mockito.mock(DomainPermission.class);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(spyDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(spyDomain);
         when(domPerm.getLevel()).thenReturn(1);
-        when(repository.getDomainPermission(applicationUuid, domainUuid, permissionLevel)).thenReturn(new DomainPermission());
+        when(repository.getDomainPermission(currentApplication.getUuid(), domainUuid, permissionLevel)).thenReturn(new DomainPermission());
         control.createDomainPermission(domainUuid, domPerm);
         fail();
 
@@ -235,9 +252,9 @@ public class DomainControlTest {
 
         DomainPermission spyDomPerm = Mockito.spy(new DomainPermission());
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(spyDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(spyDomain);
         when(spyDomPerm.getLevel()).thenReturn(1);
-        when(repository.getDomainPermission(applicationUuid, domainUuid, permissionLevel)).thenReturn(null);
+        when(repository.getDomainPermission(currentApplication.getUuid(), domainUuid, permissionLevel)).thenReturn(null);
 
         control.createDomainPermission(domainUuid, spyDomPerm);
 
@@ -253,9 +270,9 @@ public class DomainControlTest {
 
         Domain foundDomain = Mockito.mock(Domain.class);
         DomainPermission domPerm = Mockito.mock(DomainPermission.class);
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermission(applicationUuid, domainUuid, domPerm.getLevel())).thenReturn(domPerm);
+        when(repository.getDomainPermission(currentApplication.getUuid(), domainUuid, domPerm.getLevel())).thenReturn(domPerm);
         control.updateDomainPermission(domainUuid, null, domPerm);
         fail();
     }
@@ -267,9 +284,9 @@ public class DomainControlTest {
 
         Domain foundDomain = Mockito.mock(Domain.class);
         DomainPermission domPerm = Mockito.mock(DomainPermission.class);
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermission(applicationUuid, domainUuid, domPerm.getLevel())).thenReturn(null);
+        when(repository.getDomainPermission(currentApplication.getUuid(), domainUuid, domPerm.getLevel())).thenReturn(null);
         when(domPerm.getLevel()).thenReturn(permLevel);
 
         control.updateDomainPermission(domainUuid, null, domPerm);
@@ -284,11 +301,11 @@ public class DomainControlTest {
 
         Domain foundDomain = Mockito.mock(Domain.class);
         DomainPermission domPerm = Mockito.mock(DomainPermission.class);
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermission(applicationUuid, domainUuid, domPerm.getLevel())).thenReturn(null);
+        when(repository.getDomainPermission(currentApplication.getUuid(), domainUuid, domPerm.getLevel())).thenReturn(null);
         when(domPerm.getLevel()).thenReturn(permLevel);
-        when(repository.find(DomainPermission.class, currentManager.getApplication().getUuid(), permissionUuid)).thenReturn(null);
+        when(repository.find(DomainPermission.class, currentApplication.getUuid(), permissionUuid)).thenReturn(null);
 
         control.updateDomainPermission(domainUuid, permissionUuid, domPerm);
         fail();
@@ -304,11 +321,11 @@ public class DomainControlTest {
         DomainPermission domPerm = Mockito.mock(DomainPermission.class);
         DomainPermission foundDomainPermission = Mockito.mock(DomainPermission.class);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermission(applicationUuid, domainUuid, domPerm.getLevel())).thenReturn(null);
+        when(repository.getDomainPermission(currentApplication.getUuid(), domainUuid, domPerm.getLevel())).thenReturn(null);
         when(domPerm.getLevel()).thenReturn(permLevel);
-        when(repository.find(DomainPermission.class, currentManager.getApplication().getUuid(), permissionUuid)).thenReturn(foundDomainPermission);
+        when(repository.find(DomainPermission.class, currentApplication.getUuid(), permissionUuid)).thenReturn(foundDomainPermission);
 
         control.updateDomainPermission(domainUuid, permissionUuid, domPerm);
 
@@ -326,9 +343,9 @@ public class DomainControlTest {
 
         List<DomainPermission> permissions = Mockito.mock(List.class);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermissions(applicationUuid, domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(permissions);
+        when(repository.getDomainPermissions(currentApplication.getUuid(), domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(permissions);
         when(permissions.size()).thenReturn(permissionsCount);
 
         control.deleteDomainPermission(domainUuid, null, null);
@@ -345,9 +362,9 @@ public class DomainControlTest {
         permissions.add(mockedDomainPerm);
         permissions.add(mockedDomainPerm);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermissions(applicationUuid, domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(permissions);
+        when(repository.getDomainPermissions(currentApplication.getUuid(), domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(permissions);
         when(mockedDomainPerm.getUuid()).thenReturn(""); //if (r.getUuid().equals(permissionUuid)) ** FALSE **
 
         control.deleteDomainPermission(domainUuid, null, null);
@@ -369,9 +386,9 @@ public class DomainControlTest {
         permissions.add(replacementPermissionMock);
 
         //repository.getDomainPermissions(currentManager.getApplication().getUuid(), domainUuid, 10, 0);
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermissions(eq(applicationUuid), eq(domainUuid), any(Integer.class), any(Integer.class))).thenReturn(permissions);
+        when(repository.getDomainPermissions(eq(currentApplication.getUuid()), eq(domainUuid), any(Integer.class), any(Integer.class))).thenReturn(permissions);
         when(mockedDomainPerm1.getUuid()).thenReturn(domPermUuid); //if (r.getUuid().equals(permissionUuid)) ** TRUE **
         when(replacementPermissionMock.getUuid()).thenReturn(""); //no replacement
 
@@ -393,9 +410,9 @@ public class DomainControlTest {
         permissions.add(mockedDomainPerm1);
         permissions.add(replacementPermissionMock);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermissions(applicationUuid, domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(permissions);
+        when(repository.getDomainPermissions(currentApplication.getUuid(), domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(permissions);
         //replacement
         when(mockedDomainPerm1.getUuid()).thenReturn(domPermUuid); //if (r.getUuid().equals(permissionUuid)) ** TRUE **
         when(replacementPermissionMock.getUuid()).thenReturn(replacementDomPermUuid); //if (r.getUuid().equals(permissionUuid)) ** TRUE **
@@ -421,9 +438,9 @@ public class DomainControlTest {
         permissions.add(mockedDomainPerm);
         permissions.add(mockedReplacementDomainPerm);
 
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(foundDomain);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(foundDomain);
         when(foundDomain.getOwner()).thenReturn(currentManager);
-        when(repository.getDomainPermissions(eq(applicationUuid), eq(domainUuid), any(Integer.class), any(Integer.class))).thenReturn(permissions);
+        when(repository.getDomainPermissions(eq(currentApplication.getUuid()), eq(domainUuid), any(Integer.class), any(Integer.class))).thenReturn(permissions);
         //replacement
         when(mockedDomainPerm.getUuid()).thenReturn(domPermUuid); //if (r.getUuid().equals(permissionUuid)) ** TRUE **
         when(mockedReplacementDomainPerm.getUuid()).thenReturn(replacementDomPermUuid);
@@ -438,7 +455,7 @@ public class DomainControlTest {
         String domainUuid = "domain-123";
         List<DomainPermission> permissions = Mockito.mock(List.class);
         int listSize = 10;
-        when(repository.getDomainPermissions(applicationUuid, domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(permissions);
+        when(repository.getDomainPermissions(currentApplication.getUuid(), domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(permissions);
         when(permissions.size()).thenReturn(listSize);
         ListResource<DomainPermission> domainPermissions = control.getDomainPermissions(domainUuid, DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(permissions, domainPermissions.getItems());
@@ -464,14 +481,14 @@ public class DomainControlTest {
     @Test
     public void testCheckDomainExists() throws RestException {
         String domainUuid = "domain-123";
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(new Domain());
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(new Domain());
         control.checkDomainExists(domainUuid);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void testCheckDomainExistsNot() throws RestException {
         String domainUuid = "domain-123";
-        when(repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid)).thenReturn(null);
+        when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(null);
         control.checkDomainExists(domainUuid);
     }
 }

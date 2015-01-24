@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.shiro;
+package com.josue.kingdom.security;
 
 import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.application.entity.Application;

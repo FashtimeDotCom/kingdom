@@ -1,6 +1,5 @@
 package com.josue.kingdom.domain;
 
-import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
@@ -12,7 +11,8 @@ import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.util.cdi.Current;
+import com.josue.kingdom.security.Current;
+import com.josue.kingdom.security.KingdomSecurity;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,23 +30,23 @@ public class DomainControl {
 
     @Inject
     @Current
-    Manager currentManager;
+    KingdomSecurity security;
 
-    public ListResource<Domain> getOwnedDomains(Integer limit, Integer offset) {
-        long totalCount = repository.countOwnedDomains(currentManager.getApplication().getUuid(), currentManager.getUuid());
-        List<Domain> ownedDomains = repository.getOwnedDomains(currentManager.getApplication().getUuid(), currentManager.getUuid(), limit, offset);
+    public ListResource<Domain> getOwnedDomains(Integer limit, Integer offset) throws RestException {
+        long totalCount = repository.countOwnedDomains(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid());
+        List<Domain> ownedDomains = repository.getOwnedDomains(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid(), limit, offset);
         return ListResourceUtils.buildListResource(ownedDomains, totalCount, limit, offset);
     }
 
-    public ListResource<Domain> getJoinedDomains(Integer limit, Integer offset) {
-        List<Domain> joinedDomains = repository.getJoinedDomains(currentManager.getApplication().getUuid(), currentManager.getUuid(), limit, offset);
+    public ListResource<Domain> getJoinedDomains(Integer limit, Integer offset) throws RestException {
+        List<Domain> joinedDomains = repository.getJoinedDomains(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid(), limit, offset);
 
-        long totalCount = repository.countJoinedDomains(currentManager.getApplication().getUuid(), currentManager.getUuid());
+        long totalCount = repository.countJoinedDomains(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid());
         return ListResourceUtils.buildListResource(joinedDomains, totalCount, limit, offset);
     }
 
     public Domain getJoinedDomain(String domainUuid) throws RestException {
-        Domain joinedDomain = repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid);
+        Domain joinedDomain = repository.find(Domain.class, security.getCurrentApplication().getUuid(), domainUuid);
         if (joinedDomain == null) {
             throw new ResourceNotFoundException(ManagerMembership.class, domainUuid);
         }
@@ -61,7 +61,7 @@ public class DomainControl {
     public Domain createDomain(Domain domain) throws RestException {
         domain.removeNonCreatable();
         domain.setStatus(DomainStatus.ACTIVE);
-        domain.setOwner(currentManager);
+        domain.setOwner(security.getCurrentManager());
 
         //TODO this should run inside the TX
         repository.create(domain);
@@ -83,7 +83,7 @@ public class DomainControl {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(foundDomain);
         //TODO improve business logic:... deactivate all docs and clean everything
-        repository.purgeDomain(currentManager.getApplication().getUuid(), foundDomain.getUuid());
+        repository.purgeDomain(security.getCurrentApplication().getUuid(), foundDomain.getUuid());
     }
 
     public DomainPermission createDomainPermission(String domainUuid, DomainPermission domainPermission) throws RestException {
@@ -95,7 +95,7 @@ public class DomainControl {
             throw new InvalidResourceArgException(DomainPermission.class, "level", "0");
         }
 
-        DomainPermission foundPermission = repository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPermission.getLevel());
+        DomainPermission foundPermission = repository.getDomainPermission(security.getCurrentApplication().getUuid(), domainUuid, domainPermission.getLevel());
         if (foundPermission != null) { //Permission level already exists
             throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
         }
@@ -108,14 +108,14 @@ public class DomainControl {
     public DomainPermission updateDomainPermission(String domainUuid, String permissionUuid, DomainPermission domainPermission) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(foundDomain);
-        DomainPermission foundPermission = repository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, domainPermission.getLevel());
+        DomainPermission foundPermission = repository.getDomainPermission(security.getCurrentApplication().getUuid(), domainUuid, domainPermission.getLevel());
         if (foundPermission != null) { //Permission level already exists
             throw new ResourceAlreadyExistsException(DomainPermission.class, "level", domainPermission.getLevel());
         }
         if (domainPermission.getLevel() == 0) {
             throw new InvalidResourceArgException(DomainPermission.class, "level", "0");
         }
-        DomainPermission permissionByUuid = repository.find(DomainPermission.class, currentManager.getApplication().getUuid(), permissionUuid);
+        DomainPermission permissionByUuid = repository.find(DomainPermission.class, security.getCurrentApplication().getUuid(), permissionUuid);
         if (permissionByUuid == null) {
             throw new ResourceNotFoundException(DomainPermission.class, permissionUuid);
         }
@@ -140,7 +140,7 @@ public class DomainControl {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(foundDomain);
         // fixed limit, we just need to know if its size is equal to 1
-        List<DomainPermission> domainPermissions = repository.getDomainPermissions(currentManager.getApplication().getUuid(), domainUuid, 50, 0);
+        List<DomainPermission> domainPermissions = repository.getDomainPermissions(security.getCurrentApplication().getUuid(), domainUuid, 50, 0);
         if (domainPermissions.size() == 1) {
             throw new RestException(DomainPermission.class, domainUuid, "A domain should have at least one permission", Response.Status.BAD_REQUEST);
         }
@@ -174,21 +174,21 @@ public class DomainControl {
     }
 
     public ListResource<DomainPermission> getDomainPermissions(String domainUuid, Integer limit, Integer offset) {
-        List<DomainPermission> permissions = repository.getDomainPermissions(currentManager.getApplication().getUuid(), domainUuid, limit, offset);
+        List<DomainPermission> permissions = repository.getDomainPermissions(security.getCurrentApplication().getUuid(), domainUuid, limit, offset);
         return ListResourceUtils.buildListResource(permissions, permissions.size(), permissions.size(), 0);
     }
 
     //Created a simple method because its important responsability
     //Returns true if a the actual credential can update the domain
     protected void checkOwnerAccess(Domain domain) throws RestException {
-        if (!domain.getOwner().equals(currentManager)) {
+        if (!domain.getOwner().equals(security.getCurrentManager())) {
             throw new AuthorizationException();
         }
     }
 
     //returns an existent domain, if none found, throw a exception
     protected Domain checkDomainExists(String domainUuid) throws RestException {
-        Domain foundDomain = repository.find(Domain.class, currentManager.getApplication().getUuid(), domainUuid);
+        Domain foundDomain = repository.find(Domain.class, security.getCurrentApplication().getUuid(), domainUuid);
         if (foundDomain == null) {
             throw new ResourceNotFoundException(Domain.class, domainUuid);
         }

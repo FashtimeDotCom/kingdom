@@ -18,4 +18,8 @@ public class AuthenticationException extends RestException {
                 "Invalid credentials"), Response.Status.UNAUTHORIZED);
     }
 
+    public AuthenticationException(String message) {
+        super(null, "", message, Response.Status.UNAUTHORIZED);
+    }
+
 }

@@ -24,8 +24,9 @@ import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.shiro.AccessLevelPermission;
-import com.josue.kingdom.util.cdi.Current;
+import com.josue.kingdom.security.AccessLevelPermission;
+import com.josue.kingdom.security.Current;
+import com.josue.kingdom.security.KingdomSecurity;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
@@ -60,10 +61,10 @@ public class CredentialControl {
 
     @Inject
     @Current
-    Manager currentManager;
+    KingdomSecurity security;
 
-    public ListResource<APICredential> getAPICredentials(String domainUuid, Integer limit, Integer offset) {
-        List<APICredential> apiCredentials = accountRepository.getAPICredentials(currentManager.getApplication().getUuid(), domainUuid, limit, offset);
+    public ListResource<APICredential> getAPICredentials(String domainUuid, Integer limit, Integer offset) throws RestException {
+        List<APICredential> apiCredentials = accountRepository.getAPICredentials(security.getCurrentApplication().getUuid(), domainUuid, limit, offset);
         for (APICredential apiCredential : apiCredentials) {
             obfuscateKeys(apiCredential);
             //Optional.. removing non usable fields
@@ -71,12 +72,12 @@ public class CredentialControl {
             apiCredential.getMembership().setManager(null);
         }
 
-        long totalCount = accountRepository.countAPICredential(currentManager.getUuid(), currentManager.getUuid());
+        long totalCount = accountRepository.countAPICredential(security.getCurrentManager().getUuid(), security.getCurrentManager().getUuid());
         return ListResourceUtils.buildListResource(apiCredentials, totalCount, limit, offset);
     }
 
-    public ListResource<APICredential> getAPICredentialsByDomainAndManager(String domainUuid, Integer limit, Integer offset) {
-        List<APICredential> apiCredentials = accountRepository.getAPICredentials(currentManager.getApplication().getUuid(), domainUuid, currentManager.getUuid(), limit, offset);
+    public ListResource<APICredential> getAPICredentialsByDomainAndManager(String domainUuid, Integer limit, Integer offset) throws RestException {
+        List<APICredential> apiCredentials = accountRepository.getAPICredentials(security.getCurrentApplication().getUuid(), domainUuid, security.getCurrentManager().getUuid(), limit, offset);
         for (APICredential apiCredential : apiCredentials) {
             obfuscateKeys(apiCredential);
             //Optional.. removing non usable fields
@@ -84,23 +85,23 @@ public class CredentialControl {
             apiCredential.getMembership().setManager(null);
         }
 
-        long totalCount = accountRepository.countAPICredential(currentManager.getUuid(), currentManager.getUuid());
+        long totalCount = accountRepository.countAPICredential(security.getCurrentManager().getUuid(), security.getCurrentManager().getUuid());
         return ListResourceUtils.buildListResource(apiCredentials, totalCount, limit, offset);
     }
 
     public APICredential getAPICredential(String apiCredentialUuid) {
-        APICredential apiCredential = accountRepository.getAPICredential(currentManager.getApplication().getUuid(), apiCredentialUuid);
+        APICredential apiCredential = accountRepository.getAPICredential(security.getCurrentApplication().getUuid(), apiCredentialUuid);
         obfuscateKeys(apiCredential);
         return apiCredential;
     }
 
     public APICredential updateAPICredential(String domainUuid, String credentialUuid, APICredential apiCredential) throws RestException {
-        APICredential foundCredential = accountRepository.find(APICredential.class, currentManager.getApplication().getUuid(), credentialUuid);
+        APICredential foundCredential = accountRepository.find(APICredential.class, security.getCurrentApplication().getUuid(), credentialUuid);
         if (foundCredential == null) {
             throw new ResourceNotFoundException(APICredential.class, credentialUuid);
         }
 
-        DomainPermission foundPermission = domainRepository.getDomainPermission(currentManager.getApplication().getUuid(), domainUuid, apiCredential.getMembership().getPermission().getName());
+        DomainPermission foundPermission = domainRepository.getDomainPermission(security.getCurrentApplication().getUuid(), domainUuid, apiCredential.getMembership().getPermission().getName());
         if (foundPermission == null) {
             throw new InvalidResourceArgException(APICredential.class, "Permission name", apiCredential.getMembership().getPermission().getName());
         }
@@ -125,7 +126,7 @@ public class CredentialControl {
     public APICredential createAPICredential(String domainUuid, APICredential apiCredential) throws RestException {
 
         apiCredential.removeNonCreatable();
-        ManagerMembership membership = accountRepository.getManagerMembership(currentManager.getApplication().getUuid(), domainUuid, currentManager.getUuid());
+        ManagerMembership membership = accountRepository.getManagerMembership(security.getCurrentApplication().getUuid(), domainUuid, security.getCurrentManager().getUuid());
 
         if (membership == null) {
             throw new InvalidResourceArgException(ManagerMembership.class,
@@ -139,7 +140,7 @@ public class CredentialControl {
 
         //API credential is bound to an manager-domain membership, and inherits its Permission
         apiCredential.setMembership(membership);
-        apiCredential.setApplication(currentManager.getApplication());
+        apiCredential.setApplication(security.getCurrentApplication());
         apiCredential.setApiKey(generateAPIKey());
         apiCredential.setStatus(AccountStatus.ACTIVE);
 
@@ -149,7 +150,7 @@ public class CredentialControl {
     }
 
     public void deleteAPICredential(String domainUuid, String apiCredentialUuid) throws ResourceNotFoundException {
-        APICredential apiCredential = accountRepository.find(APICredential.class, currentManager.getApplication().getUuid(), apiCredentialUuid);
+        APICredential apiCredential = accountRepository.find(APICredential.class, security.getCurrentApplication().getUuid(), apiCredentialUuid);
         if (apiCredential == null) {
             throw new ResourceNotFoundException(APICredential.class, apiCredentialUuid);
         }
@@ -158,13 +159,13 @@ public class CredentialControl {
     }
 
     public ListResource<Manager> getManagers(Integer limit, Integer offset) {
-        List<Manager> managers = accountRepository.getManagers(currentManager.getApplication().getUuid(), limit, offset);
-        Long totalCount = accountRepository.count(Manager.class, currentManager.getApplication().getUuid());
+        List<Manager> managers = accountRepository.getManagers(security.getCurrentApplication().getUuid(), limit, offset);
+        Long totalCount = accountRepository.count(Manager.class, security.getCurrentApplication().getUuid());
         return ListResourceUtils.buildListResource(managers, totalCount, limit, offset);
     }
 
     public Manager getManagerBylogin(String login) throws ResourceNotFoundException {
-        Manager managerByLogin = accountRepository.getManagerByUsername(currentManager.getApplication().getUuid(), login);
+        Manager managerByLogin = accountRepository.getManagerByUsername(security.getCurrentApplication().getUuid(), login);
         if (managerByLogin == null) {
             throw new ResourceNotFoundException(Manager.class, "login", login);
         }
@@ -174,7 +175,7 @@ public class CredentialControl {
     //TODO create a resource class to register credentials changes
     @Transactional(Transactional.TxType.REQUIRED)
     public void passwordReset(String login) throws RestException {
-        Manager foundManager = accountRepository.getManagerByUsername(currentManager.getApplication().getUuid(), login);
+        Manager foundManager = accountRepository.getManagerByUsername(security.getCurrentApplication().getUuid(), login);
         if (foundManager == null) {
             //TODO wicch exception should be thrown ?
             throw new ResourceNotFoundException(Manager.class, "login", login);
@@ -190,7 +191,7 @@ public class CredentialControl {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public void loginRecovery(String email) throws RestException {
-        Manager foundManager = accountRepository.getManagerByEmail(currentManager.getApplication().getUuid(), email);
+        Manager foundManager = accountRepository.getManagerByEmail(security.getCurrentApplication().getUuid(), email);
         if (foundManager == null) {
             //TODO wicch exception should be thrown ?
             throw new ResourceNotFoundException(Manager.class, "email", email);
@@ -203,22 +204,22 @@ public class CredentialControl {
 
     @Transactional(Transactional.TxType.REQUIRED)//TODO update all logic... manager is now created on invitation submit
     public Manager createManager(String token, Manager manager) throws RestException {
-        Invitation invitationByToken = invRepository.getInvitationByToken(currentManager.getApplication().getUuid(), token);
+        Invitation invitationByToken = invRepository.getInvitationByToken(security.getCurrentApplication().getUuid(), token);
         if (invitationByToken == null) {
             throw new ResourceNotFoundException(Invitation.class, "token", token, "Invalid invitation token, the domain still exists ? check with the Domain manager");
         }
         checkInvitationStatus(invitationByToken.getStatus());
 
         //TODO working only with email
-        Manager foundManager = accountRepository.getManagerByEmail(currentManager.getApplication().getUuid(), manager.getEmail());
+        Manager foundManager = accountRepository.getManagerByEmail(security.getCurrentApplication().getUuid(), manager.getEmail());
         if (foundManager != null) {
             throw new ResourceAlreadyExistsException(Manager.class, "email", manager.getEmail());
         }
 
         //TODO All this block should run inside the same TX
         //Domain and DomainPermission should not be null on this stage
-        Domain foundDomain = accountRepository.find(Domain.class, currentManager.getApplication().getUuid(), invitationByToken.getDomain().getUuid());
-        DomainPermission foundPermission = accountRepository.find(DomainPermission.class, currentManager.getApplication().getUuid(), invitationByToken.getPermission().getUuid());
+        Domain foundDomain = accountRepository.find(Domain.class, security.getCurrentApplication().getUuid(), invitationByToken.getDomain().getUuid());
+        DomainPermission foundPermission = accountRepository.find(DomainPermission.class, security.getCurrentApplication().getUuid(), invitationByToken.getPermission().getUuid());
 
         manager.removeNonCreatable();
         //Email should be the same from invitation
@@ -228,7 +229,7 @@ public class CredentialControl {
 
         //Assign user to domain
         ManagerMembership managerMembership = new ManagerMembership();
-        managerMembership.setApplication(currentManager.getApplication());
+        managerMembership.setApplication(security.getCurrentApplication());
         managerMembership.setDomain(foundDomain);
         managerMembership.setPermission(foundPermission);
         managerMembership.setManager(manager);

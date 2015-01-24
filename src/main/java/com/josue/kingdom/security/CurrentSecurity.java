@@ -3,14 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.util.cdi;
+package com.josue.kingdom.security;
 
-import com.josue.kingdom.credential.CredentialRepository;
-import com.josue.kingdom.credential.entity.Manager;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
@@ -19,22 +16,20 @@ import org.apache.shiro.subject.Subject;
  * @author Josue
  */
 @ApplicationScoped
-public class CurrentManager {
-
-    @Inject
-    CredentialRepository repository;
+public class CurrentSecurity {
 
     @Produces
     @Current
-    @SessionScoped
-    public Manager current() {
+    @RequestScoped
+    public KingdomSecurity currentSecurity() {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null) {
-            Manager manager = (Manager) subject;
-            return manager;
+            KingdomSecurity kingdomSecurity = (KingdomSecurity) subject;
+            return kingdomSecurity;
 
         }
-        throw new RuntimeException("Could not load credential, check for credential type");
+        throw new RuntimeException("Could not load credentials");
+
     }
 
 }

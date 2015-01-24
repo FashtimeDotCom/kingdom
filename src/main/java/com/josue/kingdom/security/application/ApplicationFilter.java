@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.shiro.application;
+package com.josue.kingdom.security.application;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -26,7 +26,7 @@ import org.apache.shiro.web.util.WebUtils;
 public class ApplicationFilter extends BasicHttpAuthenticationFilter {
 
     //TODO this should be able to be changed on shiro.ini
-    private static final String KINGDOM_HEADER = "Kingdom";
+    public static final String KINGDOM_HEADER = "Kingdom";
     private static final String CREDENTIAL_SEPARATOR = ":";
 
     @Override
@@ -47,12 +47,12 @@ public class ApplicationFilter extends BasicHttpAuthenticationFilter {
         //TODO improve.... check null, etc
         String appCredentials = httpRequest.getHeader(KINGDOM_HEADER);
         String parsedHeader = new String(DatatypeConverter.parseBase64Binary(appCredentials));
-        String key = parsedHeader.split(CREDENTIAL_SEPARATOR)[0];
-        char[] value = parsedHeader.split(CREDENTIAL_SEPARATOR)[1].toCharArray();
+        String managerKey = parsedHeader.split(CREDENTIAL_SEPARATOR)[0];
+        char[] managerValue = parsedHeader.split(CREDENTIAL_SEPARATOR)[1].toCharArray();
 
         AuthenticationToken authToken = super.createToken(request, response);
         //TODO validate if its an email or a username
-        ApplicationToken apiToken = new ApplicationToken(authToken.getPrincipal(), authToken.getCredentials(), new ManagerToken(key, null, value));
+        ApplicationToken apiToken = new ApplicationToken(authToken.getPrincipal(), authToken.getCredentials(), new ManagerToken(managerKey, null, managerValue));
         return apiToken;
     }
 

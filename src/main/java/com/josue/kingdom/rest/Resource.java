@@ -46,6 +46,12 @@ public class Resource implements Serializable {
     public void init() {
         this.uuid = UUID.randomUUID().toString();
         this.dateCreated = new Date();
+
+//         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+//        bb.putLong(uuid.getMostSignificantBits());
+//        bb.putLong(uuid.getLeastSignificantBits());
+//        String base64 = DatatypeConverter.printBase64Binary(bb.array());
+//        return base64.substring(0, base64.length() - 2).replace("/", "_").replace("+", "-");
     }
 
     @PreUpdate

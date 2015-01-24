@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.shiro;
+package com.josue.kingdom.security;
 
-import com.josue.kingdom.shiro.application.ApplicationlRealm;
+import com.josue.kingdom.security.application.ApplicationlRealm;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;

@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.shiro.application;
+package com.josue.kingdom.security.application;
 
+import com.josue.kingdom.security.KingdomSecurity;
 import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerMembership;
-import com.josue.kingdom.shiro.AccessLevelPermission;
-import com.josue.kingdom.shiro.AuthRepository;
+import com.josue.kingdom.security.AccessLevelPermission;
+import com.josue.kingdom.security.AuthRepository;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
