@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.application.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.rest.Resource;
@@ -37,6 +38,7 @@ public class Application extends Resource implements AuthenticationToken {
     @Column(name = "app_key")
     @NotNull
     private String appKey;
+
     @NotNull
     private String secret;// unique
     private String company;
@@ -47,10 +49,17 @@ public class Application extends Resource implements AuthenticationToken {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
-    @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "application", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Domain> domains = new ArrayList<>();
-    @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "application", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Manager> managers = new ArrayList<>();
+
+    public Application() {
+    }
+
+    public Application(String uuid) {
+        super.setUuid(uuid);
+    }
 
     public String getName() {
         return name;
@@ -68,6 +77,7 @@ public class Application extends Resource implements AuthenticationToken {
         this.appKey = appKey;
     }
 
+    @JsonIgnore
     public String getSecret() {
         return secret;
     }

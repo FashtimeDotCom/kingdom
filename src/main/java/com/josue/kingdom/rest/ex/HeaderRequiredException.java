@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 public class HeaderRequiredException extends RestException {
 
     public HeaderRequiredException(String headerName) {
-        super(null, "", "Header '" + headerName + "' is required", Response.Status.BAD_REQUEST);
+        super(null, "", "Header '" + headerName + "' with valid value is required", Response.Status.BAD_REQUEST);
     }
 
 }

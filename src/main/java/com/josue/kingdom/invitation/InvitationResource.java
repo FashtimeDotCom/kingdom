@@ -41,7 +41,7 @@ public class InvitationResource {
     @GET
     @Produces(value = CONTENT_TYPE)
     public Response getInvitations(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
-            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) {
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
         ListResource<Invitation> invitations = control.getInvitations(limit, offset);
         return ResponseUtils.buildSimpleResponse(invitations, Response.Status.OK, info);
     }

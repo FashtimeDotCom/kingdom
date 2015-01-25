@@ -11,7 +11,6 @@ public class ResourceNotFoundException extends RestException {
                 "Resource '%s' not found, id '%s'.",
                 entityClass.getSimpleName(), entityId),
                 Response.Status.NOT_FOUND);
-
     }
 
     public ResourceNotFoundException(Class<?> entityClass, String field, Object value) {
@@ -19,13 +18,11 @@ public class ResourceNotFoundException extends RestException {
                 "Resource '%s' not found for field '%s', value %s.",
                 entityClass.getSimpleName(), field, value),
                 Response.Status.NOT_FOUND);
-
     }
 
     public ResourceNotFoundException(Class<?> entityClass, String field, Object value, String message) {
         super(entityClass, null, message,
                 Response.Status.NOT_FOUND);
-
     }
 
 }

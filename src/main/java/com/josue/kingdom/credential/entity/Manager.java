@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.credential.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.josue.kingdom.rest.Resource;
 import com.josue.kingdom.rest.TenantResource;
 import com.josue.kingdom.util.validation.Email;
@@ -89,6 +90,7 @@ public class Manager extends TenantResource implements AuthenticationToken {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

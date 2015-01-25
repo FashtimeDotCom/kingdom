@@ -5,7 +5,6 @@
  */
 package com.josue.kingdom.security.application;
 
-import com.josue.kingdom.security.KingdomSecurity;
 import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
@@ -13,6 +12,8 @@ import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerMembership;
 import com.josue.kingdom.security.AccessLevelPermission;
 import com.josue.kingdom.security.AuthRepository;
+import com.josue.kingdom.security.KingdomSecurity;
+import com.josue.kingdom.security.KingdomSecurity.ManagerStatus;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,27 +48,34 @@ public class ApplicationlRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {
 
         ApplicationToken appToken = (ApplicationToken) authToken;
-        Application foundApp = persistence.getApplication((String) appToken.getPrincipal(), new String((char[]) appToken.getCredentials())); //TODO this and down here
+        char[] appSecret = (char[]) appToken.getCredentials();
+        Application foundApp = persistence.getApplication((String) appToken.getPrincipal(), new String(appSecret)); //TODO this and down here
+        KingdomSecurity security;
+        ManagerStatus managerStatus = ManagerStatus.EMPTY;
 
         if (foundApp != null) {
             Manager foundManager = null;
             if (appToken.getManagerToken() != null) {
+                //can be username or email
                 //TODO search for email or username
-                foundManager = persistence.getManager(appToken.getPrincipal().toString(), appToken.getManagerToken().getPrincipal().toString(), new String((char[]) appToken.getManagerToken().getCredentials()));
-                //TODO throw exception ? or just leave null ?
+                String manLogin = appToken.getManagerToken().getPrincipal().toString();
+                char[] manPsw = (char[]) appToken.getManagerToken().getCredentials();
+                if (manPsw.length != 0 || manLogin.length() != 0) {
+                    foundManager = persistence.getManager(foundApp.getUuid(), manLogin, new String(manPsw));
+                    if (foundManager != null) {
+                        managerStatus = ManagerStatus.AUTHENTICATED;
+                    } else {
+                        managerStatus = ManagerStatus.UNAUTHENTICATED;
+                    }
+                }
             }
 
-            KingdomSecurity security = new KingdomSecurity(foundApp, foundManager);
+            security = new KingdomSecurity(foundApp, foundManager, managerStatus);
             //Here we put the entire APICredential class, so we can fetch it using Subject subject = SecurityUtils.getSubject();
             return new SimpleAuthenticationInfo(security, foundApp.getSecret(), getName());
         }
         throw new AuthenticationException("Invalid username or password, APP: " + appToken.getPrincipal());
     }
-    /*
-     This method actually validate the TWO available credentials:
-     APICredential type: When is purelly restful, and
-     ManagerCredential type: When user is already logged in and whe need a Permissin check for a rest action based on ManagerCredentials
-     */
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {

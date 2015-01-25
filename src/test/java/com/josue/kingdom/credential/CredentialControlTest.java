@@ -92,7 +92,7 @@ public class CredentialControlTest {
         currentMan.setUsername("current-manager");
         currentMan.setApplication(currentApp);
 
-        security = new KingdomSecurity(currentApp, currentMan);
+        security = new KingdomSecurity(currentApp, currentMan, KingdomSecurity.ManagerStatus.AUTHENTICATED);
         currentManager = currentMan;
         currentApplication = currentApp;
 

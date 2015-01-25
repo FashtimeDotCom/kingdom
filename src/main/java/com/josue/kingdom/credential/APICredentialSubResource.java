@@ -47,7 +47,7 @@ public class APICredentialSubResource {
     @Produces(value = CONTENT_TYPE)
     public Response getAPICredentials(@PathParam("domainUuid") String domainUuid,
             @QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
-            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) {
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset) throws RestException {
         ListResource<APICredential> apiCredentials = control.getAPICredentials(domainUuid, limit, offset);
         return ResponseUtils.buildSimpleResponse(apiCredentials, Response.Status.OK, info);
     }

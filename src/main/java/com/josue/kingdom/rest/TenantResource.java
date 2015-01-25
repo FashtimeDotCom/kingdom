@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.josue.kingdom.application.entity.Application;
 import java.util.Objects;
 import javax.persistence.FetchType;
@@ -19,6 +20,7 @@ import javax.persistence.OneToOne;
 @MappedSuperclass
 public class TenantResource extends Resource {
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, optional = false, targetEntity = Application.class)
     @JoinColumn(updatable = false)
     private Resource application;

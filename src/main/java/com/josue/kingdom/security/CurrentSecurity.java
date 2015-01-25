@@ -24,7 +24,7 @@ public class CurrentSecurity {
     public KingdomSecurity currentSecurity() {
         Subject subject = SecurityUtils.getSubject();
         if (subject != null) {
-            KingdomSecurity kingdomSecurity = (KingdomSecurity) subject;
+            KingdomSecurity kingdomSecurity = (KingdomSecurity) subject.getPrincipal();
             return kingdomSecurity;
 
         }
