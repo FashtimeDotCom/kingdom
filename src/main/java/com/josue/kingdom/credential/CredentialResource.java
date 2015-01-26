@@ -9,8 +9,6 @@ import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.security.Current;
-import com.josue.kingdom.security.KingdomSecurity;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -37,9 +35,6 @@ public class CredentialResource {
     @Inject
     CredentialControl control;
 
-    @Current
-    @Inject
-    KingdomSecurity security;
 
     /*
      returns the ManagerCredential for the login
@@ -48,7 +43,7 @@ public class CredentialResource {
     @Path("current")
     @Produces(value = CONTENT_TYPE)
     public Response getCurrentManager() throws RestException {
-        return ResponseUtils.buildSimpleResponse(security.getCurrentManager(), Response.Status.OK, info);
+        return ResponseUtils.buildSimpleResponse(control.getCurrentManager(), Response.Status.OK, info);
     }
 
     @GET

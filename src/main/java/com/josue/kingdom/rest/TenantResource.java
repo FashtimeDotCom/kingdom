@@ -21,7 +21,7 @@ import javax.persistence.OneToOne;
 public class TenantResource extends Resource {
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY, optional = false, targetEntity = Application.class)
+    @OneToOne(fetch = FetchType.EAGER, optional = false, targetEntity = Application.class)
     @JoinColumn(updatable = false)
     private Resource application;
 

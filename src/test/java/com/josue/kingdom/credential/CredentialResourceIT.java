@@ -41,20 +41,6 @@ public class CredentialResourceIT {
     }
 
     @Test
-    public void testGetCurrentManager() {
-        String testInitialManagerUuid = "cdbd57b8-3dc2-4370-b8a6-65e674a430d6";
-
-        ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, CURRENT);
-        RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
-
-        Manager foundManager = response.getEntity(new GenericType<Manager>() {
-        });
-        assertNotNull(foundManager);
-        assertEquals(testInitialManagerUuid, foundManager.getUuid());
-        //TODO credential (user, psw) should not be returned, test it
-    }
-
-    @Test
     public void testGetAccount() {
 
         String testInitialEmail = "manager1@gmail.com";
@@ -67,6 +53,20 @@ public class CredentialResourceIT {
         });
         assertNotNull(foundManager);
         assertEquals(testInitialEmail, foundManager.getEmail());
+    }
+
+    @Test
+    public void testGetCurrentManager() {
+        String testInitialManagerUuid = "cdbd57b8-3dc2-4370-b8a6-65e674a430d6";
+
+        ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, CURRENT);
+        RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
+
+        Manager foundManager = response.getEntity(new GenericType<Manager>() {
+        });
+        assertNotNull(foundManager);
+        assertEquals(testInitialManagerUuid, foundManager.getUuid());
+        //TODO credential (user, psw) should not be returned, test it
     }
 
     @Test

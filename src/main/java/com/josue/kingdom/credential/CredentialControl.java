@@ -173,6 +173,10 @@ public class CredentialControl {
         return managerByLogin;
     }
 
+    public Manager getCurrentManager() throws RestException {
+        return security.getCurrentManager();
+    }
+
     //TODO create a resource class to register credentials changes
     @Transactional(Transactional.TxType.REQUIRED)
     public void passwordReset(String username) throws RestException {

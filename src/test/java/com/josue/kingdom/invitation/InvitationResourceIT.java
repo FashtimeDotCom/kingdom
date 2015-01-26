@@ -14,6 +14,8 @@ import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.RestHelper;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.core.Response;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -22,6 +24,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,20 +46,24 @@ public class InvitationResourceIT {
 
     @Test
     public void testGetInvitations() {
-        final String testInitialInvValue = "1811009b-dc81-4686-9297-d5d357049858";
+        final String testInitialInvValue = "3e68d3e1-d0fd-48af-81ca-1cd10e1a92f7";
 
         ClientResponse getDomainsResponse = RestHelper.doGetRequest(INVITATIONS);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), getDomainsResponse);
         ListResource<Invitation> invitations = getDomainsResponse.getEntity(new GenericType<ListResource<Invitation>>() {
         });
-        assertEquals(1, invitations.getItems().size());
-        assertEquals(testInitialInvValue, invitations.getItems().get(0).getUuid());
+        assertTrue(invitations.getItems().size() >= 1);
+        List<String> invUuids = new ArrayList<>();
+        for (Invitation inv : invitations.getItems()) {
+            invUuids.add(inv.getUuid());
+        }
+        assertTrue(invUuids.contains(testInitialInvValue));
 
     }
 
     @Test
     public void testGetInvitation() {
-        final String testInitialInvValue = "1811009b-dc81-4686-9297-d5d357049858";
+        final String testInitialInvValue = "3e68d3e1-d0fd-48af-81ca-1cd10e1a92f7";
 
         ClientResponse getDomainsResponse = RestHelper.doGetRequest(INVITATIONS, testInitialInvValue);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), getDomainsResponse);
@@ -70,10 +77,10 @@ public class InvitationResourceIT {
     public void testCreateInvitation() {
 
         Domain testCreatedDomain = new Domain();
-        testCreatedDomain.setUuid("70f4b4b0-18d2-4707-824b-b30af193d99b");
+        testCreatedDomain.setUuid("4cf10908-9992-4ce5-8fad-7a8ea1a96b8a");
 
         Manager testCreatedAuthorManager = new Manager();
-        testCreatedAuthorManager.setUuid("926caa10-43a4-11e4-916c-0800200c9a66");
+        testCreatedAuthorManager.setUuid("cdbd57b8-3dc2-4370-b8a6-65e674a430d6");
 
         DomainPermission testCreatedPermission = new DomainPermission();
         testCreatedPermission.setUuid("d1486e7e-611c-47eb-bba1-28e6d4adca95");
