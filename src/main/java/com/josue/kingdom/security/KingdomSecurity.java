@@ -56,6 +56,10 @@ public class KingdomSecurity {
         return currentManager;
     }
 
+    public ManagerStatus getManagerStatus() {
+        return managerStatus;
+    }
+
     public boolean isPermitted(Permission permission) throws RestException {
         Manager manager = getCurrentManager();
         return SecurityUtils.getSubject().isPermitted(permission);
