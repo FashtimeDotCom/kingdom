@@ -96,6 +96,7 @@ public class CredentialControl {
         return apiCredential;
     }
 
+    //TODO check how the permission will work for each of the Domain custom credentials
     public APICredential updateAPICredential(String domainUuid, String credentialUuid, APICredential apiCredential) throws RestException {
         APICredential foundCredential = accountRepository.find(APICredential.class, security.getCurrentApplication().getUuid(), credentialUuid);
         if (foundCredential == null) {
@@ -121,7 +122,6 @@ public class CredentialControl {
     //Encapsules thrity party (Shiro)... for testing purposes
     protected boolean isPermitted(Permission permission) {
         return SecurityUtils.getSubject().isPermitted(permission);
-
     }
 
     public APICredential createAPICredential(String domainUuid, APICredential apiCredential) throws RestException {

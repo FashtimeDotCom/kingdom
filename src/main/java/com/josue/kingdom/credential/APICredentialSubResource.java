@@ -67,7 +67,6 @@ public class APICredentialSubResource {
         return ResponseUtils.buildSimpleResponse(apiCredential, Response.Status.OK, info);
     }
 
-    //TODO change @PathParam to have a meaningful name for APICredential resource
     @DELETE
     @Path("{apikeyUuid}")
     @Produces(value = CONTENT_TYPE)

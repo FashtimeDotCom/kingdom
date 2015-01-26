@@ -11,6 +11,8 @@ import com.josue.kingdom.rest.ex.HeaderRequiredException;
 import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.security.application.ApplicationFilter;
 import javax.ws.rs.core.Response;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.Permission;
 
 /**
  *
@@ -54,4 +56,8 @@ public class KingdomSecurity {
         return currentManager;
     }
 
+    public boolean isPermitted(Permission permission) throws RestException {
+        Manager manager = getCurrentManager();
+        return SecurityUtils.getSubject().isPermitted(permission);
+    }
 }

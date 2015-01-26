@@ -10,6 +10,7 @@ import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerMembership;
+import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.security.AccessLevelPermission;
 import com.josue.kingdom.security.AuthRepository;
 import com.josue.kingdom.security.KingdomSecurity;
@@ -87,8 +88,16 @@ public class ApplicationlRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 
         Object availablePrincipal = getAvailablePrincipal(principals);
-        Manager manager = (Manager) availablePrincipal;
-        List<ManagerMembership> memberships = persistence.getManagerMemberships(manager.getApplication().getUuid(), manager.getUuid());
+        KingdomSecurity kingdomSecurity = (KingdomSecurity) availablePrincipal;
+
+        Manager currentManager;
+        try {//TODO hidding exception ? how to throw to REST endpoint
+            currentManager = kingdomSecurity.getCurrentManager();
+        } catch (RestException ex) {
+            return info;
+        }
+
+        List<ManagerMembership> memberships = persistence.getManagerMemberships(kingdomSecurity.getCurrentApplication().getUuid(), currentManager.getUuid());
 
         Map<Object, DomainPermission> permissions = new HashMap<>();
         for (ManagerMembership membership : memberships) {
