@@ -62,6 +62,7 @@ public class DomainControl {
         domain.removeNonCreatable();
         domain.setStatus(DomainStatus.ACTIVE);
         domain.setOwner(security.getCurrentManager());
+        domain.setApplication(security.getCurrentApplication());
 
         //TODO this should run inside the TX
         repository.create(domain);
@@ -101,6 +102,7 @@ public class DomainControl {
         }
 
         domainPermission.setDomain(foundDomain);
+        domainPermission.setApplication(security.getCurrentApplication());
         repository.create(domainPermission);
         return domainPermission;
     }
@@ -167,7 +169,8 @@ public class DomainControl {
                 throw new RestException(DomainPermission.class, replacementUuid, "", Response.Status.BAD_REQUEST);
             } else {
                 //replacement exists and its valid...
-                //TODO change managers permissions and remove this Permission
+                //TODO change managers AND invitations permissions and remove this Permission
+                //TODO should replacementPermission be mandatory ?
             }
         }
         repository.delete(foundPermission);
@@ -201,6 +204,7 @@ public class DomainControl {
         permission.setName("LEVEL_1");
         permission.setDescription("Permission level 1");
         permission.setDomain(domain);
+        permission.setApplication(security.getCurrentApplication());
         repository.create(permission);
 
         permission = new DomainPermission();
@@ -208,6 +212,7 @@ public class DomainControl {
         permission.setName("LEVEL_2");
         permission.setDescription("Permission level 2");
         permission.setDomain(domain);
+        permission.setApplication(security.getCurrentApplication());
         repository.create(permission);
 
         permission = new DomainPermission();
@@ -215,6 +220,7 @@ public class DomainControl {
         permission.setName("LEVEL_3");
         permission.setDescription("Permission level 3");
         permission.setDomain(domain);
+        permission.setApplication(security.getCurrentApplication());
         repository.create(permission);
     }
 }

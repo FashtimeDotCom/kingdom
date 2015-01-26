@@ -74,7 +74,7 @@ public class DomainRepository extends JpaRepository {
     }
 
     public Long countJoinedDomains(String appUuid, String managerUuid) {
-        TypedQuery<Long> query = em.createQuery("SELECT COUNT(mem.uuid) FROM ManagerMembership mem WHERE mem.manager.uuid = :managerUuid AND dom.application.uuid = :appUuid", Long.class);
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(membership.uuid) FROM ManagerMembership membership WHERE membership.manager.uuid = :managerUuid AND membership.application.uuid = :appUuid", Long.class);
         query.setParameter("managerUuid", managerUuid);
         query.setParameter("appUuid", appUuid);
         Long count = query.getSingleResult();

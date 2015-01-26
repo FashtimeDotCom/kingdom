@@ -47,22 +47,22 @@ public class CredentialResource {
     @GET
     @Path("current")
     @Produces(value = CONTENT_TYPE)
-    public Response getCurrentCredential() throws RestException {
+    public Response getCurrentManager() throws RestException {
         return ResponseUtils.buildSimpleResponse(security.getCurrentManager(), Response.Status.OK, info);
     }
 
     @GET
-    @Path("{login}")
+    @Path("{username}")//TODO username and email ?
     @Produces(value = CONTENT_TYPE)
-    public Response getAccount(@PathParam("login") String login) throws RestException {
-        Manager managerBylogin = control.getManagerBylogin(login);
+    public Response getAccount(@PathParam("username") String username) throws RestException {
+        Manager managerBylogin = control.getManagerBylogin(username);
         return ResponseUtils.buildSimpleResponse(managerBylogin, Response.Status.OK, info);
     }
 
     @GET
-    @Path("{login}/password-reset")
-    public Response passwordReset(@PathParam("login") String login) throws RestException {
-        control.passwordReset(login);
+    @Path("{username}/password-reset")
+    public Response passwordReset(@PathParam("username") String username) throws RestException {
+        control.passwordReset(username);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }
 
@@ -79,8 +79,8 @@ public class CredentialResource {
     @Path("{token}")
     @Produces(value = CONTENT_TYPE)
     @Consumes(value = CONTENT_TYPE)
-    public Response createManager(@PathParam("token") String token, Manager managerCredential) throws RestException {
-        Manager createdManager = control.createManager(token, managerCredential);
+    public Response createManager(@PathParam("token") String token, Manager manager) throws RestException {
+        Manager createdManager = control.createManager(token, manager);
         return ResponseUtils.buildSimpleResponse(createdManager, Response.Status.CREATED, info);
     }
 }

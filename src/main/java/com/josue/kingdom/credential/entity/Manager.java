@@ -6,6 +6,7 @@
 package com.josue.kingdom.credential.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.josue.kingdom.rest.Resource;
 import com.josue.kingdom.rest.TenantResource;
 import com.josue.kingdom.util.validation.Email;
@@ -37,11 +38,13 @@ public class Manager extends TenantResource implements AuthenticationToken {
     private String lastName;
 
     @Email
+    @NotNull
     private String email;
 
     private String username;
 
     @NotNull
+    @JsonIgnore//Allowed only for Deserialization, set method must be annotated with @JsonProperty
     private String password;
 
     @NotNull
@@ -90,11 +93,11 @@ public class Manager extends TenantResource implements AuthenticationToken {
         this.username = username;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }

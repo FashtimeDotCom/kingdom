@@ -98,7 +98,7 @@ public class DomainControlTest {
 
     @Test
     public void testCreateDomain() throws RestException {
-        Domain domain = new Domain();
+        Domain domain = Mockito.spy(new Domain());
         domain.setName("name-123");
         domain.setStatus(DomainStatus.ACTIVE);
         //Non creatable fields
@@ -112,7 +112,8 @@ public class DomainControlTest {
         assertEquals(createdDomain.getOwner(), currentManager);
         assertNull(domain.getDateCreated());
         assertNull(domain.getLastUpdate());
-        verify(repository, times(1)).create(domain);
+        verify(domain).setApplication(currentApplication);
+        verify(repository).create(domain);
 
     }
 
@@ -259,6 +260,7 @@ public class DomainControlTest {
         control.createDomainPermission(domainUuid, spyDomPerm);
 
         verify(spyDomPerm).removeNonCreatable();
+        verify(spyDomPerm).setApplication(currentApplication);
         verify(repository).create(spyDomPerm);
         assertEquals(spyDomain, spyDomPerm.getDomain());
 

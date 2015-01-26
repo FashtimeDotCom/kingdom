@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,11 +43,6 @@ public class DomainResourceIT {
     @TargetsContainer("wildfly-managed")
     public static WebArchive createDeployment() {
         return ArquillianTestBase.createDefaultDeployment();
-    }
-
-    @Before
-    public void init() {
-        String s = "";
     }
 
     private Domain createDomainWithPermissions() {
@@ -71,7 +65,7 @@ public class DomainResourceIT {
         ListResource<Domain> domains = getDomainsResponse.getEntity(new GenericType<ListResource<Domain>>() {
         });
         //Values based on Liquibase test changelog
-        assertTrue(domains.getItems().size() == 2);
+        assertTrue(domains.getItems().size() == 1);
     }
 
     //Testing against the self joined domain, when a new one is created

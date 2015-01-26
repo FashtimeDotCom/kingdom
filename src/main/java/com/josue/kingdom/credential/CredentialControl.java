@@ -34,6 +34,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.Permission;
 
@@ -174,11 +175,11 @@ public class CredentialControl {
 
     //TODO create a resource class to register credentials changes
     @Transactional(Transactional.TxType.REQUIRED)
-    public void passwordReset(String login) throws RestException {
-        Manager foundManager = accountRepository.getManagerByUsername(security.getCurrentApplication().getUuid(), login);
+    public void passwordReset(String username) throws RestException {
+        Manager foundManager = accountRepository.getManagerByUsername(security.getCurrentApplication().getUuid(), username);
         if (foundManager == null) {
             //TODO wicch exception should be thrown ?
-            throw new ResourceNotFoundException(Manager.class, "login", login);
+            throw new ResourceNotFoundException(Manager.class, "username", username);
         }
 
         //This block should run within the same TX block
@@ -204,39 +205,57 @@ public class CredentialControl {
 
     @Transactional(Transactional.TxType.REQUIRED)//TODO update all logic... manager is now created on invitation submit
     public Manager createManager(String token, Manager manager) throws RestException {
-        Invitation invitationByToken = invRepository.getInvitationByToken(security.getCurrentApplication().getUuid(), token);
-        if (invitationByToken == null) {
+        Invitation foundInvitation = invRepository.getInvitationByToken(security.getCurrentApplication().getUuid(), token);
+        if (foundInvitation == null) {
             throw new ResourceNotFoundException(Invitation.class, "token", token, "Invalid invitation token, the domain still exists ? check with the Domain manager");
         }
-        checkInvitationStatus(invitationByToken.getStatus());
+        checkInvitationStatus(foundInvitation.getStatus());
 
-        //TODO working only with email
-        Manager foundManager = accountRepository.getManagerByEmail(security.getCurrentApplication().getUuid(), manager.getEmail());
-        if (foundManager != null) {
-            throw new ResourceAlreadyExistsException(Manager.class, "email", manager.getEmail());
+        //Validate non nullable fields... Bean validation ?
+        //TODO apply rules for username and password
+        if (manager.getUsername() == null || manager.getUsername().length() == 0) {
+            throw new InvalidResourceArgException(Manager.class, "Username should not be null or empty");
+        }
+        if (manager.getPassword() == null || manager.getPassword().length() == 0) {
+            throw new InvalidResourceArgException(Manager.class, "Password should not be null or empty");
         }
 
-        //TODO All this block should run inside the same TX
-        //Domain and DomainPermission should not be null on this stage
-        Domain foundDomain = accountRepository.find(Domain.class, security.getCurrentApplication().getUuid(), invitationByToken.getDomain().getUuid());
-        DomainPermission foundPermission = accountRepository.find(DomainPermission.class, security.getCurrentApplication().getUuid(), invitationByToken.getPermission().getUuid());
+        Manager existingByUsername = accountRepository.getManagerByUsername(security.getCurrentApplication().getUuid(), manager.getUsername());
+        if (existingByUsername != null) {
+            throw new ResourceAlreadyExistsException(Manager.class, "username", manager.getUsername());
+        }
 
-        manager.removeNonCreatable();
-        //Email should be the same from invitation
-        manager.setEmail(invitationByToken.getTargetManager().getEmail());
-        manager.setStatus(AccountStatus.ACTIVE);
-        accountRepository.create(manager);
+        Manager targetManager = foundInvitation.getTargetManager();
+        if (targetManager.getStatus().equals(AccountStatus.INACTIVE)) {//Account already blocked, the invitation process should fail
+            throw new RestException(Manager.class, targetManager.getUuid(), "Manager account is blocked", Response.Status.BAD_REQUEST);
+        } else if (targetManager.getStatus().equals(AccountStatus.ACTIVE)) {
+            //Account already activated by another invitation process, just add it to current invitation domain
+            //Do nothing with manager. it already exist
+        } else if (targetManager.getStatus().equals(AccountStatus.PROVISIONING)) {
+            manager.removeNonCreatable();
+            targetManager.setStatus(AccountStatus.ACTIVE);
+            targetManager.setFirstName(manager.getFirstName());
+            targetManager.setLastName(manager.getLastName());
+            targetManager.setPassword(manager.getPassword());
+            targetManager.setUsername(manager.getUsername());
+            accountRepository.update(targetManager);
+        }
+
+        //TODO validate if the domain and the permission still exists
+        Domain foundDomain = accountRepository.find(Domain.class, security.getCurrentApplication().getUuid(), foundInvitation.getDomain().getUuid());
+        DomainPermission foundPermission = accountRepository.find(DomainPermission.class, security.getCurrentApplication().getUuid(), foundInvitation.getPermission().getUuid());
 
         //Assign user to domain
         ManagerMembership managerMembership = new ManagerMembership();
         managerMembership.setApplication(security.getCurrentApplication());
         managerMembership.setDomain(foundDomain);
         managerMembership.setPermission(foundPermission);
-        managerMembership.setManager(manager);
+        managerMembership.setManager(targetManager);
 
         accountRepository.create(managerMembership);
-
-        return manager;
+        //TODO complete the invitation status and 'invalidate' the token
+        //assign a 'confirmation' token to the manager
+        return targetManager;
     }
 
     private void checkInvitationStatus(InvitationStatus status) throws RestException {

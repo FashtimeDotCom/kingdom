@@ -61,7 +61,12 @@ public class ApplicationlRealm extends AuthorizingRealm {
                 String manLogin = appToken.getManagerToken().getPrincipal().toString();
                 char[] manPsw = (char[]) appToken.getManagerToken().getCredentials();
                 if (manPsw.length != 0 || manLogin.length() != 0) {
-                    foundManager = persistence.getManager(foundApp.getUuid(), manLogin, new String(manPsw));
+                    if (manLogin.contains("@")) {//email.... TODO improve?
+                        foundManager = persistence.getManagerByEmail(foundApp.getUuid(), manLogin, new String(manPsw));
+                    } else {
+                        foundManager = persistence.getManagerByUsername(foundApp.getUuid(), manLogin, new String(manPsw));
+                    }
+
                     if (foundManager != null) {
                         managerStatus = ManagerStatus.AUTHENTICATED;
                     } else {

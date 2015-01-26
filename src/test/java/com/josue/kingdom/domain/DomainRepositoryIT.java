@@ -134,6 +134,13 @@ public class DomainRepositoryIT {
     }
 
     @Test
+    public void testCountJoinedDomains() {
+        ManagerMembership membership = InstanceHelper.createFullManagerMembership(repository);
+        Long count = repository.countJoinedDomains(InstanceHelper.APP_ID, membership.getManager().getUuid());
+        assertEquals(Long.valueOf(1), count);
+    }
+
+    @Test
     public void testGetDomainPermissions() {
         ManagerMembership domainCredential = InstanceHelper.createFullManagerMembership(repository);
 

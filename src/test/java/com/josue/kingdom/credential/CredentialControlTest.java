@@ -151,10 +151,16 @@ public class CredentialControlTest {
         DomainPermission permission = new DomainPermission(1);
         permission.setUuid("permission-uuid");
 
+        String targetEmail = "target@email.com";
+        Manager manFromInv = new Manager();
+        manFromInv.setApplication(currentApplication);
+        manFromInv.setEmail(targetEmail);
+        manFromInv.setStatus(AccountStatus.PROVISIONING);
+
         Invitation invitation = new Invitation();
         invitation.setDomain(domain);
         invitation.setPermission(permission);
-        invitation.setTargetManager(new Manager());
+        invitation.setTargetManager(manFromInv);
         invitation.getTargetManager().setEmail("target@email.com");
         Invitation spyInvitation = Mockito.spy(invitation);
 
@@ -170,11 +176,10 @@ public class CredentialControlTest {
         when(invRepository.getInvitationByToken(currentApplication.getUuid(), token)).thenReturn(spyInvitation);
         when(credentialRepository.find(Domain.class, currentApplication.getUuid(), spyInvitation.getDomain().getUuid())).thenReturn(domain);
         when(credentialRepository.find(DomainPermission.class, currentApplication.getUuid(), spyInvitation.getPermission().getUuid())).thenReturn(permission);
-        when(credentialRepository.getManagerByEmail(currentApplication.getUuid(), managerCreate.getEmail())).thenReturn(null);
 
         Manager createdManager = control.createManager(token, spyManager);
         verify(spyManager, times(1)).removeNonCreatable();
-        verify(credentialRepository, times(1)).create(spyManager);
+        verify(credentialRepository).update(manFromInv);
 
         assertEquals(spyInvitation.getTargetManager().getEmail(), createdManager.getEmail());
         assertEquals(AccountStatus.ACTIVE, createdManager.getStatus());
@@ -186,7 +191,97 @@ public class CredentialControlTest {
         membership.setPermission(permission);
         membership.setApplication(security.getCurrentApplication());
 
-        verify(credentialRepository, times(1)).create(membership);
+        verify(credentialRepository).create(membership);
+    }
+
+    @Test
+    public void testCreateManagerActivatedAccount() throws RestException {
+        String token = "token-123";
+
+        Domain domain = new Domain();
+        domain.setUuid("domain-uuid");
+
+        DomainPermission permission = new DomainPermission(1);
+        permission.setUuid("permission-uuid");
+
+        String targetEmail = "target@email.com";
+        Manager manFromInv = new Manager();
+        manFromInv.setApplication(currentApplication);
+        manFromInv.setEmail(targetEmail);
+        manFromInv.setStatus(AccountStatus.ACTIVE);
+
+        Invitation invitation = new Invitation();
+        invitation.setDomain(domain);
+        invitation.setPermission(permission);
+        invitation.setTargetManager(manFromInv);
+        invitation.getTargetManager().setEmail("target@email.com");
+        Invitation spyInvitation = Mockito.spy(invitation);
+
+        Manager managerCreate = new Manager();
+        managerCreate.setUsername("a-username");
+        managerCreate.setEmail("wrong@email.com");
+        managerCreate.setFirstName("firstName");
+        managerCreate.setLastName("lastName");
+        managerCreate.setPassword("new-password");
+
+        Manager spyManager = Mockito.spy(managerCreate);
+
+        when(invRepository.getInvitationByToken(currentApplication.getUuid(), token)).thenReturn(spyInvitation);
+        when(credentialRepository.find(Domain.class, currentApplication.getUuid(), spyInvitation.getDomain().getUuid())).thenReturn(domain);
+        when(credentialRepository.find(DomainPermission.class, currentApplication.getUuid(), spyInvitation.getPermission().getUuid())).thenReturn(permission);
+
+        Manager createdManager = control.createManager(token, spyManager);
+
+        assertEquals(spyInvitation.getTargetManager().getEmail(), createdManager.getEmail());
+        assertEquals(AccountStatus.ACTIVE, createdManager.getStatus());
+
+        verify(credentialRepository, times(0)).update(manFromInv);
+
+        //Verify if this object is being saved
+        ManagerMembership membership = new ManagerMembership();
+        membership.setManager(createdManager);
+        membership.setDomain(domain);
+        membership.setPermission(permission);
+        membership.setApplication(security.getCurrentApplication());
+
+        verify(credentialRepository).create(membership);
+    }
+
+    @Test(expected = RestException.class)
+    public void testCreateManagerInactiveAccount() throws RestException {
+        String token = "token-123";
+
+        Domain domain = new Domain();
+        domain.setUuid("domain-uuid");
+
+        DomainPermission permission = new DomainPermission(1);
+        permission.setUuid("permission-uuid");
+
+        String targetEmail = "target@email.com";
+        Manager manFromInv = new Manager();
+        manFromInv.setApplication(currentApplication);
+        manFromInv.setEmail(targetEmail);
+        manFromInv.setStatus(AccountStatus.INACTIVE);
+
+        Invitation invitation = new Invitation();
+        invitation.setDomain(domain);
+        invitation.setTargetManager(manFromInv);
+        Invitation spyInvitation = Mockito.spy(invitation);
+
+        Manager managerCreate = new Manager();
+        managerCreate.setUsername("a-username");
+        managerCreate.setEmail("wrong@email.com");
+        managerCreate.setFirstName("firstName");
+        managerCreate.setLastName("lastName");
+        managerCreate.setPassword("new-password");
+
+        Manager spyManager = Mockito.spy(managerCreate);
+
+        when(invRepository.getInvitationByToken(currentApplication.getUuid(), token)).thenReturn(spyInvitation);
+
+        control.createManager(token, spyManager);
+        fail();
+
     }
 
     @Test(expected = RestException.class)
@@ -198,14 +293,41 @@ public class CredentialControlTest {
         fail();
     }
 
-    @Test(expected = ResourceAlreadyExistsException.class)
-    public void testCreateManagerLoginAlreadyExists() throws RestException {
+    @Test(expected = InvalidResourceArgException.class)
+    public void testCreateManagerNoUsername() throws RestException {
         String token = "token";
         Manager manager = Mockito.mock(Manager.class);
 
         when(invRepository.getInvitationByToken(eq(currentApplication.getUuid()), eq(token))).thenReturn(new Invitation());
-        when(credentialRepository.getManagerByEmail(currentApplication.getUuid(), manager.getEmail())).thenReturn(manager);
+        when(manager.getUsername()).thenReturn(null);
+
         control.createManager(token, manager);
+        fail();
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testCreateManagerNoPassword() throws RestException {
+        String token = "token";
+        Manager manager = Mockito.mock(Manager.class);
+
+        when(invRepository.getInvitationByToken(eq(currentApplication.getUuid()), eq(token))).thenReturn(new Invitation());
+        when(manager.getUsername()).thenReturn("any-username");
+
+        control.createManager(token, manager);
+        fail();
+    }
+
+    @Test(expected = ResourceAlreadyExistsException.class)
+    public void testCreateManagerUsernameAlreadyExists() throws RestException {
+        String token = "token";
+        Manager manager = Mockito.mock(Manager.class);
+
+        when(invRepository.getInvitationByToken(eq(currentApplication.getUuid()), eq(token))).thenReturn(new Invitation());
+        when(manager.getUsername()).thenReturn("a-username");
+        when(manager.getPassword()).thenReturn("a-password");
+        when(credentialRepository.getManagerByUsername(currentApplication.getUuid(), manager.getUsername())).thenReturn(manager);
+        control.createManager(token, manager);
+        fail();
     }
 
     @Test(expected = InvalidResourceArgException.class)

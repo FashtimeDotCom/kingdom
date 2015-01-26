@@ -27,11 +27,14 @@ import org.junit.Assert;
  */
 public class RestHelper {
 
-    private static final String BASE_URI = "http://localhost:9080/kingdom-test/api";
-    public static final String API_KEY = "ApiKey";
+    private static final String BASE_URI = "http://localhost:8080/kingdom-test/api/v1";
     public static final String MEDIA_TYPE = "application/json;charset=utf-8";
 
-    private static final String DEFAULT_APIKEY = "tmfkrkileqo65hjl9udm550hip";
+    public static final String KINGDOM = "Kingdom";
+    private static final String DEFAULT_MANAGER_CREDENTIALS = "bWFuYWdlcjFAZ21haWwuY29tOnBhc3MxMjM=";
+
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String APPLICATION_CREDENTIALS = "Basic MzIxZmc2OHNkNWo2Mnl0Njg2OnMzY3JldA==";
 
     private static Client client;
     private static WebResource webResource;
@@ -81,31 +84,31 @@ public class RestHelper {
         WebResource wr = getWebResource();
         wr = setPath(wr, paths);
         setQueryParams(wr, queryParams);
-        return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).get(ClientResponse.class);
+        return wr.header(KINGDOM, DEFAULT_MANAGER_CREDENTIALS).header(AUTHORIZATION, APPLICATION_CREDENTIALS).type(MEDIA_TYPE).accept(MEDIA_TYPE).get(ClientResponse.class);
     }
 
     public static ClientResponse doGetRequest(String... paths) {
         WebResource wr = getWebResource();
         wr = setPath(wr, paths);
-        return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).get(ClientResponse.class);
+        return wr.header(KINGDOM, DEFAULT_MANAGER_CREDENTIALS).header(AUTHORIZATION, APPLICATION_CREDENTIALS).type(MEDIA_TYPE).accept(MEDIA_TYPE).get(ClientResponse.class);
     }
 
     public static ClientResponse doPostRequest(Object resource, String... paths) {
         WebResource wr = getWebResource();
         wr = setPath(wr, paths);
-        return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).post(ClientResponse.class, resource);
+        return wr.header(KINGDOM, DEFAULT_MANAGER_CREDENTIALS).header(AUTHORIZATION, APPLICATION_CREDENTIALS).type(MEDIA_TYPE).accept(MEDIA_TYPE).post(ClientResponse.class, resource);
     }
 
     public static ClientResponse doPutRequest(Object resource, String... paths) {
         WebResource wr = getWebResource();
         wr = setPath(wr, paths);
-        return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).put(ClientResponse.class, resource);
+        return wr.header(KINGDOM, DEFAULT_MANAGER_CREDENTIALS).header(AUTHORIZATION, APPLICATION_CREDENTIALS).type(MEDIA_TYPE).accept(MEDIA_TYPE).put(ClientResponse.class, resource);
     }
 
     public static ClientResponse doDeleteRequest(String... paths) {
         WebResource wr = getWebResource();
         wr = setPath(wr, paths);
-        return wr.header(API_KEY, DEFAULT_APIKEY).type(MEDIA_TYPE).accept(MEDIA_TYPE).delete(ClientResponse.class);
+        return wr.header(KINGDOM, DEFAULT_MANAGER_CREDENTIALS).header(AUTHORIZATION, APPLICATION_CREDENTIALS).type(MEDIA_TYPE).accept(MEDIA_TYPE).delete(ClientResponse.class);
     }
 
     //This method is useful for detail message response

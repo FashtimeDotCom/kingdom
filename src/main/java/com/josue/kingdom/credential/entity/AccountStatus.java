@@ -11,5 +11,5 @@ package com.josue.kingdom.credential.entity;
  */
 public enum AccountStatus {
 
-    PROVISIONING, INACTIVE, ACTIVE, SUSPENDED
+    PROVISIONING, INACTIVE, ACTIVE
 }

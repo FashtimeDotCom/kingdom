@@ -26,9 +26,19 @@ public class AuthRepository extends JpaRepository {
 
     //TODO working only with email
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
-    public Manager getManager(String appKey, String email, String password) {
+    public Manager getManagerByEmail(String appKey, String email, String password) {
         Query query = em.createQuery("SELECT man FROM Manager man WHERE man.email = :email AND man.password = :password AND man.application.uuid = :appKey", Manager.class);
         query.setParameter("email", email);
+        query.setParameter("password", password);
+        query.setParameter("appKey", appKey);
+        List<Manager> resultList = query.getResultList();
+        return extractSingleResultFromList(resultList);
+    }
+
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public Manager getManagerByUsername(String appKey, String username, String password) {
+        Query query = em.createQuery("SELECT man FROM Manager man WHERE man.username = :username AND man.password = :password AND man.application.uuid = :appKey", Manager.class);
+        query.setParameter("username", username);
         query.setParameter("password", password);
         query.setParameter("appKey", appKey);
         List<Manager> resultList = query.getResultList();

@@ -48,12 +48,22 @@ public class AuthRepositoryIT {
     public AuthRepositoryIT() {
     }
 
-    @Test//TODO using email only.... update to handle both email ans username
-    public void testGetManager() {
+    @Test
+    public void testGetManagerByEmail() {
         Manager manager = InstanceHelper.createManager();
         repository.create(manager);
 
-        Manager foundManager = repository.getManager(InstanceHelper.APP_ID, manager.getEmail(), manager.getPassword());
+        Manager foundManager = repository.getManagerByEmail(InstanceHelper.APP_ID, manager.getEmail(), manager.getPassword());
+        assertNotNull(foundManager);
+        assertEquals(manager, foundManager);
+    }
+
+    @Test
+    public void testGetManagerByUsername() {
+        Manager manager = InstanceHelper.createManager();
+        repository.create(manager);
+
+        Manager foundManager = repository.getManagerByUsername(InstanceHelper.APP_ID, manager.getUsername(), manager.getPassword());
         assertNotNull(foundManager);
         assertEquals(manager, foundManager);
     }
