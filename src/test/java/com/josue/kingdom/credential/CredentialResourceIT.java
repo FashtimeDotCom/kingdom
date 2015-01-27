@@ -69,9 +69,10 @@ public class CredentialResourceIT {
         //TODO credential (user, psw) should not be returned, test it
     }
 
+    //Note, this test should run with specific Manager, do not affect the other tests
     @Test
     public void testPasswordReset() {
-        String testInitialUsername = "manager1";
+        String testInitialUsername = "manager2";//secundary manager
         ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, testInitialUsername, PASSWORD_RESET);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }

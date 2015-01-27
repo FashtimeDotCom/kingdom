@@ -143,7 +143,7 @@
    
     <!-- ####################################################################################### -->
     
-    <!-- MANAGER 1 -->
+    <!-- MANAGER 2 -->
     <changeSet author="Josue" id="kingdom-initial-data-8">
         <insert tableName="manager">
             <column name="uuid" value="537e6f68-47fc-4926-8a8a-8d669715f300"/>
