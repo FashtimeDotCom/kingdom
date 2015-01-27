@@ -10,6 +10,7 @@ import com.josue.kingdom.credential.entity.AccountStatus;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordResetEvent;
+import com.josue.kingdom.credential.entity.SimpleLogin;
 import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
@@ -27,6 +28,7 @@ import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.security.AccessLevelPermission;
 import com.josue.kingdom.security.Current;
 import com.josue.kingdom.security.KingdomSecurity;
+import com.josue.kingdom.security.manager.ManagerToken;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
@@ -35,7 +37,9 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.DatatypeConverter;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.Permission;
 
 /**
@@ -171,6 +175,26 @@ public class CredentialControl {
             throw new ResourceNotFoundException(Manager.class, "login", login);
         }
         return managerByLogin;
+    }
+
+    public Manager login(SimpleLogin simpleLogin) throws RestException {
+
+        String value = simpleLogin.getValue();
+        byte[] parseBase64Binary = DatatypeConverter.parseBase64Binary(value);
+        String[] loginPass = new String(parseBase64Binary).split(":");
+        if (loginPass.length != 2) {//Invalid ':' character
+            throw new InvalidResourceArgException(SimpleLogin.class, "value", value);
+        }
+
+        Manager foundManager;
+        try {
+            SecurityUtils.getSubject().login(new ManagerToken(loginPass[0], loginPass[1].toCharArray(), security.getCurrentApplication().getUuid()));
+            foundManager = (Manager) SecurityUtils.getSubject().getPrincipal();
+        } catch (AuthenticationException e) {
+            throw new com.josue.kingdom.rest.ex.AuthenticationException("json response here");
+        }
+        return foundManager;
+
     }
 
     public Manager getCurrentManager() throws RestException {

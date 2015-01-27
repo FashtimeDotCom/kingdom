@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.security.application;
 
+import com.josue.kingdom.security.manager.ManagerToken;
 import java.util.Objects;
 import org.apache.shiro.authc.AuthenticationToken;
 

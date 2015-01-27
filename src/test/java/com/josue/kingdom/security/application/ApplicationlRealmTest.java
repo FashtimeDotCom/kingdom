@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.security.application;
 
+import com.josue.kingdom.security.manager.ManagerToken;
 import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
@@ -55,7 +56,7 @@ public class ApplicationlRealmTest {
     public void testDoGetAuthenticationInfoAppNotFound() {
         String appKey = "appKey";
         char[] appSecret = "app-secret".toCharArray();
-        ManagerToken manToken = new ManagerToken("man-username", "man@email.com", "man-pass123".toCharArray());
+        ManagerToken manToken = new ManagerToken("man-username", "man-pass123".toCharArray());
         ApplicationToken appToken = new ApplicationToken(appKey, appSecret, manToken);
 
         when(persistence.getApplication((String) appToken.getPrincipal(), new String(appSecret))).thenReturn(null);
@@ -95,8 +96,7 @@ public class ApplicationlRealmTest {
 
         String manEmail = "man@email.com";
         char[] manPassword = "man-pass123".toCharArray();
-        String manUsername = "man-username";
-        ManagerToken manToken = new ManagerToken(manUsername, manEmail, manPassword);
+        ManagerToken manToken = new ManagerToken(manEmail, manPassword);
 
         String appKey = "appKey";
         char[] appSecret = "app-secret".toCharArray();
@@ -130,7 +130,7 @@ public class ApplicationlRealmTest {
         String manEmail = "man@email.com";
         char[] manPassword = "man-pass123".toCharArray();
         String manUsername = "man-username";
-        ManagerToken manToken = new ManagerToken(manUsername, manEmail, manPassword);
+        ManagerToken manToken = new ManagerToken(manEmail, manPassword);
         Manager foundManager = Mockito.mock(Manager.class);
 
         String appKey = "appKey";
@@ -163,10 +163,9 @@ public class ApplicationlRealmTest {
     @Test
     public void testDoGetAuthenticationInfoByUsername() {
 
-        String manEmail = null;
         char[] manPassword = "man-pass123".toCharArray();
         String manUsername = "man-username";
-        ManagerToken manToken = new ManagerToken(manUsername, manEmail, manPassword);
+        ManagerToken manToken = new ManagerToken(manUsername, manPassword);
         Manager foundManager = Mockito.mock(Manager.class);
 
         String appKey = "appKey";

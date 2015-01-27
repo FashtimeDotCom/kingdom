@@ -6,6 +6,7 @@
 package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.credential.entity.SimpleLogin;
 import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
 import com.josue.kingdom.rest.ex.RestException;
@@ -35,6 +36,12 @@ public class CredentialResource {
     @Inject
     CredentialControl control;
 
+    @POST
+    @Path("login/attempts")//TODI... change this path
+    @Produces(value = CONTENT_TYPE)
+    public Response login(SimpleLogin simpleLogin) throws RestException {
+        return ResponseUtils.buildSimpleResponse(control.login(simpleLogin), Response.Status.OK, info);
+    }
 
     /*
      returns the ManagerCredential for the login

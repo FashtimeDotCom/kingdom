@@ -6,6 +6,7 @@
 package com.josue.kingdom.security;
 
 import com.josue.kingdom.security.application.ApplicationlRealm;
+import com.josue.kingdom.security.manager.ManagerRealm;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -27,6 +28,9 @@ public class CustomEnvironmentLoaderListener extends EnvironmentLoaderListener {
     @Inject
     private ApplicationlRealm apiCredentialJPARealm;
 
+    @Inject
+    private ManagerRealm managerJPARealm;
+
     //http://stackoverflow.com/questions/15605038/unable-to-inject-my-dao-in-a-custom-apache-shiro-authorizingrealm
     @Override
     protected WebEnvironment createEnvironment(ServletContext pServletContext) {
@@ -44,6 +48,7 @@ public class CustomEnvironmentLoaderListener extends EnvironmentLoaderListener {
         //TODO add another realms here
         Set<Realm> realms = new HashSet<>();
         realms.add(apiCredentialJPARealm);
+        realms.add(managerJPARealm);
         rsm.setRealms(realms);
 
         rsm.setCacheManager(new MemoryConstrainedCacheManager());

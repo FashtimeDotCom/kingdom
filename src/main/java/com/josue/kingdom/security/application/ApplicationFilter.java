@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.security.application;
 
+import com.josue.kingdom.security.manager.ManagerToken;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,12 +48,12 @@ public class ApplicationFilter extends BasicHttpAuthenticationFilter {
         //TODO improve.... check null, etc
         String appCredentials = httpRequest.getHeader(KINGDOM_HEADER);
         String parsedHeader = new String(DatatypeConverter.parseBase64Binary(appCredentials));
-        String managerKey = parsedHeader.split(CREDENTIAL_SEPARATOR)[0];
-        char[] managerValue = parsedHeader.split(CREDENTIAL_SEPARATOR)[1].toCharArray();
+        String managerLogin = parsedHeader.split(CREDENTIAL_SEPARATOR)[0];
+        char[] managerPassword = parsedHeader.split(CREDENTIAL_SEPARATOR)[1].toCharArray();
 
         AuthenticationToken authToken = super.createToken(request, response);
         //TODO validate if its an email or a username
-        ApplicationToken apiToken = new ApplicationToken(authToken.getPrincipal(), authToken.getCredentials(), new ManagerToken(managerKey, null, managerValue));
+        ApplicationToken apiToken = new ApplicationToken(authToken.getPrincipal(), authToken.getCredentials(), new ManagerToken(managerLogin, managerPassword));
         return apiToken;
     }
 
