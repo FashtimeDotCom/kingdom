@@ -31,7 +31,7 @@ public abstract class InstanceHelper {
 
     private static final SecureRandom random = new SecureRandom();
 
-    public static final String APP_ID = "926caa10-43a4-11e4-916c-0800200c9a66";
+    public static final String APP_ID = "kmyqEEOkEeSRbAgAIAyaZg";
 
     public static Date mysqlMilliSafeTimestamp() {
 

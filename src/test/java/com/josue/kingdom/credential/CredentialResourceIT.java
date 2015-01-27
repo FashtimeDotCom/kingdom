@@ -57,7 +57,7 @@ public class CredentialResourceIT {
 
     @Test
     public void testGetCurrentManager() {
-        String testInitialManagerUuid = "cdbd57b8-3dc2-4370-b8a6-65e674a430d6";
+        String testInitialManagerUuid = "zb1XuD3CQ3C4pmXmdKQw1g";
 
         ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, CURRENT);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);

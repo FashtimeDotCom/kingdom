@@ -6,6 +6,7 @@
 package com.josue.kingdom.rest;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -44,14 +46,8 @@ public class Resource implements Serializable {
 
     @PrePersist
     public void init() {
-        this.uuid = UUID.randomUUID().toString();
+        this.uuid = base64FromUUID();
         this.dateCreated = new Date();
-
-//         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-//        bb.putLong(uuid.getMostSignificantBits());
-//        bb.putLong(uuid.getLeastSignificantBits());
-//        String base64 = DatatypeConverter.printBase64Binary(bb.array());
-//        return base64.substring(0, base64.length() - 2).replace("/", "_").replace("+", "-");
     }
 
     @PreUpdate
@@ -63,6 +59,15 @@ public class Resource implements Serializable {
         Resource res = new Resource();
         res.setHref(href);
         return res;
+    }
+
+    public static String base64FromUUID() {
+        UUID rand = UUID.randomUUID();
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(rand.getMostSignificantBits());
+        bb.putLong(rand.getLeastSignificantBits());
+        String base64 = DatatypeConverter.printBase64Binary(bb.array());
+        return base64.substring(0, base64.length() - 2).replace("/", "_").replace("+", "-");
     }
 
     public static Resource fromResource(Resource resource) {

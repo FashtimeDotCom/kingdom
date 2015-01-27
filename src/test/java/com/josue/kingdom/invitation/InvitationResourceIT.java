@@ -46,7 +46,7 @@ public class InvitationResourceIT {
 
     @Test
     public void testGetInvitations() {
-        final String testInitialInvValue = "3e68d3e1-d0fd-48af-81ca-1cd10e1a92f7";
+        final String testInitialInvValue = "PmjT4dD9SK-ByhzRDhqS9w";
 
         ClientResponse getDomainsResponse = RestHelper.doGetRequest(INVITATIONS);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), getDomainsResponse);
@@ -63,7 +63,7 @@ public class InvitationResourceIT {
 
     @Test
     public void testGetInvitation() {
-        final String testInitialInvValue = "3e68d3e1-d0fd-48af-81ca-1cd10e1a92f7";
+        final String testInitialInvValue = "PmjT4dD9SK-ByhzRDhqS9w";
 
         ClientResponse getDomainsResponse = RestHelper.doGetRequest(INVITATIONS, testInitialInvValue);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), getDomainsResponse);
@@ -77,13 +77,13 @@ public class InvitationResourceIT {
     public void testCreateInvitation() {
 
         Domain testCreatedDomain = new Domain();
-        testCreatedDomain.setUuid("4cf10908-9992-4ce5-8fad-7a8ea1a96b8a");
+        testCreatedDomain.setUuid("TPEJCJmSTOWPrXqOoalrig");
 
         Manager testCreatedAuthorManager = new Manager();
-        testCreatedAuthorManager.setUuid("cdbd57b8-3dc2-4370-b8a6-65e674a430d6");
+        testCreatedAuthorManager.setUuid("zb1XuD3CQ3C4pmXmdKQw1g");
 
         DomainPermission testCreatedPermission = new DomainPermission();
-        testCreatedPermission.setUuid("d1486e7e-611c-47eb-bba1-28e6d4adca95");
+        testCreatedPermission.setUuid("0UhufmEcR-u7oSjm1K3KlQ");
 
         Invitation invitation = new Invitation();
         invitation.setAuthorManager(testCreatedAuthorManager);

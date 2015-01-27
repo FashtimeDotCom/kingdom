@@ -19,7 +19,7 @@
     <!-- DEFAULT APPLICATION -->
     <changeSet author="Josue" id="initial-test-data-1" runAlways="true">
         <insert tableName="application">
-            <column name="uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="email" value="manager1@gmail.com"/>
             <column name="name" value="Application-name"/>
@@ -33,7 +33,7 @@
     <!-- MANAGER 1 -->
     <changeSet author="Josue" id="initial-test-data-2" runAlways="true">
         <insert tableName="manager">
-            <column name="uuid" value="cdbd57b8-3dc2-4370-b8a6-65e674a430d6"/>
+            <column name="uuid" value="zb1XuD3CQ3C4pmXmdKQw1g"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="email" value="manager1@gmail.com"/>
             <column name="first_name" value="Josue"/>
@@ -41,114 +41,114 @@
             <column name="password" value="pass123"/>
             <column name="username" value="manager1"/>
             <column name="status" value="ACTIVE"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <!-- DOMAIN 1 -->
     <changeSet author="Josue" id="initial-test-data-3" runAlways="true">
         <insert tableName="domain">
-            <column name="uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>
+            <column name="uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="description" value="Test domain 1"/>
             <column name="name" value="Domain 1"/>
-            <column name="owner_uuid" value="cdbd57b8-3dc2-4370-b8a6-65e674a430d6"/>
+            <column name="owner_uuid" value="zb1XuD3CQ3C4pmXmdKQw1g"/>
             <column name="status" value="ACTIVE"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <!-- Default Domain 1 Permissions -->
     <changeSet author="Josue" id="initial-test-data-4" runAlways="true">
         <insert tableName="domain_permission">
-            <column name="uuid" value="d1486e7e-611c-47eb-bba1-28e6d4adca95"/>
+            <column name="uuid" value="0UhufmEcR-u7oSjm1K3KlQ"/>
             <column name="description" value="PERMISSION LEVEL 1"/>
             <column name="level" value="1"/>
             <column name="name" value="PERMISSION_LEVEL_1"/>
-            <column name="domain_uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
         <insert tableName="domain_permission">
-            <column name="uuid" value="6c0dca33-5e1a-4660-8188-5e4db9f310b6"/>
+            <column name="uuid" value="bA3KM14aRmCBiF5NufMQtg"/>
             <column name="description" value="PERMISSION LEVEL 2"/>
             <column name="level" value="2"/>
             <column name="name" value="PERMISSION_LEVEL_2"/>
             <column name="date_created" valueDate="${now}"/>
-            <column name="domain_uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
         <insert tableName="domain_permission">
-            <column name="uuid" value="3cbf4057-e22c-40ce-a738-9020345aa60b"/>
+            <column name="uuid" value="PL9AV-IsQM6nOJAgNFqmCw"/>
             <column name="description" value="PERMISSION LEVEL 3"/>
             <column name="level" value="3"/>
             <column name="name" value="PERMISSION_LEVEL_3"/>
             <column name="date_created" valueDate="${now}"/>
-            <column name="domain_uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
         <insert tableName="domain_permission">
-            <column name="uuid" value="9b37bc34-db06-4afe-9b45-fc30f82d6bb2"/>
+            <column name="uuid" value="mze8NNsGSv6bRfww-C1rsg"/>
             <column name="description" value="PERMISSION LEVEL 4"/>
             <column name="level" value="4"/>
             <column name="name" value="PERMISSION_LEVEL_4"/>
             <column name="date_created" valueDate="${now}"/>
-            <column name="domain_uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
         <insert tableName="domain_permission">
-            <column name="uuid" value="94730d8e-c616-491d-adce-df94b2fb7a6e"/>
+            <column name="uuid" value="lHMNjsYWSR2tzt-Usvt6bg"/>
             <column name="description" value="PERMISSION LEVEL 5"/>
             <column name="level" value="5"/>
             <column name="name" value="PERMISSION_LEVEL_5"/>
             <column name="date_created" valueDate="${now}"/>
-            <column name="domain_uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <!-- MANAGER MEMBERSHIP-->
     <changeSet author="Josue" id="initial-test-data-5" runAlways="true">
         <insert tableName="manager_membership">
-            <column name="uuid" value="8dc26c2f-4bfa-4c05-9f3c-de249e251ba1"/>
+            <column name="uuid" value="lHMNjsYWSR2tzt-Usvt6bg"/>
             <column name="date_created" valueDate="${now}"/>
-            <column name="domain_uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>
-            <column name="manager_uuid" value="cdbd57b8-3dc2-4370-b8a6-65e674a430d6"/>
-            <column name="permission_uuid" value="94730d8e-c616-491d-adce-df94b2fb7a6e"/><!-- OWNER SHOULD BE JOINED TO DOMAIN AS WELL -->
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
+            <column name="manager_uuid" value="zb1XuD3CQ3C4pmXmdKQw1g"/>
+            <column name="permission_uuid" value="lHMNjsYWSR2tzt-Usvt6bg"/><!-- OWNER SHOULD BE JOINED TO DOMAIN AS WELL -->
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <changeSet author="Josue" id="initial-test-data-6" runAlways="true">
         <insert tableName="api_credential">
-            <column name="uuid" value="1ad9d234-9445-4b60-86df-8ad2defb64d2"/>
+            <column name="uuid" value="GtnSNJRFS2CG34rS3vtk0g"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="api_key" value="987sdfsdf623bdf6g843"/>
             <column name="name" value="MASTER API KEY"/>
             <column name="status" value="ACTIVE"/>
-            <column name="membership_uuid" value="8dc26c2f-4bfa-4c05-9f3c-de249e251ba1"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="membership_uuid" value="lHMNjsYWSR2tzt-Usvt6bg"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <changeSet author="Josue" id="initial-test-data-7" runAlways="true">
         <insert tableName="manager">
-            <column name="uuid" value="9b7ddc20-569e-4b1d-be38-b9a35ec9022f"/>
+            <column name="uuid" value="m33cIFaeSx2-OLmjXskCLw"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="email" value="manager3@gmail.com"/>
             <column name="password" value="8939ing938ng3984"/>
             <column name="status" value="PROVISIONING"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
         <insert tableName="invitation">
-            <column name="uuid" value="3e68d3e1-d0fd-48af-81ca-1cd10e1a92f7"/>
+            <column name="uuid" value="PmjT4dD9SK-ByhzRDhqS9w"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="status" value="CREATED"/>
-            <column name="target_manager_uuid" value="9b7ddc20-569e-4b1d-be38-b9a35ec9022f"/>
+            <column name="target_manager_uuid" value="m33cIFaeSx2-OLmjXskCLw"/>
             <column name="token" value="93f52dc9-496d-46bc-a2f8-ba7394fca966"/>
-            <column name="author_manager_uuid" value="cdbd57b8-3dc2-4370-b8a6-65e674a430d6"/>
-            <column name="domain_uuid" value="4cf10908-9992-4ce5-8fad-7a8ea1a96b8a"/>
-            <column name="domain_permission_uuid" value="d1486e7e-611c-47eb-bba1-28e6d4adca95"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="author_manager_uuid" value="zb1XuD3CQ3C4pmXmdKQw1g"/>
+            <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
+            <column name="domain_permission_uuid" value="0UhufmEcR-u7oSjm1K3KlQ"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
@@ -158,7 +158,7 @@
     <!-- MANAGER 1 -->
     <changeSet author="Josue" id="initial-test-data-8" runAlways="true">
         <insert tableName="manager">
-            <column name="uuid" value="537e6f68-47fc-4926-8a8a-8d669715f300"/>
+            <column name="uuid" value="U35vaEf8SSaKio1mlxXzAA"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="email" value="manager2@gmail.com"/>
             <column name="first_name" value="Josue"/>
@@ -166,65 +166,65 @@
             <column name="password" value="pass123"/>
             <column name="username" value="manager2"/>
             <column name="status" value="ACTIVE"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <!-- DOMAIN 1 -->
     <changeSet author="Josue" id="initial-test-data-9" runAlways="true">
         <insert tableName="domain">
-            <column name="uuid" value="3668f3b8-acc7-4ebb-b464-9a3f968fee52"/>
+            <column name="uuid" value="NmjzuKzHTru0ZJo_lo_uUg"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="description" value="Test domain 1"/>
             <column name="name" value="Domain 1"/>
-            <column name="owner_uuid" value="537e6f68-47fc-4926-8a8a-8d669715f300"/>
+            <column name="owner_uuid" value="U35vaEf8SSaKio1mlxXzAA"/>
             <column name="status" value="ACTIVE"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <!-- Default Domain 1 Permissions -->
     <changeSet author="Josue" id="initial-test-data-10" runAlways="true">
         <insert tableName="domain_permission">
-            <column name="uuid" value="3f622281-5cbf-4e39-8428-51714839d03b"/>
+            <column name="uuid" value="P2IigVy_TjmEKFFxSDnQOw"/>
             <column name="description" value="GUEST PERMISSION"/>
             <column name="level" value="1"/>
             <column name="name" value="GUEST"/>
-            <column name="domain_uuid" value="3668f3b8-acc7-4ebb-b464-9a3f968fee52"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="NmjzuKzHTru0ZJo_lo_uUg"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
         <insert tableName="domain_permission">
-            <column name="uuid" value="02a494e4-9836-4c83-8883-f8b0d787b5a6"/>
+            <column name="uuid" value="AqSU5Jg2TIOIg_iw14e1pg"/>
             <column name="description" value="ADMIN PERMISSION"/>
             <column name="level" value="2"/>
             <column name="name" value="ADMIN"/>
             <column name="date_created" valueDate="${now}"/>
-            <column name="domain_uuid" value="3668f3b8-acc7-4ebb-b464-9a3f968fee52"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="NmjzuKzHTru0ZJo_lo_uUg"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <!-- MANAGER MEMBERSHIP-->
     <changeSet author="Josue" id="initial-test-data-11" runAlways="true">
         <insert tableName="manager_membership">
-            <column name="uuid" value="9f846cad-8301-416c-ab48-bb4ce5f92b2c"/>
+            <column name="uuid" value="n4RsrYMBQWyrSLtM5fkrLA"/>
             <column name="date_created" valueDate="${now}"/>
-            <column name="domain_uuid" value="3668f3b8-acc7-4ebb-b464-9a3f968fee52"/>
-            <column name="manager_uuid" value="537e6f68-47fc-4926-8a8a-8d669715f300"/>
-            <column name="permission_uuid" value="02a494e4-9836-4c83-8883-f8b0d787b5a6"/><!-- OWNER SHOULD BE JOINED TO DOMAIN AS WELL -->
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="domain_uuid" value="NmjzuKzHTru0ZJo_lo_uUg"/>
+            <column name="manager_uuid" value="U35vaEf8SSaKio1mlxXzAA"/>
+            <column name="permission_uuid" value="AqSU5Jg2TIOIg_iw14e1pg"/><!-- OWNER SHOULD BE JOINED TO DOMAIN AS WELL -->
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
     <changeSet author="Josue" id="initial-test-data-12" runAlways="true">
         <insert tableName="api_credential">
-            <column name="uuid" value="7048242d-f862-4295-9230-ee0f84202593"/>
+            <column name="uuid" value="cEgkLfhiQpWSMO4PhCAlkw"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="api_key" value="jsdf897sdfnj39nf9348"/>
             <column name="name" value="MASTER API KEY"/>
             <column name="status" value="ACTIVE"/>
-            <column name="membership_uuid" value="9f846cad-8301-416c-ab48-bb4ce5f92b2c"/>
-            <column name="application_uuid" value="926caa10-43a4-11e4-916c-0800200c9a66"/>
+            <column name="membership_uuid" value="n4RsrYMBQWyrSLtM5fkrLA"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
     
