@@ -93,10 +93,7 @@ public class ManagerToken implements AuthenticationToken {
         if (!Arrays.equals(this.password, other.password)) {
             return false;
         }
-        if (!Objects.equals(this.appUuid, other.appUuid)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.appUuid, other.appUuid);
     }
 
 }
