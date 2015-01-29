@@ -12,14 +12,14 @@
             <property name="allowConnectingToRunningServer">true</property>
             <property name="outputToConsole">true</property>
             <!-- DEV ENV -->
-<!--            <property name="jbossHome">D:\JBoss\wildfly-8.1.0.Final</property>
+            <property name="jbossHome">D:\JBoss\wildfly-8.1.0.Final</property>
             <property name="javaVmArguments">-Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled -XX:MaxPermSize=128M</property>
-            <property name="managementPort">9990</property>-->
+            <property name="managementPort">9990</property>
             
             <!-- TEST ENV -->
-            <property name="jbossHome">D:\JBoss\wildfly-8.1.0.Final-Arquillian</property>
+<!--            <property name="jbossHome">D:\JBoss\wildfly-8.1.0.Final-Arquillian</property>
             <property name="javaVmArguments">-Xdebug -Djboss.socket.binding.port-offset=1000 -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled -XX:MaxPermSize=256M</property>
-            <property name="managementPort">10990</property> 
+            <property name="managementPort">10990</property> -->
         </configuration>
     </container>
 

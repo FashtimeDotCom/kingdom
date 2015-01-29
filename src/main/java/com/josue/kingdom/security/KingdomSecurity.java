@@ -12,6 +12,8 @@ import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.security.application.ApplicationFilter;
 import javax.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.Permission;
 
 /**
@@ -61,7 +63,17 @@ public class KingdomSecurity {
     }
 
     public boolean isPermitted(Permission permission) throws RestException {
-        Manager manager = getCurrentManager();
         return SecurityUtils.getSubject().isPermitted(permission);
+    }
+
+    public Manager login(AuthenticationToken token) throws com.josue.kingdom.rest.ex.AuthenticationException {
+        Manager foundManager;
+        try {
+            SecurityUtils.getSubject().login(token);
+            foundManager = (Manager) SecurityUtils.getSubject().getPrincipal();
+        } catch (AuthenticationException e) {
+            throw new com.josue.kingdom.rest.ex.AuthenticationException("json response here");
+        }
+        return foundManager;
     }
 }

@@ -5,6 +5,7 @@
  */
 package com.josue.kingdom.security.manager;
 
+import com.josue.kingdom.credential.entity.AccountStatus;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.ManagerMembership;
@@ -63,6 +64,9 @@ public class ManagerRealm extends AuthorizingRealm {
 
         if (foundManager == null) {
             throw new AuthenticationException("Invalid username or password, login: " + managerToken.getPrincipal());
+        }
+        if (!foundManager.getStatus().equals(AccountStatus.ACTIVE)) {
+            throw new AuthenticationException("Inactive user: " + managerToken.getPrincipal());
         }
 
         //Here we put the entire APICredential class, so we can fetch it using Subject subject = SecurityUtils.getSubject();

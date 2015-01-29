@@ -5,6 +5,8 @@
  */
 package com.josue.kingdom.security.manager;
 
+import java.util.Arrays;
+import java.util.Objects;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
@@ -65,6 +67,36 @@ public class ManagerToken implements AuthenticationToken {
 
     public void setAppUuid(String appUuid) {
         this.appUuid = appUuid;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.login);
+        hash = 67 * hash + Arrays.hashCode(this.password);
+        hash = 67 * hash + Objects.hashCode(this.appUuid);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ManagerToken other = (ManagerToken) obj;
+        if (!Objects.equals(this.login, other.login)) {
+            return false;
+        }
+        if (!Arrays.equals(this.password, other.password)) {
+            return false;
+        }
+        if (!Objects.equals(this.appUuid, other.appUuid)) {
+            return false;
+        }
+        return true;
     }
 
 }

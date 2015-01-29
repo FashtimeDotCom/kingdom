@@ -38,9 +38,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authz.Permission;
 
 /**
  *
@@ -112,7 +109,7 @@ public class CredentialControl {
             throw new InvalidResourceArgException(APICredential.class, "Permission name", apiCredential.getMembership().getPermission().getName());
         }
 
-        if (!isPermitted(new AccessLevelPermission(domainUuid, foundPermission))) {
+        if (!security.isPermitted(new AccessLevelPermission(domainUuid, foundPermission))) {
             throw new AuthorizationException(apiCredential.getMembership().getPermission());
         }
 
@@ -120,12 +117,6 @@ public class CredentialControl {
         APICredential updated = accountRepository.update(foundCredential);
         return updated;
 
-    }
-
-    //TODO should change to a specific class ???
-    //Encapsules thrity party (Shiro)... for testing purposes
-    protected boolean isPermitted(Permission permission) {
-        return SecurityUtils.getSubject().isPermitted(permission);
     }
 
     public APICredential createAPICredential(String domainUuid, APICredential apiCredential) throws RestException {
@@ -139,7 +130,7 @@ public class CredentialControl {
         }
 
         //Check permission for create API Permission level
-        if (!isPermitted(new AccessLevelPermission(domainUuid, membership.getPermission()))) {
+        if (!security.isPermitted(new AccessLevelPermission(domainUuid, membership.getPermission()))) {
             throw new AuthorizationException(apiCredential.getMembership().getPermission());
         }
 
@@ -186,13 +177,7 @@ public class CredentialControl {
             throw new InvalidResourceArgException(SimpleLogin.class, "value", value);
         }
 
-        Manager foundManager;
-        try {
-            SecurityUtils.getSubject().login(new ManagerToken(loginPass[0], loginPass[1].toCharArray(), security.getCurrentApplication().getUuid()));
-            foundManager = (Manager) SecurityUtils.getSubject().getPrincipal();
-        } catch (AuthenticationException e) {
-            throw new com.josue.kingdom.rest.ex.AuthenticationException("json response here");
-        }
+        Manager foundManager = security.login(new ManagerToken(loginPass[0], loginPass[1].toCharArray(), security.getCurrentApplication().getUuid()));
         return foundManager;
 
     }

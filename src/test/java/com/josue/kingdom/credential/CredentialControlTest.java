@@ -11,6 +11,7 @@ import com.josue.kingdom.credential.entity.AccountStatus;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordResetEvent;
+import com.josue.kingdom.credential.entity.SimpleLogin;
 import com.josue.kingdom.domain.DomainRepository;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
@@ -25,10 +26,12 @@ import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.security.KingdomSecurity;
+import com.josue.kingdom.security.manager.ManagerToken;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import javax.enterprise.event.Event;
+import javax.xml.bind.DatatypeConverter;
 import org.apache.shiro.authz.Permission;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -373,7 +376,7 @@ public class CredentialControlTest {
     }
 
     @Test
-    public void testGetAPICredentialsByDomain() throws RestException {
+    public void testGetAPICredentials() throws RestException {
         ManagerMembership membership = new ManagerMembership();
         membership.setDomain(new Domain());
 
@@ -493,7 +496,7 @@ public class CredentialControlTest {
 
         when(credentialRepository.find(APICredential.class, currentApplication.getUuid(), credentialUuid)).thenReturn(apiCredential);
         when(domainRespository.getDomainPermission(currentApplication.getUuid(), domainUuid, domainPerm.getName())).thenReturn(domainPerm);
-        doReturn(false).when(control).isPermitted(any(Permission.class));
+        doReturn(false).when(security).isPermitted(any(Permission.class));
         control.updateAPICredential(domainUuid, credentialUuid, apiCredential);
         fail();
     }
@@ -512,7 +515,7 @@ public class CredentialControlTest {
 
         when(credentialRepository.find(APICredential.class, currentApplication.getUuid(), credentialUuid)).thenReturn(foundAPICredential);
         when(domainRespository.getDomainPermission(currentApplication.getUuid(), domainUuid, domainPerm.getName())).thenReturn(domainPerm);
-        doReturn(true).when(control).isPermitted(any(Permission.class));
+        doReturn(true).when(security).isPermitted(any(Permission.class));
         when(credentialRepository.update(foundAPICredential)).thenReturn(foundAPICredential);
 
         APICredential updatedDomCred = control.updateAPICredential(domainUuid, credentialUuid, apiCredential);
@@ -545,7 +548,7 @@ public class CredentialControlTest {
 
 //        AccessLevelPermission mockPerm = Mockito.spy(new AccessLevelPermission(apiCredential.getMembership().getDomain().getUuid(), apiCredential.getMembership().getPermission()));
         when(credentialRepository.getManagerMembership(currentApplication.getUuid(), domainUuid, security.getCurrentManager().getUuid())).thenReturn(new ManagerMembership());
-        doReturn(false).when(control).isPermitted(any(Permission.class));
+        doReturn(false).when(security).isPermitted(any(Permission.class));
 
         control.createAPICredential(domainUuid, apiCredential);
         fail();
@@ -556,7 +559,7 @@ public class CredentialControlTest {
         String domainUuid = "domain-123";
         APICredential apiCredential = Mockito.spy(new APICredential());
 
-        doReturn(true).when(control).isPermitted(any(Permission.class));
+        doReturn(true).when(security).isPermitted(any(Permission.class));
         when(credentialRepository.getManagerMembership(currentApplication.getUuid(), domainUuid, security.getCurrentManager().getUuid())).thenReturn(null);
 
         control.createAPICredential(domainUuid, apiCredential);
@@ -571,7 +574,7 @@ public class CredentialControlTest {
         ManagerMembership foundMembership = Mockito.mock(ManagerMembership.class);
 
         when(credentialRepository.getManagerMembership(currentApplication.getUuid(), domainUuid, security.getCurrentManager().getUuid())).thenReturn(foundMembership);
-        doReturn(true).when(control).isPermitted(any(Permission.class));
+        doReturn(true).when(security).isPermitted(any(Permission.class));
 
         APICredential createdAPiDomCred = control.createAPICredential(domainUuid, apiCredential);
 
@@ -624,5 +627,35 @@ public class CredentialControlTest {
         when(credentialRepository.getManagerByUsername(currentApplication.getUuid(), login)).thenReturn(mockManager);
         Manager foundManager = control.getManagerBylogin(login);
         assertEquals(mockManager, foundManager);
+    }
+
+    @Test
+    public void testLogin() throws Exception {
+        String email = "test@email.com";
+        String psw = "pass123";
+        String base64Formatted = DatatypeConverter.printBase64Binary((email + ":" + psw).getBytes());
+
+        SimpleLogin simpleLogin = new SimpleLogin();
+        simpleLogin.setType(SimpleLogin.LoginType.BASIC);
+        simpleLogin.setValue(base64Formatted);
+
+        //For this test, KingdomSecurity should me mocked and no spied
+        KingdomSecurity mock = Mockito.mock(KingdomSecurity.class);
+        control.security = mock;
+
+        when(mock.getCurrentApplication()).thenReturn(currentApplication);
+        ManagerToken token = new ManagerToken(email, psw.toCharArray(), mock.getCurrentApplication().getUuid());
+        when(mock.login(token)).thenReturn(new Manager());
+        Manager foundManager = control.login(simpleLogin);
+        assertNotNull(foundManager);
+
+    }
+
+    @Test
+    public void testGetCurrentManager() throws Exception {
+        when(security.getCurrentManager()).thenReturn(new Manager());
+        control.getCurrentManager();
+        verify(security).getCurrentManager();
+
     }
 }
