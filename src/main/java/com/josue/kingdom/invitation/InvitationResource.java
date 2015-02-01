@@ -47,9 +47,9 @@ public class InvitationResource {
     }
 
     @GET
-    @Path("{uuid}")
+    @Path("{invUuid}")
     @Produces(value = CONTENT_TYPE)
-    public Response getInvitation(@PathParam(("uuid")) String uuid) throws RestException {
+    public Response getInvitation(@PathParam(("invUuid")) String uuid) throws RestException {
         Invitation invitation = control.getInvitation(uuid);
         return ResponseUtils.buildSimpleResponse(invitation, Response.Status.OK, info);
     }

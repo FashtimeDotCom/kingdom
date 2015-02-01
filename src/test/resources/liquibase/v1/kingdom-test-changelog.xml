@@ -124,6 +124,7 @@
             <column name="domain_permission_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="confirmation_token" type="VARCHAR(255)">
         </createTable>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-6">

@@ -32,6 +32,12 @@ public class DomainControl {
     @Current
     KingdomSecurity security;
 
+    public ListResource<Domain> getDomains(String query, Integer limit, Integer offset) throws RestException {
+        long totalCount = repository.countDomains(security.getCurrentApplication().getUuid());
+        List<Domain> domains = repository.getDomains(security.getCurrentApplication().getUuid(), query, limit, offset);
+        return ListResourceUtils.buildListResource(domains, totalCount, limit, offset);
+    }
+
     public ListResource<Domain> getOwnedDomains(Integer limit, Integer offset) throws RestException {
         long totalCount = repository.countOwnedDomains(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid());
         List<Domain> ownedDomains = repository.getOwnedDomains(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid(), limit, offset);
@@ -46,7 +52,7 @@ public class DomainControl {
     }
 
     public Domain getJoinedDomain(String domainUuid) throws RestException {
-        Domain joinedDomain = repository.find(Domain.class, security.getCurrentApplication().getUuid(), domainUuid);
+        Domain joinedDomain = repository.getJoinedDomain(security.getCurrentApplication().getUuid(), domainUuid, security.getCurrentManager().getUuid());
         if (joinedDomain == null) {
             throw new ResourceNotFoundException(ManagerMembership.class, domainUuid);
         }

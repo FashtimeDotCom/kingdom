@@ -43,6 +43,17 @@ public class DomainResource {
     @Context
     UriInfo info;
 
+    //Return all domains
+    @GET
+    @Produces(value = CONTENT_TYPE)
+    public Response getDomains(@QueryParam("limit") @DefaultValue(DEFAULT_LIMIT) Integer limit,
+            @QueryParam("offset") @DefaultValue(DEFAULT_OFFSET) Integer offset,
+            @QueryParam("name") String name) throws RestException {
+        ListResource<Domain> foundDomains = control.getJoinedDomains(limit, offset);
+
+        return ResponseUtils.buildSimpleResponse(foundDomains, Response.Status.OK, info);
+    }
+
     @GET
     @Path("joined")
     @Produces(value = CONTENT_TYPE)

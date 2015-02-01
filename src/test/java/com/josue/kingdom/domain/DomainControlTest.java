@@ -194,11 +194,11 @@ public class DomainControlTest {
 
     @Test
     public void testGetJoinedDomain() throws RestException {
-        String uuid = "123";
+        String domainUuid = "123";
 
         Domain mockedDomain = Mockito.mock(Domain.class);
-        when(repository.find(Domain.class, currentApplication.getUuid(), uuid)).thenReturn(mockedDomain);
-        Domain joinedDomain = control.getJoinedDomain(uuid);
+        when(repository.getJoinedDomain(currentApplication.getUuid(), domainUuid, currentManager.getUuid())).thenReturn(mockedDomain);
+        Domain joinedDomain = control.getJoinedDomain(domainUuid);
         assertEquals(mockedDomain, joinedDomain);
     }
 
@@ -492,5 +492,41 @@ public class DomainControlTest {
         String domainUuid = "domain-123";
         when(repository.find(Domain.class, currentApplication.getUuid(), domainUuid)).thenReturn(null);
         control.checkDomainExists(domainUuid);
+    }
+
+    @Test
+    public void testGetDomains() throws RestException {
+        String nameQuery = "a domain name";
+        List<Domain> foundDomains = Mockito.mock(List.class);
+        long size = 1L;
+
+        when(repository.countDomains(currentApplication.getUuid())).thenReturn(size);
+        when(repository.getDomains(currentApplication.getUuid(), nameQuery, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(foundDomains);
+        ListResource<Domain> domains = control.getDomains(nameQuery, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(foundDomains, domains.getItems());
+        assertEquals(size, domains.getTotalCount());
+    }
+
+    @Test
+    public void testGetJoinedDomains() throws RestException {
+        String nameQuery = "a domain name";
+        List<Domain> foundDomains = Mockito.mock(List.class);
+        long size = 1L;
+
+        when(repository.countJoinedDomains(currentApplication.getUuid(), currentManager.getUuid())).thenReturn(size);
+        when(repository.getJoinedDomains(currentApplication.getUuid(), currentManager.getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(foundDomains);
+        ListResource<Domain> domains = control.getJoinedDomains(DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(foundDomains, domains.getItems());
+        assertEquals(size, domains.getTotalCount());
+    }
+
+    @Test
+    public void testGetOwnedDomain() throws RestException {
+        String domainUuid = "123";
+
+        Domain mockedDomain = Mockito.mock(Domain.class);
+        when(repository.getJoinedDomain(currentApplication.getUuid(), domainUuid, currentManager.getUuid())).thenReturn(mockedDomain);
+        Domain ownedDomain = control.getJoinedDomain(domainUuid);
+        assertEquals(mockedDomain, ownedDomain);
     }
 }

@@ -73,6 +73,12 @@ public class InvitationControl {
         }
         if (invitation.getTargetManager().getEmail() == null) {// TODO validate email
             throw new InvalidResourceArgException(Manager.class, "targetManager.email", null);
+        }//TODO validate another if null ??? bean validation ?
+        if (invitation.getPermission() == null) {
+            throw new InvalidResourceArgException(Manager.class, "permission", null);
+        }
+        if (invitation.getPermission().getUuid() == null) {
+            throw new InvalidResourceArgException(Manager.class, "permission.uuid", null);
         }
 
         Domain foundDomain = invitationRepository.find(Domain.class, security.getCurrentApplication().getUuid(), invitation.getDomain().getUuid());
@@ -86,7 +92,6 @@ public class InvitationControl {
             throw new ResourceAlreadyExistsException(Invitation.class, "targetEmail", invitation.getTargetManager().getEmail());
         }
 
-        //TODO validate another if null ??? bean validation ?
         DomainPermission permission = invitationRepository.find(DomainPermission.class, security.getCurrentApplication().getUuid(), invitation.getPermission().getUuid());
 
         invitation.removeNonCreatable();

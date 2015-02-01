@@ -25,6 +25,26 @@ import javax.transaction.Transactional;
 public class DomainRepository extends JpaRepository {
 
     @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    public List<Domain> getDomains(String appUuid, String nameQuery, Integer limit, Integer offset) {
+        Query query;
+        if (nameQuery != null) {
+            query = buildSearchQuery(nameQuery);
+        } else {
+            query = em.createQuery("SELECT dom FROM Domain dom WHERE dom.application.uuid = :appUuid", Domain.class);
+        }
+        query.setParameter("appUuid", appUuid);
+        query.setMaxResults(limit).setFirstResult(offset);
+        List<Domain> resultList = query.getResultList();
+        return resultList;
+    }
+
+    private Query buildSearchQuery(String nameQuery) {
+        Query query = em.createQuery("SELECT dom FROM Domain dom WHERE dom.name LIKE :nameQuery AND dom.application.uuid = :appUuid", Domain.class);
+        query.setParameter("nameQuery", "%" + nameQuery + "%");
+        return query;
+    }
+
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<Domain> getJoinedDomains(String appUuid, String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT membership.domain FROM ManagerMembership membership WHERE membership.manager.uuid = :managerUuid AND membership.application.uuid = :appUuid", Domain.class);
         query.setParameter("managerUuid", managerUuid);
@@ -63,6 +83,13 @@ public class DomainRepository extends JpaRepository {
         query.setMaxResults(limit).setFirstResult(offset);
         List<Domain> domains = query.getResultList();
         return domains;
+    }
+
+    public Long countDomains(String appUuid) {
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(dom.uuid) FROM Domain dom WHERE dom.application.uuid = :appUuid", Long.class);
+        query.setParameter("appUuid", appUuid);
+        Long count = query.getSingleResult();
+        return count;
     }
 
     public Long countOwnedDomains(String appUuid, String managerUuid) {

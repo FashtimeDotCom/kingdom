@@ -36,7 +36,6 @@ public class RestExceptionMapper implements ExceptionMapper<Exception> {
         }
 
         LOG.log(Level.INFO, exception.getMessage(), exception);
-
         return Response
                 .status(Status.INTERNAL_SERVER_ERROR)
                 .type(MediaType.APPLICATION_JSON)

@@ -29,7 +29,6 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.josue.kingdom.credential.CredentialResource.class);
-        resources.add(com.josue.kingdom.domain.DomainPermissionSubResource.class);
         resources.add(com.josue.kingdom.domain.DomainResource.class);
         resources.add(com.josue.kingdom.invitation.InvitationResource.class);
         resources.add(com.josue.kingdom.rest.CustomJacksonProvider.class);

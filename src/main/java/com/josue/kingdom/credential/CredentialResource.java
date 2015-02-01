@@ -53,6 +53,7 @@ public class CredentialResource {
         return ResponseUtils.buildSimpleResponse(control.getCurrentManager(), Response.Status.OK, info);
     }
 
+    //TODO add get by uuid ?
     @GET
     @Path("{username}")//TODO username and email ?
     @Produces(value = CONTENT_TYPE)
@@ -61,15 +62,19 @@ public class CredentialResource {
         return ResponseUtils.buildSimpleResponse(managerBylogin, Response.Status.OK, info);
     }
 
-    @GET
+    @GET//TODO POST ??? PUT ???
+    //TODO change history ?
+    //TODO password should not be changed qhen the service is requested, instead, it should send a token by email
+    //TODO limit the request by username
     @Path("{username}/password-reset")
     public Response passwordReset(@PathParam("username") String username) throws RestException {
         control.passwordReset(username);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }
 
-    @GET
+    @GET//TODO POST ??? PUT ???
     @Path("{email}/login-recover")
+    //TODO history ?
     //TODO return any body ? SHOULD THOSE ACCOUNT METHOD HAVE AN ENTITY CLASS ?
     public Response loginRecover(@PathParam("email") String email) throws RestException {
         control.loginRecovery(email);

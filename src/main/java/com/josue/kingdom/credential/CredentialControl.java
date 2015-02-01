@@ -142,7 +142,6 @@ public class CredentialControl {
 
         accountRepository.create(apiCredential);
         return apiCredential;
-
     }
 
     public void deleteAPICredential(String domainUuid, String apiCredentialUuid) throws ResourceNotFoundException {
