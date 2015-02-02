@@ -20,12 +20,11 @@ import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.security.Current;
 import com.josue.kingdom.security.KingdomSecurity;
+import com.josue.kingdom.util.KingdomUtils;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
@@ -42,7 +41,6 @@ import javax.ws.rs.core.Response;
 public class InvitationControl {
 
     @Inject
-    @Current
     KingdomSecurity security;
 
     @Inject
@@ -56,6 +54,9 @@ public class InvitationControl {
 
     @Inject
     Event<Invitation> invitatioEvent;
+
+    @Inject
+    KingdomUtils utils;
 
     //TODO add use cases:
     //a manager can invite a given email for a given domain once, he can resend the the invitation a number of times (e.g. 3)
@@ -96,7 +97,7 @@ public class InvitationControl {
 
         invitation.removeNonCreatable();
         invitation.setStatus(InvitationStatus.CREATED);
-        invitation.setValidUntil(getInvitationExprirationDate());
+        invitation.setValidUntil(utils.addFutureDate(Calendar.DAY_OF_MONTH, 2));
         invitation.setDomain(foundDomain);
         invitation.setAuthorManager(security.getCurrentManager());
         invitation.setPermission(permission);
@@ -169,13 +170,6 @@ public class InvitationControl {
         List<Invitation> invitations = invitationRepository.getInvitations(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid(), limit, offset);
         long invitationsCount = invitationRepository.getInvitationsCount(security.getCurrentApplication().getUuid(), security.getCurrentManager().getUuid());
         return ListResourceUtils.buildListResource(invitations, invitationsCount, limit, offset);
-    }
-
-    private Date getInvitationExprirationDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.DAY_OF_MONTH, 2);
-        return calendar.getTime();
     }
 
 }

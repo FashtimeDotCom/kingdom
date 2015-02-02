@@ -61,6 +61,7 @@ public class Resource implements Serializable {
         return res;
     }
 
+    //Do not move to Utils, this pojo should not have any dependencies on CDI or whatever
     public static String base64FromUUID() {
         UUID rand = UUID.randomUUID();
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);

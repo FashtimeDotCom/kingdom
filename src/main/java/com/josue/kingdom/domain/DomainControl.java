@@ -11,7 +11,6 @@ import com.josue.kingdom.rest.ex.InvalidResourceArgException;
 import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
-import com.josue.kingdom.security.Current;
 import com.josue.kingdom.security.KingdomSecurity;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
@@ -29,7 +28,6 @@ public class DomainControl {
     DomainRepository repository;
 
     @Inject
-    @Current
     KingdomSecurity security;
 
     public ListResource<Domain> getDomains(String query, Integer limit, Integer offset) throws RestException {

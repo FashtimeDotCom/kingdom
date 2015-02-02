@@ -19,7 +19,6 @@ import org.apache.shiro.subject.Subject;
 public class CurrentSecurity {
 
     @Produces
-    @Current
     @RequestScoped
     public KingdomSecurity currentSecurity() {
         Subject subject = SecurityUtils.getSubject();

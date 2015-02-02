@@ -5,9 +5,9 @@
  */
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.util.MailService;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
-import com.josue.kingdom.credential.entity.PasswordResetEvent;
+import com.josue.kingdom.credential.entity.PasswordChangeEvent;
+import com.josue.kingdom.util.MailService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;
@@ -20,12 +20,12 @@ import javax.enterprise.event.TransactionPhase;
 public class CredentialService extends MailService {
 
     //TODO load from template
-    public void sendPasswordReset(@Observes(during = TransactionPhase.AFTER_SUCCESS) PasswordResetEvent event) {
+    public void sendPasswordToken(@Observes(during = TransactionPhase.AFTER_SUCCESS) PasswordChangeEvent event) {
 
         String subject = "Password reset";
-        String message = "Your new password is: <b>" + event.getNewPassword() + "</b>";
+        String message = "The token to reset the password is: <b>" + event.getToken() + "</b>";
 
-        send(event.getTargetEmail(), subject, message);
+        send(event.getTargetManager().getEmail(), subject, message);
 
     }
 

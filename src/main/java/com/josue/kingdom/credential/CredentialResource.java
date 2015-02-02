@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -62,13 +63,23 @@ public class CredentialResource {
         return ResponseUtils.buildSimpleResponse(managerBylogin, Response.Status.OK, info);
     }
 
-    @GET//TODO POST ??? PUT ???
+    @POST//TODO POST ??? PUT ???
     //TODO change history ?
     //TODO password should not be changed qhen the service is requested, instead, it should send a token by email
     //TODO limit the request by username
-    @Path("{username}/password-reset")
+    @Path("{username}/password-request")
     public Response passwordReset(@PathParam("username") String username) throws RestException {
-        control.passwordReset(username);
+        control.createPasswordChangeEvent(username);
+        return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
+    }
+
+    @PUT//TODO POST ??? PUT ???
+    //TODO change history ?
+    //TODO password should not be changed qhen the service is requested, instead, it should send a token by email
+    //TODO limit the request by username
+    @Path("{username}/password-request")
+    public Response updateManagerPassword(@PathParam("token") String token, @PathParam("password") String newPassword) throws RestException {
+        control.updateManagerPassword(token, newPassword);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }
 

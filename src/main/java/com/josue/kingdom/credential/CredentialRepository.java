@@ -9,6 +9,7 @@ import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import com.josue.kingdom.domain.entity.ManagerMembership;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
@@ -21,9 +22,9 @@ import javax.transaction.Transactional;
  * @author Josue
  */
 @ApplicationScoped
+@Transactional(Transactional.TxType.NOT_SUPPORTED)
 public class CredentialRepository extends JpaRepository {
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public Application getApplication(String appUuid) {
         TypedQuery<Application> query = em.createQuery("SELECT app FROM Application app WHERE app.uuid = :appUuid", Application.class);
         query.setParameter("appUuid", appUuid);
@@ -31,7 +32,6 @@ public class CredentialRepository extends JpaRepository {
         return extractSingleResultFromList(memberships);
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<APICredential> getAPICredentials(String appUuid, String domainUuid, Integer limit, Integer offset) {
         TypedQuery<APICredential> query = em.createQuery("SELECT api FROM APICredential api WHERE api.membership.domain.uuid = :domainUuid AND api.application.uuid = :appUuid", APICredential.class);
         query.setParameter("domainUuid", domainUuid);
@@ -41,7 +41,6 @@ public class CredentialRepository extends JpaRepository {
         return memberships;
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<APICredential> getAPICredentials(String appUuid, String domainUuid, String managerUuid, Integer limit, Integer offset) {
         TypedQuery<APICredential> query = em.createQuery("SELECT api FROM APICredential api WHERE api.membership.domain.uuid = :domainUuid AND api.membership.manager.uuid = :managerUuid AND api.application.uuid = :appUuid", APICredential.class);
         query.setParameter("domainUuid", domainUuid);
@@ -53,7 +52,6 @@ public class CredentialRepository extends JpaRepository {
     }
 
     //Control changes some data, we dont want to update it on database
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public APICredential getAPICredential(String appUuid, String apiCredUuid) {
         Query query = em.createQuery("SELECT apicred FROM APICredential apicred WHERE apicred.uuid = :apiCredUuid AND apicred.application.uuid = :appUuid", APICredential.class);
         query.setParameter("apiCredUuid", apiCredUuid);
@@ -62,7 +60,6 @@ public class CredentialRepository extends JpaRepository {
         return extractSingleResultFromList(resultList);
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public long countAPICredential(String appUuid, String domainUuid, String managerUuid) {
         Query query = em.createQuery("SELECT COUNT(apicred.uuid) FROM APICredential apicred WHERE apicred.application.uuid = :appUuid AND apicred.membership.domain.uuid = :domainUuid AND apicred.membership.manager.uuid = :managerUuid", Long.class);
         query.setParameter("domainUuid", domainUuid);
@@ -71,14 +68,12 @@ public class CredentialRepository extends JpaRepository {
         return (long) query.getSingleResult();
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public long countAPICredential(String appUuid, String domainUuid) {
         Query query = em.createQuery("SELECT COUNT(apicred.uuid) FROM APICredential apicred WHERE apicred.membership.domain.uuid = :domainUuid", Long.class);
         query.setParameter("domainUuid", domainUuid);
         return (long) query.getSingleResult();
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<Manager> getManagers(String appUuid, Integer limit, Integer offset) {
         TypedQuery<Manager> query = em.createQuery("SELECT man FROM Manager man WHERE man.application.uuid = :appUuid", Manager.class);
         query.setParameter("appUuid", appUuid);
@@ -87,7 +82,6 @@ public class CredentialRepository extends JpaRepository {
         return managers;
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public Manager getManagerByEmail(String appUuid, String email) {
         TypedQuery<Manager> query = em.createQuery("SELECT man FROM Manager man WHERE man.email = :email AND man.application.uuid = :appUuid", Manager.class);
         query.setParameter("email", email);
@@ -96,8 +90,6 @@ public class CredentialRepository extends JpaRepository {
         return extractSingleResultFromList(managers);
     }
 
-    //TODO implement username / email
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public Manager getManagerByUsername(String appUuid, String username) {
         TypedQuery<Manager> query = em.createQuery("SELECT man FROM Manager man WHERE man.application.uuid = :appUuid AND man.username = :username", Manager.class);
         query.setParameter("username", username);
@@ -106,7 +98,6 @@ public class CredentialRepository extends JpaRepository {
         return extractSingleResultFromList(managers);
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public ManagerMembership getManagerMembership(String appUuid, String domainUuid, String managerUuid) {
         TypedQuery<ManagerMembership> query = em.createQuery("SELECT man FROM ManagerMembership man WHERE man.application.uuid = :appUuid AND man.domain.uuid = :domainUuid AND man.manager.uuid = :managerUuid", ManagerMembership.class);
         query.setParameter("domainUuid", domainUuid);
@@ -116,7 +107,6 @@ public class CredentialRepository extends JpaRepository {
         return extractSingleResultFromList(memberships);
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<ManagerMembership> getManagerMembershipByManager(String appUuid, String managerUuid, Integer limit, Integer offset) {
         TypedQuery<ManagerMembership> query = em.createQuery("SELECT man FROM ManagerMembership man WHERE man.application.uuid = :appUuid AND man.manager.uuid = :managerUuid", ManagerMembership.class);
         query.setParameter("appUuid", appUuid);
@@ -126,7 +116,6 @@ public class CredentialRepository extends JpaRepository {
         return memberships;
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<ManagerMembership> getManagerMembershipByDomain(String appUuid, String domainUuid, Integer limit, Integer offset) {
         TypedQuery<ManagerMembership> query = em.createQuery("SELECT man FROM ManagerMembership man WHERE man.application.uuid = :appUuid AND man.domain.uuid = :domainUuid", ManagerMembership.class);
         query.setParameter("appUuid", appUuid);
@@ -134,6 +123,22 @@ public class CredentialRepository extends JpaRepository {
         query.setMaxResults(limit).setFirstResult(offset);
         List<ManagerMembership> memberships = query.getResultList();
         return memberships;
+    }
+
+    public PasswordChangeEvent getPasswordResetEvent(String appUuid, String token) {
+        TypedQuery<PasswordChangeEvent> query = em.createQuery("SELECT pre FROM PasswordChangeEvent pre WHERE pre.application.uuid = :appUuid AND pre.token = :token", PasswordChangeEvent.class);
+        query.setParameter("appUuid", appUuid);
+        query.setParameter("token", token);
+        List<PasswordChangeEvent> events = query.getResultList();
+        return extractSingleResultFromList(events);
+    }
+
+    public List<PasswordChangeEvent> getPasswordResetEvents(String appUuid, String targetManagerUuid) {
+        TypedQuery<PasswordChangeEvent> query = em.createQuery("SELECT pre FROM PasswordChangeEvent pre WHERE pre.application.uuid = :appUuid AND pre.targetManager.uuid = :targetManagerUuid ORDER BY pre.dateCreated", PasswordChangeEvent.class);
+        query.setParameter("appUuid", appUuid);
+        query.setParameter("targetManagerUuid", targetManagerUuid);
+        List<PasswordChangeEvent> events = query.getResultList();
+        return events;
     }
 
 }

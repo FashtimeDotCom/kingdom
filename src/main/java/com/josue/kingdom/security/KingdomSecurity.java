@@ -10,6 +10,7 @@ import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.rest.ex.HeaderRequiredException;
 import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.security.application.ApplicationFilter;
+import javax.enterprise.inject.Alternative;
 import javax.ws.rs.core.Response;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -21,6 +22,7 @@ import org.apache.shiro.authz.Permission;
  * @author Josue
  */
 //TODO check if its needed add aditional values to this class
+@Alternative//Exclude this type from direct injection, but its still allowed on producer, see 'CurrentSecurity'
 public class KingdomSecurity {
 
     public static enum ManagerStatus {
