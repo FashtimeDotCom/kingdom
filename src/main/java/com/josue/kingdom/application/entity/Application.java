@@ -129,13 +129,12 @@ public class Application extends Resource implements AuthenticationToken {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + Objects.hashCode(this.name);
-        hash = 83 * hash + Objects.hashCode(this.secret);
-        hash = 83 * hash + Objects.hashCode(this.company);
-        hash = 83 * hash + Objects.hashCode(this.email);
-        hash = 83 * hash + Objects.hashCode(this.status);
-        hash = 83 * hash + Objects.hashCode(this.domains);
-        hash = 83 * hash + Objects.hashCode(this.managers);
+        hash = 19 * hash + Objects.hashCode(this.name);
+        hash = 19 * hash + Objects.hashCode(this.appKey);
+        hash = 19 * hash + Objects.hashCode(this.secret);
+        hash = 19 * hash + Objects.hashCode(this.company);
+        hash = 19 * hash + Objects.hashCode(this.email);
+        hash = 19 * hash + Objects.hashCode(this.status);
         return hash;
     }
 
@@ -151,6 +150,9 @@ public class Application extends Resource implements AuthenticationToken {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
+        if (!Objects.equals(this.appKey, other.appKey)) {
+            return false;
+        }
         if (!Objects.equals(this.secret, other.secret)) {
             return false;
         }
@@ -160,13 +162,8 @@ public class Application extends Resource implements AuthenticationToken {
         if (!Objects.equals(this.email, other.email)) {
             return false;
         }
-        if (this.status != other.status) {
-            return false;
-        }
-        if (!Objects.equals(this.domains, other.domains)) {
-            return false;
-        }
-        return Objects.equals(this.managers, other.managers);
+        return this.status == other.status;
+
     }
 
     @Override

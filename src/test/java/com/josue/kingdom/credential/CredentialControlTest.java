@@ -204,7 +204,7 @@ public class CredentialControlTest {
     }
 
     @Test
-    public void testUpdateManager() throws RestException {
+    public void testUpdateManagerPassword() throws RestException {
         String token = "token-123";
         String newPassword = "pass-123";
 
@@ -220,6 +220,7 @@ public class CredentialControlTest {
         when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), token)).thenReturn(event);
         Manager updatedManager = control.updateManagerPassword(token, newPassword);
         assertEquals(newPassword, updatedManager.getPassword());
+        verify(event).setIsValid(false);
 
     }
 

@@ -64,8 +64,8 @@ public class Invitation extends TenantResource {
     @Enumerated(EnumType.STRING)
     private InvitationStatus status;
 
-    @Column(name = "confirmation_token")
-    private String confirmationToken;
+    @Column(name = "confirmation_code")
+    private String confirmationCode;
 
     @Override
     public void removeNonCreatable() {
@@ -144,12 +144,12 @@ public class Invitation extends TenantResource {
         this.status = status;
     }
 
-    public String getConfirmationToken() {
-        return confirmationToken;
+    public String getConfirmationCode() {
+        return confirmationCode;
     }
 
-    public void setConfirmationToken(String confirmationToken) {
-        this.confirmationToken = confirmationToken;
+    public void setConfirmationCode(String confirmationCode) {
+        this.confirmationCode = confirmationCode;
     }
 
     @Override

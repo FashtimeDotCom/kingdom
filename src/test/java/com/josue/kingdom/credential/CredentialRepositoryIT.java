@@ -1,7 +1,9 @@
 package com.josue.kingdom.credential;
 
+import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import com.josue.kingdom.domain.entity.ManagerMembership;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
@@ -164,6 +166,42 @@ public class CredentialRepositoryIT {
         List<ManagerMembership> foundMemberships = repository.getManagerMembershipByDomain(InstanceHelper.APP_ID, membership.getDomain().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundMemberships.size());
         assertEquals(membership, foundMemberships.get(0));
+    }
+
+    @Test
+    public void testGetApplication() {
+        Application application = InstanceHelper.createApplication();
+        repository.create(application);
+        Application foundApplication = repository.getApplication(application.getUuid());
+        assertEquals(application, foundApplication);
+    }
+
+    @Test
+    public void testGetPasswordResetEvent() {
+        Manager targetManager = InstanceHelper.createManager();
+        repository.create(targetManager);
+
+        PasswordChangeEvent event = InstanceHelper.createPasswordChangeEvent(targetManager);
+        repository.create(event);
+
+        PasswordChangeEvent foundEvent = repository.getPasswordResetEvent(InstanceHelper.APP_ID, event.getToken());
+        assertEquals(event, foundEvent);
+    }
+
+    @Test
+    public void testGetPasswordResetEvents() {
+        Manager targetManager = InstanceHelper.createManager();
+        repository.create(targetManager);
+
+        PasswordChangeEvent event1 = InstanceHelper.createPasswordChangeEvent(targetManager);
+        repository.create(event1);
+        PasswordChangeEvent event2 = InstanceHelper.createPasswordChangeEvent(targetManager);
+        repository.create(event2);
+
+        List<PasswordChangeEvent> events = repository.getPasswordResetEvents(InstanceHelper.APP_ID, targetManager.getUuid());
+        assertEquals(2, events.size());
+        assertTrue(events.contains(event1));
+        assertTrue(events.contains(event2));
     }
 
 }

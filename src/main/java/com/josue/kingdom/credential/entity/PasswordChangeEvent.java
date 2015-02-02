@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -22,10 +23,11 @@ import javax.validation.constraints.NotNull;
  * @author Josue
  */
 @Entity
-@Table(name = "password_reset_event")
+@Table(name = "password_change_event")
 public class PasswordChangeEvent extends TenantResource {
 
     @OneToOne
+    @JoinColumn(name = "target_manager_uuid")
     private Manager targetManager;
 
     @NotNull
@@ -37,6 +39,7 @@ public class PasswordChangeEvent extends TenantResource {
     @Column(name = "valid_until", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date validUntil;
 
+    @Column(name = "valid")
     private boolean isValid;
 
     public PasswordChangeEvent() {

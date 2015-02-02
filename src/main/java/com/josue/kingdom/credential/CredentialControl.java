@@ -199,6 +199,8 @@ public class CredentialControl {
         }
         //TODO and if password is the actual ?
         //running inside TX, we dont need to update
+
+        eventBean.setIsValid(false);
         eventBean.getTargetManager().setPassword(newPassword);
         return eventBean.getTargetManager();
 

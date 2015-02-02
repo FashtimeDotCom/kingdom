@@ -6,9 +6,12 @@
 package com.josue.kingdom.testutils;
 
 import com.josue.kingdom.JpaRepository;
+import com.josue.kingdom.application.entity.Application;
+import com.josue.kingdom.application.entity.ApplicationStatus;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.AccountStatus;
 import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.domain.entity.DomainStatus;
@@ -38,7 +41,7 @@ public abstract class InstanceHelper {
         //TIP: http://www.coderanch.com/t/530003/java/java/Comparing-Date-Timestamp-unexpected-result
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.HOUR, 2);
+        cal.add(Calendar.DAY_OF_MONTH, 2);
         cal.set(Calendar.MILLISECOND, 0); //reset milliseconds
 
         return cal.getTime();
@@ -167,4 +170,23 @@ public abstract class InstanceHelper {
         return apiCredential;
     }
 
+    public static Application createApplication() {
+        Application app = new Application();
+        app.setEmail("app@email.com");
+        app.setCompany("Company name");
+        app.setStatus(ApplicationStatus.ACTIVE);
+        app.setAppKey(new BigInteger(130, random).toString(32));
+        app.setName("App name");
+        app.setSecret("secr3t");
+        return app;
+    }
+
+    public static PasswordChangeEvent createPasswordChangeEvent(Manager targetManager) {
+        PasswordChangeEvent event = new PasswordChangeEvent();
+        event.setApplication(getDefaultTestApplication());
+        event.setTargetManager(targetManager);
+        event.setToken(new BigInteger(130, random).toString(32));
+        event.setValidUntil(mysqlMilliSafeTimestamp());
+        return event;
+    }
 }

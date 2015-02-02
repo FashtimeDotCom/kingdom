@@ -124,7 +124,7 @@
             <column name="domain_permission_uuid" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="confirmation_token" type="VARCHAR(255)">
+            <column name="confirmation_code" type="VARCHAR(255)" />
         </createTable>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-6">
@@ -177,108 +177,138 @@
         </createTable>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-8">
+        <createTable tableName="password_change_event">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="date_created" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update" type="TIMESTAMP"/>
+            <column name="application_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_manager_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valid_until" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="valid" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    
+    <changeSet author="Josue" id="kingdom-changelog-101">
         <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="api_credential"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-9">
+    <changeSet author="Josue" id="kingdom-changelog-102">
         <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="application"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-10">
+    <changeSet author="Josue" id="kingdom-changelog-103">
         <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="domain"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-11">
+    <changeSet author="Josue" id="kingdom-changelog-104">
         <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="domain_permission"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-12">
+    <changeSet author="Josue" id="kingdom-changelog-105">
         <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="invitation"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-13">
+    <changeSet author="Josue" id="kingdom-changelog-106">
         <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="manager"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-14">
+    <changeSet author="Josue" id="kingdom-changelog-107">
         <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="manager_membership"/>
     </changeSet>
     
         
-    <changeSet author="Josue" id="kingdom-changelog-15">
+    <changeSet author="Josue" id="kingdom-changelog-201">
         <addUniqueConstraint columnNames="domain_uuid, manager_uuid, application_uuid" constraintName="UK_DOMAIN_MANAGER_APPLICATION" deferrable="false" disabled="false" initiallyDeferred="false" tableName="manager_membership"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-16">
+    <changeSet author="Josue" id="kingdom-changelog-202">
         <addUniqueConstraint columnNames="email, application_uuid" constraintName="UK_EMAIL_APPLICATION" deferrable="false" disabled="false" initiallyDeferred="false" tableName="manager"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-17">
+    <changeSet author="Josue" id="kingdom-changelog-203">
         <addUniqueConstraint columnNames="username, application_uuid" constraintName="UK_USERNAME_APPLICATION" deferrable="false" disabled="false" initiallyDeferred="false" tableName="manager"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-18">
+    <changeSet author="Josue" id="kingdom-changelog-204">
         <addUniqueConstraint columnNames="application_uuid, uuid, owner_uuid" constraintName="UK_APPLICATION_UUID_OWNER" deferrable="false" disabled="false" initiallyDeferred="false" tableName="domain"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-19">
+    <changeSet author="Josue" id="kingdom-changelog-205">
         <addUniqueConstraint columnNames="app_key" constraintName="UK_APPKEY" deferrable="false" disabled="false" initiallyDeferred="false" tableName="application"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-20">
+    <changeSet author="Josue" id="kingdom-changelog-206">
         <addUniqueConstraint columnNames="level, domain_uuid, application_uuid" constraintName="UK_LEVEL_DOMAIN_APPLICATION" deferrable="false" disabled="false" initiallyDeferred="false" tableName="domain_permission"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-21">
+    <changeSet author="Josue" id="kingdom-changelog-207">
         <addUniqueConstraint columnNames="name, domain_uuid, application_uuid" constraintName="UK_NAME_DOMAIN_APPLICATION" deferrable="false" disabled="false" initiallyDeferred="false" tableName="domain_permission"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-22">
+    <changeSet author="Josue" id="kingdom-changelog-208">
         <addUniqueConstraint columnNames="application_uuid, api_key" constraintName="UK_APPLICATION_APIKEY" deferrable="false" disabled="false" initiallyDeferred="false" tableName="api_credential"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-23">
+    <changeSet author="Josue" id="kingdom-changelog-209">
         <addUniqueConstraint columnNames="application_uuid, api_key, membership_uuid" constraintName="UK_APPLICATION_APIKEY_MEMBERSHIP" deferrable="false" disabled="false" initiallyDeferred="false" tableName="api_credential"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-24">
+    <changeSet author="Josue" id="kingdom-changelog-210">
         <addUniqueConstraint columnNames="application_uuid, target_manager_uuid, domain_uuid" constraintName="UK_APPLICATION_TARGETMANAGER_DOMAIN" deferrable="false" disabled="false" initiallyDeferred="false" tableName="invitation"/>
     </changeSet>
 
-
    
     
-    <changeSet author="Josue" id="kingdom-changelog-25">
+    <changeSet author="Josue" id="kingdom-changelog-301">
         <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="invitation" constraintName="FK_INVITATION_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-26">
+    <changeSet author="Josue" id="kingdom-changelog-302">
         <addForeignKeyConstraint baseColumnNames="domain_permission_uuid" baseTableName="invitation" constraintName="FK_INVITATION_DOMAINPERMISSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="domain_permission"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-27">
+    <changeSet author="Josue" id="kingdom-changelog-303">
         <addForeignKeyConstraint baseColumnNames="manager_uuid" baseTableName="manager_membership" constraintName="FK_MANAGERMEMBERSHIP_MANAGER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="manager"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-28">
+    <changeSet author="Josue" id="kingdom-changelog-304">
         <addForeignKeyConstraint baseColumnNames="author_manager_uuid" baseTableName="invitation" constraintName="FK_INVITATION_AUTHORMANAGER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="manager"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-29">
+    <changeSet author="Josue" id="kingdom-changelog-305">
         <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="manager_membership" constraintName="FK_MANAGERMEMBERSHIP_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-30">
+    <changeSet author="Josue" id="kingdom-changelog-306">
         <addForeignKeyConstraint baseColumnNames="owner_uuid" baseTableName="domain" constraintName="FK_DOMAIN_MANAGER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="manager"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-31">
+    <changeSet author="Josue" id="kingdom-changelog-307">
         <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="manager" constraintName="FK_MANAGER_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-32">
+    <changeSet author="Josue" id="kingdom-changelog-308">
         <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="api_credential" constraintName="FK_APICREDENTIAL_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-33">
+    <changeSet author="Josue" id="kingdom-changelog-309">
         <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="domain_permission" constraintName="FK_DOMAINPERMISSION_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-34">
+    <changeSet author="Josue" id="kingdom-changelog-310">
         <addForeignKeyConstraint baseColumnNames="domain_uuid" baseTableName="domain_permission" constraintName="FK_DOMAINPERMISSION_DOMAIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="domain"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-35">
+    <changeSet author="Josue" id="kingdom-changelog-311">
         <addForeignKeyConstraint baseColumnNames="domain_uuid" baseTableName="manager_membership" constraintName="FK_MANAGERMEMBERSHIP_DOMAIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="domain"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-36">
+    <changeSet author="Josue" id="kingdom-changelog-312">
         <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="domain" constraintName="FK_DOMAIN_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-37">
+    <changeSet author="Josue" id="kingdom-changelog-313">
         <addForeignKeyConstraint baseColumnNames="permission_uuid" baseTableName="manager_membership" constraintName="FK_MANAGERMEMBERSHIP_DOMAINPERMISSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="domain_permission"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-38">
+    <changeSet author="Josue" id="kingdom-changelog-314">
         <addForeignKeyConstraint baseColumnNames="domain_uuid" baseTableName="invitation" constraintName="FK_INVITATION_DOMAIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="domain"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-39">
+    <changeSet author="Josue" id="kingdom-changelog-315">
         <addForeignKeyConstraint baseColumnNames="membership_uuid" baseTableName="api_credential" constraintName="FK_APICREDENTIAL_MANAGERMEMBERSHIP" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="manager_membership"/>
     </changeSet>
-    <changeSet author="Josue" id="kingdom-changelog-40">
+    <changeSet author="Josue" id="kingdom-changelog-316">
         <addForeignKeyConstraint baseColumnNames="target_manager_uuid" baseTableName="invitation" constraintName="FK_INVITATION_TARGETMANAGER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="manager"/>
+    </changeSet>
+    <changeSet author="Josue" id="kingdom-changelog-317">
+        <addForeignKeyConstraint baseColumnNames="target_manager_uuid" baseTableName="password_change_event" constraintName="FK_PASSWORDEVENT_TARGETMANAGER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="manager"/>
     </changeSet>
 </databaseChangeLog>
