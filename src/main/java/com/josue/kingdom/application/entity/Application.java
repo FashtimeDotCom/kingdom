@@ -42,6 +42,7 @@ public class Application extends Resource implements AuthenticationToken {
     @NotNull
     private String secret;// unique
     private String company;
+
     @NotNull
     private String email;
 
@@ -51,6 +52,7 @@ public class Application extends Resource implements AuthenticationToken {
 
     @OneToMany(mappedBy = "application", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Domain> domains = new ArrayList<>();
+
     @OneToMany(mappedBy = "application", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Manager> managers = new ArrayList<>();
 
@@ -127,14 +129,24 @@ public class Application extends Resource implements AuthenticationToken {
     }
 
     @Override
+    public Object getPrincipal() {
+        return appKey;
+    }
+
+    @Override
+    public Object getCredentials() {
+        return secret;
+    }
+
+    @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 19 * hash + Objects.hashCode(this.name);
-        hash = 19 * hash + Objects.hashCode(this.appKey);
-        hash = 19 * hash + Objects.hashCode(this.secret);
-        hash = 19 * hash + Objects.hashCode(this.company);
-        hash = 19 * hash + Objects.hashCode(this.email);
-        hash = 19 * hash + Objects.hashCode(this.status);
+        int hash = 3;
+        hash = 47 * hash + Objects.hashCode(this.name);
+        hash = 47 * hash + Objects.hashCode(this.appKey);
+        hash = 47 * hash + Objects.hashCode(this.secret);
+        hash = 47 * hash + Objects.hashCode(this.company);
+        hash = 47 * hash + Objects.hashCode(this.email);
+        hash = 47 * hash + Objects.hashCode(this.status);
         return hash;
     }
 
@@ -163,17 +175,6 @@ public class Application extends Resource implements AuthenticationToken {
             return false;
         }
         return this.status == other.status;
-
-    }
-
-    @Override
-    public Object getPrincipal() {
-        return appKey;
-    }
-
-    @Override
-    public Object getCredentials() {
-        return secret;
     }
 
 }

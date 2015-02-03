@@ -65,7 +65,7 @@ public class DomainResourceIT {
         ListResource<Domain> domains = getDomainsResponse.getEntity(new GenericType<ListResource<Domain>>() {
         });
         //Values based on Liquibase test changelog
-        assertTrue(domains.getItems().size() == 1);
+        assertTrue(domains.getItems().size() >= 1);
     }
 
     //Testing against the self joined domain, when a new one is created

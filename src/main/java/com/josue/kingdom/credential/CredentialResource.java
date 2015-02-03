@@ -6,6 +6,7 @@
 package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import com.josue.kingdom.credential.entity.SimpleLogin;
 import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
@@ -63,30 +64,23 @@ public class CredentialResource {
         return ResponseUtils.buildSimpleResponse(managerBylogin, Response.Status.OK, info);
     }
 
-    @POST//TODO POST ??? PUT ???
-    //TODO change history ?
-    //TODO password should not be changed qhen the service is requested, instead, it should send a token by email
-    //TODO limit the request by username
+    @POST
     @Path("{username}/password-request")
     public Response passwordReset(@PathParam("username") String username) throws RestException {
         control.createPasswordChangeEvent(username);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }
 
-    @PUT//TODO POST ??? PUT ???
-    //TODO change history ?
-    //TODO password should not be changed qhen the service is requested, instead, it should send a token by email
-    //TODO limit the request by username
-    @Path("{username}/password-request")
-    public Response updateManagerPassword(@PathParam("token") String token, @PathParam("password") String newPassword) throws RestException {
-        control.updateManagerPassword(token, newPassword);
+    @PUT//TODO add test
+    @Path("{username}/password")
+    public Response updateManagerPassword(@PathParam("username") String username, PasswordChangeEvent event) throws RestException {
+        control.updateManagerPassword(username, event);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }
 
-    @GET//TODO POST ??? PUT ???
+    @POST
     @Path("{email}/login-recover")
-    //TODO history ?
-    //TODO return any body ? SHOULD THOSE ACCOUNT METHOD HAVE AN ENTITY CLASS ?
+    //TODO Improve the body ? LoginRecoveryEvent just have a manager
     public Response loginRecover(@PathParam("email") String email) throws RestException {
         control.loginRecovery(email);
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);

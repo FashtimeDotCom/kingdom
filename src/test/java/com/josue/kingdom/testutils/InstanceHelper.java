@@ -7,6 +7,7 @@ package com.josue.kingdom.testutils;
 
 import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.application.entity.Application;
+import com.josue.kingdom.application.entity.ApplicationConfig;
 import com.josue.kingdom.application.entity.ApplicationStatus;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.AccountStatus;
@@ -178,7 +179,19 @@ public abstract class InstanceHelper {
         app.setAppKey(new BigInteger(130, random).toString(32));
         app.setName("App name");
         app.setSecret("secr3t");
+
         return app;
+    }
+
+    public static ApplicationConfig createApplicationConfig(Application application) {
+        ApplicationConfig config = new ApplicationConfig();
+        config.setAccountCallbackUrl("http://localhost:8080/account-form");
+        config.setPasswordCallbackUrl("http://localhost:8080/password-reset");
+        config.setInvitationEmailTemplate("<p>Invitation Template</>");
+        config.setPasswordEmailTemplate("<p>Password Template</>");
+        config.setLoginRecoveryEmailTemplate("<p>Login recover Template</>");
+        config.setApplication(application);
+        return config;
     }
 
     public static PasswordChangeEvent createPasswordChangeEvent(Manager targetManager) {

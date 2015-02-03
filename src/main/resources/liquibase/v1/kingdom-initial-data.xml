@@ -3,9 +3,24 @@
     
     <property name="now" value="now()" dbms="mysql" />
     <property name="now" value="CURRENT_TIMESTAMP()" dbms="h2" />  
-        
-    <!-- DEFAULT APPLICATION -->
-    <changeSet author="Josue" id="kingdom-initial-data-1">
+    
+    <!-- TODO ADD MULTITENANCY DATA -->
+    <changeSet author="Josue" id="kingdom-initial-data-0" failOnError="true" runAlways="true">
+        <delete tableName="api_credential" />
+        <delete tableName="manager_membership" />
+        <delete tableName="invitation" />
+        <delete tableName="domain_permission" />
+        <delete tableName="password_change_event" />
+        <delete tableName="login_recovery_event" />
+        <delete tableName="application_config" />
+        <delete tableName="domain" />
+        <delete tableName="manager" />
+        <delete tableName="application" />
+    </changeSet>
+                
+    
+    <!-- DEFAULT APPLICATION -->   
+    <changeSet author="Josue" id="kingdom-initial-data-1" runAlways="true">
         <insert tableName="application">
             <column name="uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
             <column name="date_created" valueDate="${now}"/>
@@ -17,9 +32,21 @@
             <column name="status" value="ACTIVE"/>
         </insert>
     </changeSet>
-     
+    
+    <changeSet author="Josue" id="kingdom-initial-data-2" runAlways="true">
+        <insert tableName="application_config">
+            <column name="uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
+            <column name="date_created" valueDate="${now}"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
+            <column name="password_email_template"><![CDATA[ <p>test {{0}}</p> ]]></column>
+            <column name="invitation_email_template"><![CDATA[ <p>test {{0}}</p> ]]></column>
+            <column name="account_callback_url" value="http://localhost:8080/account-form"/>
+            <column name="password_callback_url" value="http://localhost:8080/password-reset"/>
+        </insert>
+    </changeSet>
+    
     <!-- MANAGER 1 -->
-    <changeSet author="Josue" id="kingdom-initial-data-2">
+    <changeSet author="Josue" id="kingdom-initial-data-3" runAlways="true">
         <insert tableName="manager">
             <column name="uuid" value="zb1XuD3CQ3C4pmXmdKQw1g"/>
             <column name="date_created" valueDate="${now}"/>
@@ -34,7 +61,7 @@
     </changeSet>
     
     <!-- DOMAIN 1 -->
-    <changeSet author="Josue" id="kingdom-initial-data-3">
+    <changeSet author="Josue" id="kingdom-initial-data-4" runAlways="true">
         <insert tableName="domain">
             <column name="uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
             <column name="date_created" valueDate="${now}"/>
@@ -47,7 +74,7 @@
     </changeSet>
     
     <!-- Default Domain 1 Permissions -->
-    <changeSet author="Josue" id="kingdom-initial-data-4">
+    <changeSet author="Josue" id="kingdom-initial-data-5" runAlways="true">
         <insert tableName="domain_permission">
             <column name="uuid" value="0UhufmEcR-u7oSjm1K3KlQ"/>
             <column name="description" value="PERMISSION LEVEL 1"/>
@@ -95,7 +122,7 @@
     </changeSet>
     
     <!-- MANAGER MEMBERSHIP-->
-    <changeSet author="Josue" id="kingdom-initial-data-5">
+    <changeSet author="Josue" id="kingdom-initial-data-6" runAlways="true">
         <insert tableName="manager_membership">
             <column name="uuid" value="lHMNjsYWSR2tzt-Usvt6bg"/>
             <column name="date_created" valueDate="${now}"/>
@@ -106,7 +133,7 @@
         </insert>
     </changeSet>
     
-    <changeSet author="Josue" id="kingdom-initial-data-6">
+    <changeSet author="Josue" id="kingdom-initial-data-7" runAlways="true">
         <insert tableName="api_credential">
             <column name="uuid" value="GtnSNJRFS2CG34rS3vtk0g"/>
             <column name="date_created" valueDate="${now}"/>
@@ -118,11 +145,12 @@
         </insert>
     </changeSet>
     
-    <changeSet author="Josue" id="kingdom-initial-data-7">
+    <changeSet author="Josue" id="kingdom-initial-data-8" runAlways="true">
         <insert tableName="manager">
             <column name="uuid" value="m33cIFaeSx2-OLmjXskCLw"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="email" value="manager3@gmail.com"/>
+            <column name="username" value="manager3"/>
             <column name="password" value="8939ing938ng3984"/>
             <column name="status" value="PROVISIONING"/>
             <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
@@ -133,9 +161,21 @@
             <column name="status" value="CREATED"/>
             <column name="target_manager_uuid" value="m33cIFaeSx2-OLmjXskCLw"/>
             <column name="token" value="93f52dc9-496d-46bc-a2f8-ba7394fca966"/>
+            <column name="valid_until"  valueDate="2038-01-01 00:00:00"/>
             <column name="author_manager_uuid" value="zb1XuD3CQ3C4pmXmdKQw1g"/>
             <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
             <column name="domain_permission_uuid" value="0UhufmEcR-u7oSjm1K3KlQ"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
+        </insert>
+    </changeSet>
+    <changeSet author="Josue" id="kingdom-initial-data-9" runAlways="true">
+        <insert tableName="password_change_event">
+            <column name="uuid" value="8jHLO1ae$FVOLmjX12JNC"/>
+            <column name="date_created" valueDate="${now}"/>
+            <column name="target_manager_uuid" value="m33cIFaeSx2-OLmjXskCLw"/>
+            <column name="token" value="9RtbC5489Er6OLmjXskCLw"/>
+            <column name="valid_until"  valueDate="2038-01-01 00:00:00"/>
+            <column name="valid" valueBoolean="1"/>
             <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>
@@ -143,8 +183,8 @@
    
     <!-- ####################################################################################### -->
     
-    <!-- MANAGER 2 -->
-    <changeSet author="Josue" id="kingdom-initial-data-8">
+    <!-- MANAGER 1 -->
+    <changeSet author="Josue" id="kingdom-initial-data-10" runAlways="true">
         <insert tableName="manager">
             <column name="uuid" value="U35vaEf8SSaKio1mlxXzAA"/>
             <column name="date_created" valueDate="${now}"/>
@@ -159,7 +199,7 @@
     </changeSet>
     
     <!-- DOMAIN 1 -->
-    <changeSet author="Josue" id="kingdom-initial-data-9">
+    <changeSet author="Josue" id="kingdom-initial-data-11" runAlways="true">
         <insert tableName="domain">
             <column name="uuid" value="NmjzuKzHTru0ZJo_lo_uUg"/>
             <column name="date_created" valueDate="${now}"/>
@@ -172,7 +212,7 @@
     </changeSet>
     
     <!-- Default Domain 1 Permissions -->
-    <changeSet author="Josue" id="kingdom-initial-data-10">
+    <changeSet author="Josue" id="kingdom-initial-data-12" runAlways="true">
         <insert tableName="domain_permission">
             <column name="uuid" value="P2IigVy_TjmEKFFxSDnQOw"/>
             <column name="description" value="GUEST PERMISSION"/>
@@ -193,7 +233,7 @@
     </changeSet>
     
     <!-- MANAGER MEMBERSHIP-->
-    <changeSet author="Josue" id="kingdom-initial-data-11">
+    <changeSet author="Josue" id="kingdom-initial-data-13" runAlways="true">
         <insert tableName="manager_membership">
             <column name="uuid" value="n4RsrYMBQWyrSLtM5fkrLA"/>
             <column name="date_created" valueDate="${now}"/>
@@ -204,7 +244,7 @@
         </insert>
     </changeSet>
     
-    <changeSet author="Josue" id="kingdom-initial-data-12">
+    <changeSet author="Josue" id="kingdom-initial-data-14" runAlways="true">
         <insert tableName="api_credential">
             <column name="uuid" value="cEgkLfhiQpWSMO4PhCAlkw"/>
             <column name="date_created" valueDate="${now}"/>
@@ -216,5 +256,4 @@
         </insert>
     </changeSet>
     
-       
 </databaseChangeLog>

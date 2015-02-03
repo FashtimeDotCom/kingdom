@@ -42,6 +42,9 @@ public class PasswordChangeEvent extends TenantResource {
     @Column(name = "valid")
     private boolean isValid;
 
+    @Column(name = "new_password")
+    private String newPassword;
+
     public PasswordChangeEvent() {
 
     }
@@ -83,13 +86,22 @@ public class PasswordChangeEvent extends TenantResource {
         this.isValid = isValid;
     }
 
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 71 * hash + Objects.hashCode(this.targetManager);
-        hash = 71 * hash + Objects.hashCode(this.token);
-        hash = 71 * hash + Objects.hashCode(this.validUntil);
-        hash = 71 * hash + (this.isValid ? 1 : 0);
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.targetManager);
+        hash = 97 * hash + Objects.hashCode(this.token);
+        hash = 97 * hash + Objects.hashCode(this.validUntil);
+        hash = 97 * hash + (this.isValid ? 1 : 0);
+        hash = 97 * hash + Objects.hashCode(this.newPassword);
         return hash;
     }
 
@@ -111,6 +123,10 @@ public class PasswordChangeEvent extends TenantResource {
         if (!Objects.equals(this.validUntil, other.validUntil)) {
             return false;
         }
-        return this.isValid == other.isValid;
+        if (this.isValid != other.isValid) {
+            return false;
+        }
+        return Objects.equals(this.newPassword, other.newPassword);
     }
+
 }

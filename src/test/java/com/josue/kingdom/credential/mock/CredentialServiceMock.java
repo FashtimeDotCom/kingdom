@@ -35,8 +35,8 @@ public class CredentialServiceMock extends CredentialService {
     @Override
     public void sendLoginRecovery(@Observes(during = TransactionPhase.AFTER_SUCCESS) LoginRecoveryEvent event) {
         logger.info("************ CREDENTIALSERVICE MOCK - sendPasswordReset() ************");
-        logger.log(Level.INFO, "TARGET EMAIL: {0}", event.getTargetEmail());
-        logger.log(Level.INFO, "LOGIN: {0}", event.getLogin());
+        logger.log(Level.INFO, "TARGET EMAIL: {0}", event.getTargetManager().getEmail());
+        logger.log(Level.INFO, "USERNAME: {0}", event.getTargetManager().getUsername());
 
     }
 

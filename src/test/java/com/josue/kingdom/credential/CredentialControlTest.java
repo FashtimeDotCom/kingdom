@@ -124,12 +124,14 @@ public class CredentialControlTest {
 
     @Test(expected = RestException.class)
     public void testPasswordResetManagerNotFound() throws RestException {
-        String login = "login";
-        String token = "token-123";
-        String newPassword = "new-password-123";
+        String username = "a-username";
 
-        when(credentialRepository.getManagerByUsername(currentApplication.getUuid(), login)).thenReturn(null);
-        control.updateManagerPassword(token, newPassword);
+        PasswordChangeEvent event = Mockito.spy(new PasswordChangeEvent());
+        event.setNewPassword("new-psw-123");
+        event.setToken("token-123");
+
+        when(credentialRepository.getManagerByUsername(currentApplication.getUuid(), username)).thenReturn(null);
+        control.updateManagerPassword(username, event);
         fail();
     }
 
@@ -164,63 +166,91 @@ public class CredentialControlTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void testUpdateManagerPasswordNotFound() throws RestException {
-        String token = "token-123";
-        String newPassword = "pass-123";
+        String username = "a-username";
+        PasswordChangeEvent event = Mockito.spy(new PasswordChangeEvent());
+        event.setNewPassword("new-psw-123");
+        event.setToken("token-123");
 
-        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), token)).thenReturn(null);
-        control.updateManagerPassword(token, newPassword);
+        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), event.getToken())).thenReturn(null);
+        control.updateManagerPassword(username, event);
         fail();
     }
 
     @Test(expected = RestException.class)
     public void testUpdateManagerPasswordInvalid() throws RestException {
-        String token = "token-123";
-        String newPassword = "pass-123";
-
+        String username = "a-username";
         PasswordChangeEvent event = Mockito.spy(new PasswordChangeEvent());
+        event.setNewPassword("new-psw-123");
+        event.setToken("token-123");
         event.setIsValid(false);
 
-        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), token)).thenReturn(event);
-        control.updateManagerPassword(token, newPassword);
+        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), event.getToken())).thenReturn(event);
+        control.updateManagerPassword(username, event);
         fail();
     }
 
     @Test(expected = RestException.class)
     public void testUpdateManagerPasswordExpired() throws RestException {
-        String token = "token-123";
-        String newPassword = "pass-123";
+        String username = "a-wrong-username"; //correct username is: current-manager
+        PasswordChangeEvent event = Mockito.spy(new PasswordChangeEvent());
+        event.setNewPassword("new-psw-123");
+        event.setToken("token-123");
+        event.setIsValid(false);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.DAY_OF_MONTH, -10);
 
+        event.setIsValid(true);
+        event.setValidUntil(calendar.getTime());
+        Manager manager = new Manager();
+        manager.setUsername("a-username");
+        event.setTargetManager(manager);
+
+        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), event.getToken())).thenReturn(event);
+        control.updateManagerPassword(username, event);
+        fail();
+    }
+
+    @Test(expected = RestException.class)
+    public void testUpdateManagerInvalidUsername() throws RestException {
         PasswordChangeEvent event = Mockito.spy(new PasswordChangeEvent());
+        event.setNewPassword("new-psw-123");
+        event.setToken("token-123");
+        event.setIsValid(false);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_MONTH, -10);
+
         event.setIsValid(true);
         event.setValidUntil(calendar.getTime());
 
-        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), token)).thenReturn(event);
-        control.updateManagerPassword(token, newPassword);
+        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), event.getToken())).thenReturn(event);
+        control.updateManagerPassword(currentManager.getUsername(), event);
         fail();
     }
 
     @Test
     public void testUpdateManagerPassword() throws RestException {
-        String token = "token-123";
-        String newPassword = "pass-123";
+        String username = "a-username";
+        PasswordChangeEvent event = Mockito.spy(new PasswordChangeEvent());
+        event.setNewPassword("new-psw-123");
+        event.setToken("token-123");
+        event.setIsValid(false);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.DAY_OF_MONTH, 1);
 
-        PasswordChangeEvent event = Mockito.spy(new PasswordChangeEvent());
         event.setIsValid(true);
         event.setValidUntil(calendar.getTime());
-        event.setTargetManager(new Manager());
+        event.setTargetManager(currentManager);
 
-        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), token)).thenReturn(event);
-        Manager updatedManager = control.updateManagerPassword(token, newPassword);
-        assertEquals(newPassword, updatedManager.getPassword());
-        verify(event).setIsValid(false);
+        when(credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), event.getToken())).thenReturn(event);
+        Manager updatedManager = control.updateManagerPassword(username, event);
+        assertEquals(event.getNewPassword(), updatedManager.getPassword());
+        verify(event, times(2)).setIsValid(false);
 
     }
 
@@ -521,7 +551,10 @@ public class CredentialControlTest {
         when(credentialRepository.getManagerByEmail(currentApplication.getUuid(), email)).thenReturn(foundManager);
 
         control.loginRecovery(email);
-        verify(mockEvent).fire(new LoginRecoveryEvent(email, foundManager.getUsername()));
+
+        LoginRecoveryEvent event = new LoginRecoveryEvent(foundManager);
+        verify(credentialRepository).create(event);
+        verify(mockEvent).fire(event);
     }
 
     @Test(expected = ResourceNotFoundException.class)

@@ -29,6 +29,7 @@ import com.josue.kingdom.security.AccessLevelPermission;
 import com.josue.kingdom.security.KingdomSecurity;
 import com.josue.kingdom.security.manager.ManagerToken;
 import com.josue.kingdom.util.KingdomUtils;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
@@ -190,18 +191,20 @@ public class CredentialControl {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Manager updateManagerPassword(String passwordChangeToken, String newPassword) throws RestException {
-        PasswordChangeEvent eventBean = credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), passwordChangeToken);
+    public Manager updateManagerPassword(String username, PasswordChangeEvent inputEvent) throws RestException {
+        PasswordChangeEvent eventBean = credentialRepository.getPasswordResetEvent(security.getCurrentApplication().getUuid(), inputEvent.getToken());
         if (eventBean == null) {
-            throw new ResourceNotFoundException(PasswordChangeEvent.class, "token", passwordChangeToken);
+            throw new ResourceNotFoundException(PasswordChangeEvent.class, "token", inputEvent.getToken());
         } else if (!eventBean.isIsValid() || eventBean.getValidUntil().before(new Date())) {
-            throw new RestException(PasswordChangeEvent.class, passwordChangeToken, "Invalid token", Response.Status.BAD_REQUEST);
+            throw new RestException(PasswordChangeEvent.class, inputEvent.getToken(), "Invalid token", Response.Status.BAD_REQUEST);
+        } else if (eventBean.getTargetManager().getUsername().equals(username)) {
+            throw new RestException(PasswordChangeEvent.class, null, "Invalid username: " + username, Response.Status.BAD_REQUEST);
         }
-        //TODO and if password is the actual ?
         //running inside TX, we dont need to update
 
         eventBean.setIsValid(false);
-        eventBean.getTargetManager().setPassword(newPassword);
+        eventBean.setNewPassword(inputEvent.getNewPassword());
+        eventBean.getTargetManager().setPassword(inputEvent.getNewPassword());
         return eventBean.getTargetManager();
 
     }
@@ -211,7 +214,6 @@ public class CredentialControl {
     public void createPasswordChangeEvent(String username) throws RestException {
         Manager foundManager = credentialRepository.getManagerByUsername(security.getCurrentApplication().getUuid(), username);
         if (foundManager == null) {
-            //TODO wich exception should be thrown ?
             throw new ResourceNotFoundException(Manager.class, "username", username);
         }
 
@@ -223,6 +225,8 @@ public class CredentialControl {
 
         String token = utils.generateBase64FromUuid();
         PasswordChangeEvent eventBean = new PasswordChangeEvent(foundManager, token);
+        eventBean.setApplication(security.getCurrentApplication());
+        eventBean.setValidUntil(utils.addFutureDate(Calendar.DAY_OF_MONTH, 1));
 
         credentialRepository.create(eventBean);
         passwordResetEvent.fire(eventBean);
@@ -232,13 +236,16 @@ public class CredentialControl {
     public void loginRecovery(String email) throws RestException {
         Manager foundManager = credentialRepository.getManagerByEmail(security.getCurrentApplication().getUuid(), email);
         if (foundManager == null) {
-            //TODO wich exception should be thrown ?
             throw new ResourceNotFoundException(Manager.class, "email", email);
         }
 
         //This block should run within the same TX
         //TODO check email / login access policies
-        loginRecoveryEvent.fire(new LoginRecoveryEvent(foundManager.getEmail(), foundManager.getUsername()));
+        LoginRecoveryEvent event = new LoginRecoveryEvent(foundManager);
+        event.setApplication(security.getCurrentApplication());
+
+        credentialRepository.create(event);
+        loginRecoveryEvent.fire(event);
     }
 
     @Transactional(Transactional.TxType.REQUIRED)//TODO update all logic... manager is now created on invitation submit

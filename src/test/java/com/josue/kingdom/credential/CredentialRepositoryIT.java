@@ -1,6 +1,5 @@
 package com.josue.kingdom.credential;
 
-import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
@@ -9,8 +8,6 @@ import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.TargetsContainer;
 import org.jboss.arquillian.junit.Arquillian;
@@ -30,9 +27,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 @Transactional(TransactionMode.DISABLED)
 public class CredentialRepositoryIT {
-
-    @PersistenceContext
-    EntityManager em;
 
     @Inject
     CredentialRepository repository;
@@ -166,14 +160,6 @@ public class CredentialRepositoryIT {
         List<ManagerMembership> foundMemberships = repository.getManagerMembershipByDomain(InstanceHelper.APP_ID, membership.getDomain().getUuid(), DEFAULT_LIMIT, DEFAULT_OFFSET);
         assertEquals(1, foundMemberships.size());
         assertEquals(membership, foundMemberships.get(0));
-    }
-
-    @Test
-    public void testGetApplication() {
-        Application application = InstanceHelper.createApplication();
-        repository.create(application);
-        Application foundApplication = repository.getApplication(application.getUuid());
-        assertEquals(application, foundApplication);
     }
 
     @Test

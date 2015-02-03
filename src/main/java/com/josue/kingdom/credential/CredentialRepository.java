@@ -6,7 +6,6 @@
 package com.josue.kingdom.credential;
 
 import com.josue.kingdom.JpaRepository;
-import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
@@ -24,13 +23,6 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 @Transactional(Transactional.TxType.NOT_SUPPORTED)
 public class CredentialRepository extends JpaRepository {
-
-    public Application getApplication(String appUuid) {
-        TypedQuery<Application> query = em.createQuery("SELECT app FROM Application app WHERE app.uuid = :appUuid", Application.class);
-        query.setParameter("appUuid", appUuid);
-        List<Application> memberships = query.getResultList();
-        return extractSingleResultFromList(memberships);
-    }
 
     public List<APICredential> getAPICredentials(String appUuid, String domainUuid, Integer limit, Integer offset) {
         TypedQuery<APICredential> query = em.createQuery("SELECT api FROM APICredential api WHERE api.membership.domain.uuid = :domainUuid AND api.application.uuid = :appUuid", APICredential.class);

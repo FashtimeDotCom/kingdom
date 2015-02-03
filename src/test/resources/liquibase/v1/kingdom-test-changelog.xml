@@ -194,15 +194,55 @@
             <column name="token" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="valid_until" type="TIMESTAMP">
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="valid_until" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="valid" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
+            <column name="new_password" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    
+    <changeSet author="Josue" id="kingdom-changelog-9">
+        <createTable tableName="application_config">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="date_created" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column  name="last_update" type="TIMESTAMP"/>
+            <column name="application_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password_email_template" type="LONGTEXT"/>
+            <column name="invitation_email_template" type="LONGTEXT"/>
+            <column name="loginrec_email_template" type="LONGTEXT"/>
+            <column name="password_callback_url" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_callback_url" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Josue" id="kingdom-changelog-10">
+        <createTable tableName="login_recovery_event">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="date_created" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column  name="last_update" type="TIMESTAMP"/>
+            <column name="application_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_manager_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
     
     <changeSet author="Josue" id="kingdom-changelog-101">
         <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="api_credential"/>
@@ -257,6 +297,9 @@
     <changeSet author="Josue" id="kingdom-changelog-210">
         <addUniqueConstraint columnNames="application_uuid, target_manager_uuid, domain_uuid" constraintName="UK_APPLICATION_TARGETMANAGER_DOMAIN" deferrable="false" disabled="false" initiallyDeferred="false" tableName="invitation"/>
     </changeSet>
+    <changeSet author="Josue" id="kingdom-changelog-211">
+        <addUniqueConstraint columnNames="application_uuid" constraintName="UK_APPLICATIONCONFIG" deferrable="false" disabled="false" initiallyDeferred="false" tableName="application_config"/>
+    </changeSet>
 
    
     
@@ -310,5 +353,17 @@
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-317">
         <addForeignKeyConstraint baseColumnNames="target_manager_uuid" baseTableName="password_change_event" constraintName="FK_PASSWORDEVENT_TARGETMANAGER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="manager"/>
+    </changeSet>
+    <changeSet author="Josue" id="kingdom-changelog-318">
+        <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="password_change_event" constraintName="FK_PASSWORDEVENT_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
+    </changeSet>
+    <changeSet author="Josue" id="kingdom-changelog-319">
+        <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="application_config" constraintName="FK_APPCONFIG_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
+    </changeSet>
+    <changeSet author="Josue" id="kingdom-changelog-320">
+        <addForeignKeyConstraint baseColumnNames="application_uuid" baseTableName="login_recovery_event" constraintName="FK_LOGINREC_APPLICATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="application"/>
+    </changeSet>
+    <changeSet author="Josue" id="kingdom-changelog-321">
+        <addForeignKeyConstraint baseColumnNames="target_manager_uuid" baseTableName="login_recovery_event" constraintName="FK_APPCONFIG_TARGETMANAGER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="uuid" referencedTableName="manager"/>
     </changeSet>
 </databaseChangeLog>

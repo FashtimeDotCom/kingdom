@@ -6,6 +6,8 @@
 package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.Manager;
+import com.josue.kingdom.credential.entity.PasswordChangeEvent;
+import com.josue.kingdom.credential.entity.SimpleLogin;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.RestHelper;
 import com.sun.jersey.api.client.ClientResponse;
@@ -29,9 +31,13 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class CredentialResourceIT {
 
+    private static final String DEFAULT_KINGDOM_HEADER = "Kingdom";
+
+    private static final String LOGIN_ATTEMPT = "login/attempts";
     private static final String CREDENTIALS = "credentials";
     private static final String CURRENT = "current";
-    private static final String PASSWORD_RESET = "password-reset";
+    private static final String PASSWORD_RESET_REQUEST = "password-request";
+    private static final String MANAGER_PASSWORD = "password";
     private static final String LOGIN_RECOVER = "login-recover";
 
     @Deployment
@@ -73,14 +79,14 @@ public class CredentialResourceIT {
     @Test
     public void testPasswordReset() {
         String testInitialUsername = "manager2";//secundary manager
-        ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, testInitialUsername, PASSWORD_RESET);
+        ClientResponse response = RestHelper.doPostRequest(null, CREDENTIALS, testInitialUsername, PASSWORD_RESET_REQUEST);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }
 
     @Test
     public void testLoginRecover() {
         String testInitialEmail = "manager1@gmail.com";
-        ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, testInitialEmail, LOGIN_RECOVER);
+        ClientResponse response = RestHelper.doPostRequest(null, CREDENTIALS, testInitialEmail, LOGIN_RECOVER);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }
 
@@ -107,6 +113,36 @@ public class CredentialResourceIT {
         assertEquals(username, foundManager.getUsername());
         assertEquals(tstInitialInvEmail, foundManager.getEmail());
 
+    }
+
+    @Test
+    public void testLogin() throws Exception {
+        String defaultManagerUsername = "manager1";
+        //manager1:pass123
+        String initialBase64DataManagerCredentials = "bWFuYWdlcjE6cGFzczEyMw==";
+
+        SimpleLogin simpleLogin = new SimpleLogin();
+        simpleLogin.setType(SimpleLogin.LoginType.BASIC);
+        simpleLogin.setValue(initialBase64DataManagerCredentials);
+
+        ClientResponse response = RestHelper.doPostRequest(simpleLogin, CREDENTIALS, LOGIN_ATTEMPT);
+        RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
+
+        Manager foundManager = response.getEntity(new GenericType<Manager>() {
+        });
+        assertEquals(defaultManagerUsername, foundManager.getUsername());
+    }
+
+    @Test
+    public void testUpdateManagerPassword() throws Exception {
+        String defaultManagerUsername = "manager1";
+        String initialTestDataPswToken = "9RtbC5489Er6OLmjXskCLw";
+        PasswordChangeEvent event = new PasswordChangeEvent();
+        event.setNewPassword("a-new-password");
+        event.setToken(initialTestDataPswToken);
+
+        ClientResponse response = RestHelper.doPutRequest(event, CREDENTIALS, defaultManagerUsername, MANAGER_PASSWORD);
+        RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }
 
 }

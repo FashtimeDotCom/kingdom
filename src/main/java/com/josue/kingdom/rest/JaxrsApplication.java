@@ -6,14 +6,15 @@
 package com.josue.kingdom.rest;
 
 import java.util.Set;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
  *
  * @author Josue
  */
-@javax.ws.rs.ApplicationPath("api/v1")
-public class ApplicationConfig extends Application {
+@ApplicationPath("api/v1")
+public class JaxrsApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -30,6 +31,7 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(com.josue.kingdom.credential.APICredentialSubResource.class);
         resources.add(com.josue.kingdom.credential.CredentialResource.class);
+        resources.add(com.josue.kingdom.domain.DomainPermissionSubResource.class);
         resources.add(com.josue.kingdom.domain.DomainResource.class);
         resources.add(com.josue.kingdom.invitation.InvitationResource.class);
         resources.add(com.josue.kingdom.rest.CustomJacksonProvider.class);

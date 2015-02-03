@@ -12,9 +12,11 @@ import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.security.KingdomSecurity;
+import java.util.LinkedList;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 
 /**
@@ -62,15 +64,31 @@ public class DomainControl {
         return foundDomain;
     }
 
+    @Transactional(Transactional.TxType.REQUIRED)
     public Domain createDomain(Domain domain) throws RestException {
         domain.removeNonCreatable();
         domain.setStatus(DomainStatus.ACTIVE);
         domain.setOwner(security.getCurrentManager());
         domain.setApplication(security.getCurrentApplication());
 
-        //TODO this should run inside the TX
         repository.create(domain);
-        createDefaultPermissions(domain);
+        //TODO if domain permission provided whe dont need to create this
+
+        List<DomainPermission> defaultPermissions = createDefaultPermissions(domain);
+        DomainPermission perm = new DomainPermission(0);
+        for (DomainPermission permission : defaultPermissions) {
+            if (permission.getLevel() > perm.getLevel()) {
+                perm = permission;
+            }
+        }
+
+        ManagerMembership membership = new ManagerMembership();
+        membership.setApplication(security.getCurrentApplication());
+        membership.setDomain(domain);
+        membership.setManager(security.getCurrentManager());
+        membership.setPermission(perm);//highest level
+        membership.setApplication(security.getCurrentApplication());
+        repository.create(membership);
 
         return domain;
     }
@@ -202,7 +220,9 @@ public class DomainControl {
         return foundDomain;
     }
 
-    private void createDefaultPermissions(Domain domain) {
+    private List<DomainPermission> createDefaultPermissions(Domain domain) {
+        List<DomainPermission> permissions = new LinkedList<>();
+
         DomainPermission permission = new DomainPermission();
         permission.setLevel(1);
         permission.setName("LEVEL_1");
@@ -210,6 +230,7 @@ public class DomainControl {
         permission.setDomain(domain);
         permission.setApplication(security.getCurrentApplication());
         repository.create(permission);
+        permissions.add(permission);
 
         permission = new DomainPermission();
         permission.setLevel(2);
@@ -218,6 +239,7 @@ public class DomainControl {
         permission.setDomain(domain);
         permission.setApplication(security.getCurrentApplication());
         repository.create(permission);
+        permissions.add(permission);
 
         permission = new DomainPermission();
         permission.setLevel(3);
@@ -226,5 +248,8 @@ public class DomainControl {
         permission.setDomain(domain);
         permission.setApplication(security.getCurrentApplication());
         repository.create(permission);
+        permissions.add(permission);
+
+        return permissions;
     }
 }
