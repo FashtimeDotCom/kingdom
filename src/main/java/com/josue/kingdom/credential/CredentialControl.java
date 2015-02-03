@@ -248,7 +248,7 @@ public class CredentialControl {
         loginRecoveryEvent.fire(event);
     }
 
-    @Transactional(Transactional.TxType.REQUIRED)//TODO update all logic... manager is now created on invitation submit
+    @Transactional(Transactional.TxType.REQUIRED)
     public Manager createManager(String token, Manager manager) throws RestException {
         Invitation foundInvitation = invRepository.getInvitationByToken(security.getCurrentApplication().getUuid(), token);
         if (foundInvitation == null) {
@@ -286,7 +286,6 @@ public class CredentialControl {
             credentialRepository.update(targetManager);
         }
 
-        //TODO validate if the domain and the permission still exists
         Domain foundDomain = credentialRepository.find(Domain.class, security.getCurrentApplication().getUuid(), foundInvitation.getDomain().getUuid());
         DomainPermission foundPermission = credentialRepository.find(DomainPermission.class, security.getCurrentApplication().getUuid(), foundInvitation.getPermission().getUuid());
 
@@ -298,8 +297,9 @@ public class CredentialControl {
         managerMembership.setManager(targetManager);
 
         credentialRepository.create(managerMembership);
-        //TODO complete the invitation status and 'invalidate' the token
-        //assign a 'confirmation' token to the manager
+
+        foundInvitation.setStatus(InvitationStatus.COMPLETED);
+        foundInvitation.setConfirmationCode(utils.generateBase64FromUuid());
         return targetManager;
     }
 

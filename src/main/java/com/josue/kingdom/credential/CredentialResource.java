@@ -55,7 +55,6 @@ public class CredentialResource {
         return ResponseUtils.buildSimpleResponse(control.getCurrentManager(), Response.Status.OK, info);
     }
 
-    //TODO add get by uuid ?
     @GET
     @Path("{username}")//TODO username and email ?
     @Produces(value = CONTENT_TYPE)
@@ -71,7 +70,7 @@ public class CredentialResource {
         return ResponseUtils.buildSimpleResponse(null, Response.Status.OK, info);
     }
 
-    @PUT//TODO add test
+    @PUT
     @Path("{username}/password")
     public Response updateManagerPassword(@PathParam("username") String username, PasswordChangeEvent event) throws RestException {
         control.updateManagerPassword(username, event);
