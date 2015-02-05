@@ -24,6 +24,10 @@ import javax.validation.constraints.NotNull;
 public class ApplicationConfig extends TenantResource {
 
     @NotNull
+    @Column(name = "application_url")
+    private String applicationUrl;
+
+    @NotNull
     @Column(name = "password_callback_url")
     private String passwordCallbackUrl;
 
@@ -80,14 +84,23 @@ public class ApplicationConfig extends TenantResource {
         this.loginRecoveryEmailTemplate = loginRecoveryEmailTemplate;
     }
 
+    public String getApplicationUrl() {
+        return applicationUrl;
+    }
+
+    public void setApplicationUrl(String applicationUrl) {
+        this.applicationUrl = applicationUrl;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.passwordCallbackUrl);
-        hash = 89 * hash + Objects.hashCode(this.accountCallbackUrl);
-        hash = 89 * hash + Objects.hashCode(this.passwordEmailTemplate);
-        hash = 89 * hash + Objects.hashCode(this.invitationEmailTemplate);
-        hash = 89 * hash + Objects.hashCode(this.loginRecoveryEmailTemplate);
+        int hash = 7;
+        hash = 11 * hash + Objects.hashCode(this.applicationUrl);
+        hash = 11 * hash + Objects.hashCode(this.passwordCallbackUrl);
+        hash = 11 * hash + Objects.hashCode(this.accountCallbackUrl);
+        hash = 11 * hash + Objects.hashCode(this.passwordEmailTemplate);
+        hash = 11 * hash + Objects.hashCode(this.invitationEmailTemplate);
+        hash = 11 * hash + Objects.hashCode(this.loginRecoveryEmailTemplate);
         return hash;
     }
 
@@ -100,6 +113,9 @@ public class ApplicationConfig extends TenantResource {
             return false;
         }
         final ApplicationConfig other = (ApplicationConfig) obj;
+        if (!Objects.equals(this.applicationUrl, other.applicationUrl)) {
+            return false;
+        }
         if (!Objects.equals(this.passwordCallbackUrl, other.passwordCallbackUrl)) {
             return false;
         }

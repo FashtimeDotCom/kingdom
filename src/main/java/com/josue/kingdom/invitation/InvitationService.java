@@ -5,6 +5,8 @@
  */
 package com.josue.kingdom.invitation;
 
+import com.josue.kingdom.application.ApplicationRepository;
+import com.josue.kingdom.application.entity.ApplicationConfig;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.util.MailService;
@@ -20,20 +22,31 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class InvitationService extends MailService {
 
+    private final String INVITATION_URL = "\\$url";
+    private final String AUTHOR_MANAGER_PARAM = "\\$authorManager";
+    private final String TARGET_MANAGER_PARAM = "\\$targetManager";
+    private final String APP_URL = "\\$appurl";
+
+    private final String DEFAULT_INVITATION_SUBJECT = "You have a new invitation !";
+    private final String TOKEN_PARAM = "?token=";
+
     @Inject
     InvitationRepository invitationRepository;
 
-    public void sendInvitation(@Observes(during = TransactionPhase.AFTER_SUCCESS) Invitation invitation) {
+    @Inject
+    ApplicationRepository applicationRepository;
 
-        String message = "You were invited to join Domain ...TODO... <br /> click the below to accept: <br /> " + getInvitationHref(invitation);
-        String subject = "Password reset";
-        send(invitation.getTargetManager().getEmail(), subject, message);
-        updateInvitationStatus(invitation);
-    }
+    public void sendInvitation(@Observes(during = TransactionPhase.AFTER_SUCCESS) Invitation event) {
 
-    //TODO improve
-    private String getInvitationHref(Invitation invitation) {
-        return "http://localhost:8080/kingdom/signup?token=" + invitation.getToken();
+        ApplicationConfig config = applicationRepository.getApplicationConfig(event.getApplication().getUuid());
+        String rawHtml = config.getInvitationEmailTemplate();
+        String parseHtml = rawHtml.replaceAll(INVITATION_URL, config.getAccountCallbackUrl() + TOKEN_PARAM + event.getToken())
+                .replaceAll(TARGET_MANAGER_PARAM, event.getTargetManager().getFirstName())
+                .replaceAll(AUTHOR_MANAGER_PARAM, event.getAuthorManager().getFirstName())
+                .replaceAll(APP_URL, config.getApplicationUrl());
+
+        send(event.getTargetManager().getEmail(), DEFAULT_INVITATION_SUBJECT, parseHtml);
+        updateInvitationStatus(event);
     }
 
     private void updateInvitationStatus(Invitation invitation) {

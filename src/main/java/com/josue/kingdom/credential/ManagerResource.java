@@ -29,8 +29,8 @@ import javax.ws.rs.core.UriInfo;
  * @author Josue
  */
 @ApplicationScoped
-@Path("credentials")
-public class CredentialResource {
+@Path("managers")
+public class ManagerResource {
 
     @Context
     UriInfo info;
@@ -39,7 +39,7 @@ public class CredentialResource {
     CredentialControl control;
 
     @POST
-    @Path("login/attempts")//TODI... change this path
+    @Path("login/attempts")
     @Produces(value = CONTENT_TYPE)
     public Response login(SimpleLogin simpleLogin) throws RestException {
         return ResponseUtils.buildSimpleResponse(control.login(simpleLogin), Response.Status.OK, info);

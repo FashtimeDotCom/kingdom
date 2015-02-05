@@ -218,6 +218,9 @@
             <column name="password_email_template" type="LONGTEXT"/>
             <column name="invitation_email_template" type="LONGTEXT"/>
             <column name="loginrec_email_template" type="LONGTEXT"/>
+            <column name="application_url" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="password_callback_url" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>

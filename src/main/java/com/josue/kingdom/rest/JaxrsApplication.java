@@ -29,8 +29,9 @@ public class JaxrsApplication extends Application {
      * out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(com.josue.kingdom.credential.APICredentialResource.class);
         resources.add(com.josue.kingdom.credential.APICredentialSubResource.class);
-        resources.add(com.josue.kingdom.credential.CredentialResource.class);
+        resources.add(com.josue.kingdom.credential.ManagerResource.class);
         resources.add(com.josue.kingdom.domain.DomainPermissionSubResource.class);
         resources.add(com.josue.kingdom.domain.DomainResource.class);
         resources.add(com.josue.kingdom.invitation.InvitationResource.class);

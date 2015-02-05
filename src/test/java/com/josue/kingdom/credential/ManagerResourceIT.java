@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
  */
 @RunAsClient
 @RunWith(Arquillian.class)
-public class CredentialResourceIT {
+public class ManagerResourceIT {
 
     private static final String DEFAULT_KINGDOM_HEADER = "Kingdom";
 

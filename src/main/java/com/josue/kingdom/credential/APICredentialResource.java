@@ -3,16 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.application;
+package com.josue.kingdom.credential;
+
+import javax.ws.rs.Path;
 
 /**
  *
  * @author Josue
  */
-public class ApplicationControl {
-
-    public void changeEmailTemplate() {
-        //TODO implement all email templates
-    }
+@Path("api-credentials")
+public class APICredentialResource {
 
 }

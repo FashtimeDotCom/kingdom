@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>    
     <datasource jndi-name="java:jboss/datasources/kingdom-testDS" pool-name="KingdomTestPool" enabled="true" use-java-context="true">
-        <connection-url>jdbc:h2:mem:kingdom_test;DB_CLOSE_DELAY=0;IGNORECASE=TRUE;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL</connection-url>
+        <connection-url>jdbc:h2:mem:kingdom_test;DB_CLOSE_DELAY=0;IGNORECASE=TRUE;DB_CLOSE_ON_EXIT=TRUE;MODE=MYSQL</connection-url>
         <driver>h2</driver>
         <security>
             <user-name>sa</user-name>
