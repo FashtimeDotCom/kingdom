@@ -212,7 +212,7 @@ public class CredentialControlTest {
         fail();
     }
 
-    @Test(expected = RestException.class)
+    @Test(expected = InvalidResourceArgException.class)
     public void testUpdateManagerInvalidUsername() throws RestException {
         PasswordChangeEvent event = Mockito.spy(new PasswordChangeEvent());
         event.setNewPassword("new-psw-123");

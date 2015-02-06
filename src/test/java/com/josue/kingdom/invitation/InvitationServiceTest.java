@@ -11,6 +11,7 @@ import com.josue.kingdom.application.entity.ApplicationConfig;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
+import javax.mail.MessagingException;
 import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +47,7 @@ public class InvitationServiceTest {
     }
 
     @Test
-    public void testSendInvitation() {
+    public void testSendInvitation() throws MessagingException {
 
         String targetEmail = "target@email.com";
         Manager targetManager = new Manager();

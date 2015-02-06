@@ -104,10 +104,15 @@ public class InvitationControl {
         invitation.setToken(UUID.randomUUID().toString());
         invitation.setApplication(security.getCurrentApplication());
 
-        Manager manager = credentialRepository.getManagerByEmail(foundDomain.getApplication().getUuid(), invitation.getTargetManager().getEmail());
+        Manager manager = credentialRepository.getManagerByEmail(security.getCurrentApplication().getUuid(), invitation.getTargetManager().getEmail());
         if (manager != null) {// manager or 'empty invitation manager' already exist
             if (manager.equals(security.getCurrentManager())) {//self invitation... this is not allowed
                 throw new InvalidResourceArgException(Invitation.class, "You cannot invit yourself");
+            }
+
+            Invitation existentInvitation = invitationRepository.getInvitation(security.getCurrentApplication().getUuid(), foundDomain.getUuid(), invitation.getTargetManager().getEmail());
+            if (existentInvitation != null) {
+                throw new ResourceAlreadyExistsException(Invitation.class, existentInvitation.getUuid());
             }
             invitation.setTargetManager(manager);
             Domain joinedDomain = domainRepository.getJoinedDomain(security.getCurrentApplication().getUuid(), manager.getUuid(), foundDomain.getUuid());

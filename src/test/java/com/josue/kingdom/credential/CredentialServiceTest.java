@@ -12,6 +12,7 @@ import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import com.josue.kingdom.invitation.InvitationRepository;
+import javax.mail.MessagingException;
 import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class CredentialServiceTest {
     }
 
     @Test
-    public void testSendPasswordToken() {
+    public void testSendPasswordToken() throws MessagingException {
 
         String passwordUrl = "$url";
         String login = "$login";
@@ -89,7 +90,7 @@ public class CredentialServiceTest {
     }
 
     @Test
-    public void testSendLoginRecovery() {
+    public void testSendLoginRecovery() throws MessagingException {
         String login = "$login";
         String appUrl = "$appurl";
         String template = "<p>" + login + " - " + appUrl + "</p>";

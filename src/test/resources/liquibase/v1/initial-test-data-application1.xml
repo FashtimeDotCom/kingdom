@@ -162,7 +162,7 @@
             <column name="status" value="CREATED"/>
             <column name="target_manager_uuid" value="m33cIFaeSx2-OLmjXskCLw"/>
             <column name="token" value="93f52dc9-496d-46bc-a2f8-ba7394fca966"/>
-            <column name="valid_until"  valueDate="2035-01-01"/>
+            <column name="valid_until"  valueDate="2030-01-01"/>
             <column name="author_manager_uuid" value="zb1XuD3CQ3C4pmXmdKQw1g"/>
             <column name="domain_uuid" value="TPEJCJmSTOWPrXqOoalrig"/>
             <column name="domain_permission_uuid" value="0UhufmEcR-u7oSjm1K3KlQ"/>
@@ -175,8 +175,8 @@
             <column name="date_created" valueDate="${now}"/>
             <column name="target_manager_uuid" value="m33cIFaeSx2-OLmjXskCLw"/>
             <column name="token" value="9RtbC5489Er6OLmjXskCLw"/>
-            <column name="valid_until"  valueDate="2035-01-01"/>
-            <column name="valid" valueBoolean="1"/>
+            <column name="valid_until"  valueDate="2030-01-01"/>
+            <column name="valid" valueBoolean="TRUE"/>
             <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>

@@ -185,6 +185,7 @@ public abstract class InstanceHelper {
 
     public static ApplicationConfig createApplicationConfig(Application application) {
         ApplicationConfig config = new ApplicationConfig();
+        config.setApplicationUrl("http://localhost:8080");
         config.setAccountCallbackUrl("http://localhost:8080/account-form");
         config.setPasswordCallbackUrl("http://localhost:8080/password-reset");
         config.setInvitationEmailTemplate("<p>Invitation Template</>");

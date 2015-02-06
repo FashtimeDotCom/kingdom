@@ -10,8 +10,6 @@ import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
 import javax.enterprise.inject.Specializes;
 
 /**
@@ -25,7 +23,7 @@ public class CredentialServiceMock extends CredentialService {
 
     //TODO load from template
     @Override
-    public void sendPasswordToken(@Observes(during = TransactionPhase.AFTER_SUCCESS) PasswordChangeEvent event) {
+    public void sendPasswordToken(PasswordChangeEvent event) {
         logger.info("************ CREDENTIALSERVICE MOCK - sendLoginRecovery()************");
         logger.log(Level.INFO, "TARGET EMAIL: {0}", event.getTargetManager().getEmail());
         logger.log(Level.INFO, "TOKEN: {0}", event.getToken());
@@ -33,7 +31,7 @@ public class CredentialServiceMock extends CredentialService {
     }
 
     @Override
-    public void sendLoginRecovery(@Observes(during = TransactionPhase.AFTER_SUCCESS) LoginRecoveryEvent event) {
+    public void sendLoginRecovery(LoginRecoveryEvent event) {
         logger.info("************ CREDENTIALSERVICE MOCK - sendPasswordReset() ************");
         logger.log(Level.INFO, "TARGET EMAIL: {0}", event.getTargetManager().getEmail());
         logger.log(Level.INFO, "USERNAME: {0}", event.getTargetManager().getUsername());

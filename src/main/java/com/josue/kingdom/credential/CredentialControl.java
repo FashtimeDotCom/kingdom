@@ -196,9 +196,9 @@ public class CredentialControl {
         if (eventBean == null) {
             throw new ResourceNotFoundException(PasswordChangeEvent.class, "token", inputEvent.getToken());
         } else if (!eventBean.isIsValid() || eventBean.getValidUntil().before(new Date())) {
-            throw new RestException(PasswordChangeEvent.class, inputEvent.getToken(), "Invalid token", Response.Status.BAD_REQUEST);
+            throw new InvalidResourceArgException(PasswordChangeEvent.class, "token ", inputEvent.getToken());
         } else if (eventBean.getTargetManager().getUsername().equals(username)) {
-            throw new RestException(PasswordChangeEvent.class, null, "Invalid username: " + username, Response.Status.BAD_REQUEST);
+            throw new InvalidResourceArgException(PasswordChangeEvent.class, "Invalid username", username);
         }
         //running inside TX, we dont need to update
 

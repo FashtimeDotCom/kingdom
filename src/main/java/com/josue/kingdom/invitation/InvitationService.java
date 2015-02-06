@@ -10,10 +10,11 @@ import com.josue.kingdom.application.entity.ApplicationConfig;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
 import com.josue.kingdom.util.MailService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.event.TransactionPhase;
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 
 /**
  *
@@ -36,17 +37,21 @@ public class InvitationService extends MailService {
     @Inject
     ApplicationRepository applicationRepository;
 
-    public void sendInvitation(@Observes(during = TransactionPhase.AFTER_SUCCESS) Invitation event) {
+    public void sendInvitation(Invitation event) {
+        try {
+            ApplicationConfig config = applicationRepository.getApplicationConfig(event.getApplication().getUuid());
+            String rawHtml = config.getInvitationEmailTemplate();
+            String parseHtml = rawHtml.replaceAll(INVITATION_URL, config.getAccountCallbackUrl() + TOKEN_PARAM + event.getToken())
+                    .replaceAll(TARGET_MANAGER_PARAM, event.getTargetManager().getFirstName())
+                    .replaceAll(AUTHOR_MANAGER_PARAM, event.getAuthorManager().getFirstName())
+                    .replaceAll(APP_URL, config.getApplicationUrl());
 
-        ApplicationConfig config = applicationRepository.getApplicationConfig(event.getApplication().getUuid());
-        String rawHtml = config.getInvitationEmailTemplate();
-        String parseHtml = rawHtml.replaceAll(INVITATION_URL, config.getAccountCallbackUrl() + TOKEN_PARAM + event.getToken())
-                .replaceAll(TARGET_MANAGER_PARAM, event.getTargetManager().getFirstName())
-                .replaceAll(AUTHOR_MANAGER_PARAM, event.getAuthorManager().getFirstName())
-                .replaceAll(APP_URL, config.getApplicationUrl());
-
-        send(event.getTargetManager().getEmail(), DEFAULT_INVITATION_SUBJECT, parseHtml);
-        updateInvitationStatus(event);
+            //Async starts from MailService
+            send(event.getTargetManager().getEmail(), DEFAULT_INVITATION_SUBJECT, parseHtml);
+            updateInvitationStatus(event);
+        } catch (MessagingException ex) {
+            Logger.getLogger(InvitationService.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void updateInvitationStatus(Invitation invitation) {

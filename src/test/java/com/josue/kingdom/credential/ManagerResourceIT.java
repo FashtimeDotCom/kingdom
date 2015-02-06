@@ -34,7 +34,7 @@ public class ManagerResourceIT {
     private static final String DEFAULT_KINGDOM_HEADER = "Kingdom";
 
     private static final String LOGIN_ATTEMPT = "login/attempts";
-    private static final String CREDENTIALS = "credentials";
+    private static final String MANAGERS = "managers";
     private static final String CURRENT = "current";
     private static final String PASSWORD_RESET_REQUEST = "password-request";
     private static final String MANAGER_PASSWORD = "password";
@@ -52,7 +52,7 @@ public class ManagerResourceIT {
         String testInitialEmail = "manager1@gmail.com";
         String testInitialLogin = "manager1";
 
-        ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, testInitialLogin);
+        ClientResponse response = RestHelper.doGetRequest(MANAGERS, testInitialLogin);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
 
         Manager foundManager = response.getEntity(new GenericType<Manager>() {
@@ -65,7 +65,7 @@ public class ManagerResourceIT {
     public void testGetCurrentManager() {
         String testInitialManagerUuid = "zb1XuD3CQ3C4pmXmdKQw1g";
 
-        ClientResponse response = RestHelper.doGetRequest(CREDENTIALS, CURRENT);
+        ClientResponse response = RestHelper.doGetRequest(MANAGERS, CURRENT);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
 
         Manager foundManager = response.getEntity(new GenericType<Manager>() {
@@ -79,14 +79,14 @@ public class ManagerResourceIT {
     @Test
     public void testPasswordReset() {
         String testInitialUsername = "manager2";//secundary manager
-        ClientResponse response = RestHelper.doPostRequest(null, CREDENTIALS, testInitialUsername, PASSWORD_RESET_REQUEST);
+        ClientResponse response = RestHelper.doPostRequest(null, MANAGERS, testInitialUsername, PASSWORD_RESET_REQUEST);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }
 
     @Test
     public void testLoginRecover() {
         String testInitialEmail = "manager1@gmail.com";
-        ClientResponse response = RestHelper.doPostRequest(null, CREDENTIALS, testInitialEmail, LOGIN_RECOVER);
+        ClientResponse response = RestHelper.doPostRequest(null, MANAGERS, testInitialEmail, LOGIN_RECOVER);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }
 
@@ -105,7 +105,7 @@ public class ManagerResourceIT {
         manager.setUsername(username);
         manager.setPassword(password);
 
-        ClientResponse response = RestHelper.doPostRequest(manager, CREDENTIALS, testInitialInvToken);
+        ClientResponse response = RestHelper.doPostRequest(manager, MANAGERS, testInitialInvToken);
         RestHelper.assertStatusCode(Response.Status.CREATED.getStatusCode(), response);
         Manager foundManager = response.getEntity(new GenericType<Manager>() {
         });
@@ -125,7 +125,7 @@ public class ManagerResourceIT {
         simpleLogin.setType(SimpleLogin.LoginType.BASIC);
         simpleLogin.setValue(initialBase64DataManagerCredentials);
 
-        ClientResponse response = RestHelper.doPostRequest(simpleLogin, CREDENTIALS, LOGIN_ATTEMPT);
+        ClientResponse response = RestHelper.doPostRequest(simpleLogin, MANAGERS, LOGIN_ATTEMPT);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
 
         Manager foundManager = response.getEntity(new GenericType<Manager>() {
@@ -141,7 +141,7 @@ public class ManagerResourceIT {
         event.setNewPassword("a-new-password");
         event.setToken(initialTestDataPswToken);
 
-        ClientResponse response = RestHelper.doPutRequest(event, CREDENTIALS, defaultManagerUsername, MANAGER_PASSWORD);
+        ClientResponse response = RestHelper.doPutRequest(event, MANAGERS, defaultManagerUsername, MANAGER_PASSWORD);
         RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
     }
 

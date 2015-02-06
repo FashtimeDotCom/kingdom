@@ -15,6 +15,7 @@ import com.josue.kingdom.domain.entity.DomainPermission;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.rest.ListResource;
 import com.josue.kingdom.rest.ex.InvalidResourceArgException;
+import com.josue.kingdom.rest.ex.ResourceAlreadyExistsException;
 import com.josue.kingdom.rest.ex.ResourceNotFoundException;
 import com.josue.kingdom.rest.ex.RestException;
 import com.josue.kingdom.security.KingdomSecurity;
@@ -152,6 +153,29 @@ public class InvitationControlTest {
         fail();
     }
 
+    @Test(expected = ResourceAlreadyExistsException.class)
+    public void testCreateInvitationAlreadyExists() throws RestException {
+        Domain domain = Mockito.spy(new Domain());
+        domain.setOwner(currentManager);
+        domain.setApplication(security.getCurrentApplication());
+
+        Manager targetManager = Mockito.spy(new Manager());
+
+        Invitation invitation = Mockito.spy(new Invitation());
+        invitation.setDomain(domain);
+        invitation.setTargetManager(targetManager);
+        invitation.getTargetManager().setEmail("test@email.com");
+        invitation.setApplication(security.getCurrentApplication());
+        invitation.setPermission(new DomainPermission());
+        invitation.getPermission().setUuid("any-uuid");
+
+        when(invitationRepository.find(Domain.class, currentApplication.getUuid(), invitation.getDomain().getUuid())).thenReturn(domain);
+        when(credentialRepository.getManagerByEmail(currentApplication.getUuid(), targetManager.getEmail())).thenReturn(targetManager);
+        when(invitationRepository.getInvitation(currentApplication.getUuid(), domain.getUuid(), targetManager.getEmail())).thenReturn(new Invitation());
+        control.createInvitation(invitation);
+        fail();
+    }
+
     @Test(expected = RestException.class)
     public void testCreateInvitationAreadyJoined() throws RestException {
         Domain domain = Mockito.spy(new Domain());
@@ -166,6 +190,7 @@ public class InvitationControlTest {
         invitation.getTargetManager().setEmail("test@email.com");
         invitation.setApplication(security.getCurrentApplication());
         invitation.setPermission(new DomainPermission());
+        invitation.getPermission().setUuid("any-uuid");
 
         when(invitationRepository.find(Domain.class, currentApplication.getUuid(), invitation.getDomain().getUuid())).thenReturn(domain);
         when(credentialRepository.getManagerByEmail(currentApplication.getUuid(), targetManager.getEmail())).thenReturn(targetManager);
