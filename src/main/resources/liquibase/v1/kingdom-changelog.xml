@@ -248,25 +248,25 @@
     </changeSet>
     
     <changeSet author="Josue" id="kingdom-changelog-101">
-        <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="api_credential"/>
+        <addPrimaryKey columnNames="uuid" constraintName="PK_APICREDENTIAL" tableName="api_credential"/>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-102">
-        <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="application"/>
+        <addPrimaryKey columnNames="uuid" constraintName="PK_APPLICATION" tableName="application"/>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-103">
-        <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="domain"/>
+        <addPrimaryKey columnNames="uuid" constraintName="PK_DOMAIN" tableName="domain"/>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-104">
-        <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="domain_permission"/>
+        <addPrimaryKey columnNames="uuid" constraintName="PK_DOMAINPERMISSION" tableName="domain_permission"/>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-105">
-        <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="invitation"/>
+        <addPrimaryKey columnNames="uuid" constraintName="PK_INVITATION" tableName="invitation"/>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-106">
-        <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="manager"/>
+        <addPrimaryKey columnNames="uuid" constraintName="PK_MANAGER" tableName="manager"/>
     </changeSet>
     <changeSet author="Josue" id="kingdom-changelog-107">
-        <addPrimaryKey columnNames="uuid" constraintName="PRIMARY" tableName="manager_membership"/>
+        <addPrimaryKey columnNames="uuid" constraintName="PK_MANAGERMEMBERSHIP" tableName="manager_membership"/>
     </changeSet>
     
         
