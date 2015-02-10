@@ -5,14 +5,15 @@
  */
 package com.josue.kingdom.invitation;
 
+import com.josue.kingdom.MailService;
 import com.josue.kingdom.application.ApplicationRepository;
 import com.josue.kingdom.application.entity.ApplicationConfig;
 import com.josue.kingdom.invitation.entity.Invitation;
 import com.josue.kingdom.invitation.entity.InvitationStatus;
-import com.josue.kingdom.util.MailService;
+import com.josue.kingdom.util.env.Environment;
+import com.josue.kingdom.util.env.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 
@@ -20,8 +21,8 @@ import javax.mail.MessagingException;
  *
  * @author Josue
  */
-@ApplicationScoped
-public class InvitationService extends MailService {
+@Environment(stage = Stage.PRODUCTION)
+public class InvitationService extends MailService implements InvitationMailService {
 
     private final String INVITATION_URL = "\\$url";
     private final String AUTHOR_MANAGER_PARAM = "\\$authorManager";
@@ -37,6 +38,7 @@ public class InvitationService extends MailService {
     @Inject
     ApplicationRepository applicationRepository;
 
+    @Override
     public void sendInvitation(Invitation event) {
         try {
             ApplicationConfig config = applicationRepository.getApplicationConfig(event.getApplication().getUuid());
@@ -58,5 +60,4 @@ public class InvitationService extends MailService {
         invitation.setStatus(InvitationStatus.SENT);
         invitationRepository.update(invitation);
     }
-
 }

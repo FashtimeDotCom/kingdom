@@ -5,10 +5,10 @@
  */
 package com.josue.kingdom.util;
 
-import com.josue.kingdom.credential.CredentialService;
+import com.josue.kingdom.credential.CredentialMailService;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
-import com.josue.kingdom.invitation.InvitationService;
+import com.josue.kingdom.invitation.InvitationMailService;
 import com.josue.kingdom.invitation.entity.Invitation;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
@@ -26,16 +26,16 @@ public class AsyncDelegator {
     private ManagedExecutorService executor;
 
     @Inject
-    InvitationService invitationService;
+    CredentialMailService credMailService;
 
     @Inject
-    CredentialService credentialService;
+    InvitationMailService invMailService;
 
     public void observeInvitation(@Observes(during = TransactionPhase.AFTER_SUCCESS) final Invitation event) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                invitationService.sendInvitation(event);
+                invMailService.sendInvitation(event);
             }
         });
     }
@@ -44,7 +44,7 @@ public class AsyncDelegator {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                credentialService.sendPasswordToken(event);
+                credMailService.sendPasswordToken(event);
             }
         });
     }
@@ -53,7 +53,7 @@ public class AsyncDelegator {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                credentialService.sendLoginRecovery(event);
+                credMailService.sendLoginRecovery(event);
             }
         });
     }

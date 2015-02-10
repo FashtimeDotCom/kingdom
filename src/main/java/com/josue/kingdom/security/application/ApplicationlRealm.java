@@ -49,7 +49,11 @@ public class ApplicationlRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authToken) throws AuthenticationException {
 
         ApplicationToken appToken = (ApplicationToken) authToken;
+        if (appToken.getPrincipal() == null || appToken.getCredentials() == null) {
+            throw new AuthenticationException("No credential provided");
+        }
         char[] appSecret = (char[]) appToken.getCredentials();
+
         Application foundApp = persistence.getApplication((String) appToken.getPrincipal(), new String(appSecret)); //TODO this and down here
         KingdomSecurity security;
         ManagerStatus managerStatus = ManagerStatus.EMPTY;

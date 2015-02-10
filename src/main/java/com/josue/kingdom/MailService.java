@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.josue.kingdom.util;
+package com.josue.kingdom;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -24,8 +23,7 @@ import javax.mail.internet.MimeMultipart;
  *
  * @author Josue
  */
-@ApplicationScoped
-public class MailService {
+public abstract class MailService {
 
     private final String systemEmail = "josue.eduardo206@gmail.com";
 

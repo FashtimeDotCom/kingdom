@@ -19,6 +19,12 @@ public class ApplicationToken implements AuthenticationToken {
     private final Object appSecret;
     private final ManagerToken managerToken;
 
+    public ApplicationToken() {
+        this.appKey = null;
+        this.appSecret = null;
+        managerToken = null;
+    }
+
     public ApplicationToken(Object appKey, Object appSecret) {
         this.appKey = appKey;
         this.appSecret = appSecret;

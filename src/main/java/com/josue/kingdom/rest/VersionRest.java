@@ -24,8 +24,8 @@ public class VersionRest {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVersion() {
-        String versinJson = "{\"version\": \"" + UUID.randomUUID().toString() + "\"}";
-        return Response.status(Response.Status.OK).entity(versinJson).build();
+        String versionJson = "{\"version\": \"" + UUID.randomUUID().toString() + "\"}";
+        return Response.status(Response.Status.OK).entity(versionJson).build();
     }
 
 }

@@ -46,14 +46,22 @@ public class ApplicationFilter extends BasicHttpAuthenticationFilter {
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpRequest = WebUtils.toHttp(request);
         //TODO improve.... check null, etc
+
+        ManagerToken managerToken = null;
         String appCredentials = httpRequest.getHeader(KINGDOM_HEADER);
-        String parsedHeader = new String(DatatypeConverter.parseBase64Binary(appCredentials));
-        String managerLogin = parsedHeader.split(CREDENTIAL_SEPARATOR)[0];
-        char[] managerPassword = parsedHeader.split(CREDENTIAL_SEPARATOR)[1].toCharArray();
+        if (appCredentials != null) {
+            String parsedHeader = new String(DatatypeConverter.parseBase64Binary(appCredentials));
+            String[] split = parsedHeader.split(CREDENTIAL_SEPARATOR);
+            if (split.length == 2) {
+                String managerLogin = parsedHeader.split(CREDENTIAL_SEPARATOR)[0];
+                char[] managerPassword = parsedHeader.split(CREDENTIAL_SEPARATOR)[1].toCharArray();
+                managerToken = new ManagerToken(managerLogin, managerPassword);
+            }
+        }
 
         AuthenticationToken authToken = super.createToken(request, response);
         //TODO validate if its an email or a username
-        ApplicationToken apiToken = new ApplicationToken(authToken.getPrincipal(), authToken.getCredentials(), new ManagerToken(managerLogin, managerPassword));
+        ApplicationToken apiToken = new ApplicationToken(authToken.getPrincipal(), authToken.getCredentials(), managerToken);
         return apiToken;
     }
 

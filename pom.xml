@@ -195,7 +195,7 @@
             <!-- Integration tests -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18</version>
+                <version>2.18.1</version>
                 <configuration>
                     <argLine>${failsafeArgLine}</argLine>
                 </configuration>

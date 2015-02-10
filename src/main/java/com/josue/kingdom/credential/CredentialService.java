@@ -5,14 +5,15 @@
  */
 package com.josue.kingdom.credential;
 
+import com.josue.kingdom.MailService;
 import com.josue.kingdom.application.ApplicationRepository;
 import com.josue.kingdom.application.entity.ApplicationConfig;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
-import com.josue.kingdom.util.MailService;
+import com.josue.kingdom.util.env.Environment;
+import com.josue.kingdom.util.env.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 
@@ -20,8 +21,8 @@ import javax.mail.MessagingException;
  *
  * @author Josue
  */
-@ApplicationScoped
-public class CredentialService extends MailService {
+@Environment(stage = Stage.PRODUCTION)
+public class CredentialService extends MailService implements CredentialMailService {
 
     @Inject
     ApplicationRepository applicationRepository;
@@ -34,6 +35,7 @@ public class CredentialService extends MailService {
     private final String TOKEN_PARAM = "?token=";
 
     //TODO load from template
+    @Override
     public void sendPasswordToken(PasswordChangeEvent event) {
 
         try {
@@ -52,6 +54,7 @@ public class CredentialService extends MailService {
 
     }
 
+    @Override
     public void sendLoginRecovery(LoginRecoveryEvent event) {
         try {
             ApplicationConfig config = applicationRepository.getApplicationConfig(event.getApplication().getUuid());
@@ -63,7 +66,6 @@ public class CredentialService extends MailService {
         } catch (MessagingException ex) {
             Logger.getLogger(CredentialService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
 }

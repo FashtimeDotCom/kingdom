@@ -61,12 +61,6 @@ public class JpaRepository {
         return extractSingleResultFromList(result);
     }
 
-    public <T> List<T> findAll(Class<T> clazz, String appUuid) {
-        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-        cq.select(cq.from(clazz));
-        return em.createQuery(cq).getResultList();
-    }
-
     public <T> long count(Class<T> clazz, String appUuid) {
         CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         Root<T> root = cq.from(clazz);
