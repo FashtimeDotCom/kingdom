@@ -246,6 +246,22 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet author="Josue" id="kingdom-changelog-11">
+        <createTable tableName="login_attempt">
+            <column name="uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="date_created" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column  name="last_update" type="TIMESTAMP"/>
+            <column name="application_uuid" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(20)"/>
+        </createTable>
+    </changeSet>
     
     <changeSet author="Josue" id="kingdom-changelog-101">
         <addPrimaryKey columnNames="uuid" constraintName="PK_APICREDENTIAL" tableName="api_credential"/>

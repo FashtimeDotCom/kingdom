@@ -7,7 +7,6 @@ package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
-import com.josue.kingdom.credential.entity.SimpleLogin;
 import com.josue.kingdom.rest.ResponseUtils;
 import static com.josue.kingdom.rest.ResponseUtils.CONTENT_TYPE;
 import com.josue.kingdom.rest.ex.RestException;
@@ -37,13 +36,6 @@ public class ManagerResource {
 
     @Inject
     CredentialControl control;
-
-    @POST
-    @Path("login/attempts")
-    @Produces(value = CONTENT_TYPE)
-    public Response login(SimpleLogin simpleLogin) throws RestException {
-        return ResponseUtils.buildSimpleResponse(control.login(simpleLogin), Response.Status.OK, info);
-    }
 
     /*
      returns the ManagerCredential for the login

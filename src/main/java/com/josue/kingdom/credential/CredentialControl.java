@@ -7,6 +7,8 @@ package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.AccountStatus;
+import com.josue.kingdom.credential.entity.LoginAttempt;
+import com.josue.kingdom.credential.entity.LoginAttempt.LoginStatus;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
@@ -174,7 +176,7 @@ public class CredentialControl {
 
     public Manager login(SimpleLogin simpleLogin) throws RestException {
 
-        String value = simpleLogin.getValue();
+        String value = simpleLogin.getData();
         byte[] parseBase64Binary = DatatypeConverter.parseBase64Binary(value);
         String[] loginPass = new String(parseBase64Binary).split(":");
         if (loginPass.length != 2) {//Invalid ':' character
@@ -182,8 +184,31 @@ public class CredentialControl {
         }
 
         Manager foundManager = security.login(new ManagerToken(loginPass[0], loginPass[1].toCharArray(), security.getCurrentApplication().getUuid()));
-        return foundManager;
 
+        LoginAttempt attempt = new LoginAttempt();
+        attempt.setApplication(security.getCurrentApplication());
+        attempt.setLogin(loginPass[0]);
+        attempt.setStatus(foundManager == null ? LoginStatus.FAILED : LoginStatus.SUCCESSFUL);
+        credentialRepository.create(attempt);
+
+        return foundManager;
+    }
+
+    public ListResource<LoginAttempt> getLoginAttempts(String login, String status, Date startDate, Date endDate, Integer limit, Integer offset) throws RestException {
+        if (startDate != null) {
+            endDate = endDate == null ? new Date() : endDate;
+        }
+        LoginStatus loginStatus = null;
+        try {
+            if (status != null) {
+                loginStatus = LoginStatus.valueOf(status.toUpperCase());
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidResourceArgException(LoginAttempt.class, "status", status);
+        }
+        List<LoginAttempt> attempts = credentialRepository.getLoginAttempts(security.getCurrentApplication().getUuid(), login, loginStatus, startDate, endDate, limit, offset);
+        Long totalCount = credentialRepository.countLoginAttempts(security.getCurrentApplication().getUuid(), login, loginStatus, startDate, endDate);
+        return ListResourceUtils.buildListResource(attempts, totalCount, limit, offset);
     }
 
     public Manager getCurrentManager() throws RestException {
@@ -206,7 +231,6 @@ public class CredentialControl {
         eventBean.setNewPassword(inputEvent.getNewPassword());
         eventBean.getTargetManager().setPassword(inputEvent.getNewPassword());
         return eventBean.getTargetManager();
-
     }
 
     //Creates a new Event, if any unused token already exists, invalidate it and create a new one

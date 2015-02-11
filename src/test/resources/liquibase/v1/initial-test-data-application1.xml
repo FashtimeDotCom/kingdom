@@ -13,6 +13,7 @@
         <delete tableName="password_change_event" />
         <delete tableName="login_recovery_event" />
         <delete tableName="application_config" />
+        <delete tableName="login_attempt" />
         <delete tableName="domain" />
         <delete tableName="manager" />
         <delete tableName="application" />
@@ -179,8 +180,7 @@
             <column name="valid" valueBoolean="TRUE"/>
             <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
-    </changeSet>
-    
+    </changeSet>    
    
     <!-- ####################################################################################### -->
     
@@ -253,6 +253,16 @@
             <column name="name" value="MASTER API KEY"/>
             <column name="status" value="ACTIVE"/>
             <column name="membership_uuid" value="n4RsrYMBQWyrSLtM5fkrLA"/>
+            <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
+        </insert>
+    </changeSet>
+    
+    <changeSet author="Josue" id="initial-test-data-15" runAlways="true">
+        <insert tableName="login_attempt">
+            <column name="uuid" value="AbHLO1ae09COLmjANT78"/>
+            <column name="date_created" valueDate="${now}"/>
+            <column name="login" value="anymanagerlogin123"/>
+            <column name="status" value="SUCCESSFUL"/>
             <column name="application_uuid" value="kmyqEEOkEeSRbAgAIAyaZg"/>
         </insert>
     </changeSet>

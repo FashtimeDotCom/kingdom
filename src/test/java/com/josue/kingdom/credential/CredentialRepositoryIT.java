@@ -1,11 +1,14 @@
 package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.APICredential;
+import com.josue.kingdom.credential.entity.LoginAttempt;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import com.josue.kingdom.domain.entity.ManagerMembership;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -190,4 +193,79 @@ public class CredentialRepositoryIT {
         assertTrue(events.contains(event2));
     }
 
+    @Test
+    public void testGetLoginAttempts() {
+        String login = "manager1username123";
+
+        LoginAttempt successfulAttempt = InstanceHelper.createLoginAttempt(login, LoginAttempt.LoginStatus.SUCCESSFUL);
+        repository.create(successfulAttempt);
+        LoginAttempt failedAttempt = InstanceHelper.createLoginAttempt(login, LoginAttempt.LoginStatus.FAILED);
+        repository.create(failedAttempt);
+
+        List<LoginAttempt> foundSuccededAttempts = repository.getLoginAttempts(InstanceHelper.APP_ID, login, LoginAttempt.LoginStatus.SUCCESSFUL, null, null, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(1, foundSuccededAttempts.size());
+        assertEquals(successfulAttempt, foundSuccededAttempts.get(0));
+        List<LoginAttempt> foundFailedAttempts = repository.getLoginAttempts(InstanceHelper.APP_ID, login, LoginAttempt.LoginStatus.FAILED, null, null, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(1, foundFailedAttempts.size());
+        assertEquals(failedAttempt, foundFailedAttempts.get(0));
+
+        //Any status for a given user
+        List<LoginAttempt> allStatusAttempts = repository.getLoginAttempts(InstanceHelper.APP_ID, login, null, null, null, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(2, allStatusAttempts.size());
+        assertTrue(allStatusAttempts.contains(successfulAttempt));
+        assertTrue(allStatusAttempts.contains(failedAttempt));
+
+        //find by date
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(new Date());
+        startDate.add(Calendar.HOUR_OF_DAY, -2);
+
+        //Added 1 hour due date error caused by mysql rounding
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(new Date());
+        endDate.add(Calendar.HOUR_OF_DAY, +1);
+
+        List<LoginAttempt> foundByDate = repository.getLoginAttempts(InstanceHelper.APP_ID, login, null, startDate.getTime(), endDate.getTime(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(2, foundByDate.size());
+        assertTrue(foundByDate.contains(successfulAttempt));
+        assertTrue(foundByDate.contains(failedAttempt));
+
+        List<LoginAttempt> foundByDateAndStatus = repository.getLoginAttempts(InstanceHelper.APP_ID, login, LoginAttempt.LoginStatus.SUCCESSFUL, startDate.getTime(), endDate.getTime(), DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(1, foundByDateAndStatus.size());
+        assertTrue(foundByDateAndStatus.contains(successfulAttempt));
+
+    }
+
+    @Test
+    public void testCountLoginAttempts() {
+        String login = "ausername123456";
+
+        LoginAttempt successfulAttempt = InstanceHelper.createLoginAttempt(login, LoginAttempt.LoginStatus.SUCCESSFUL);
+        repository.create(successfulAttempt);
+        LoginAttempt failedAttempt = InstanceHelper.createLoginAttempt(login, LoginAttempt.LoginStatus.FAILED);
+        repository.create(failedAttempt);
+
+        Long foundSuccededAttempts = repository.countLoginAttempts(InstanceHelper.APP_ID, login, LoginAttempt.LoginStatus.SUCCESSFUL, null, null);
+        assertEquals(Long.valueOf(1L), foundSuccededAttempts);
+
+        //Any status for a given user
+        Long allStatusAttempts = repository.countLoginAttempts(InstanceHelper.APP_ID, login, null, null, null);
+        assertEquals(Long.valueOf(2L), allStatusAttempts);
+
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(new Date());
+        startDate.add(Calendar.HOUR_OF_DAY, -2);
+
+        //Added 1 hour due date error caused by mysql rounding
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(new Date());
+        endDate.add(Calendar.HOUR_OF_DAY, +1);
+
+        Long foundByDate = repository.countLoginAttempts(InstanceHelper.APP_ID, login, null, startDate.getTime(), endDate.getTime());
+        assertEquals(Long.valueOf(2L), foundByDate);
+
+        Long foundByDateAndStatus = repository.countLoginAttempts(InstanceHelper.APP_ID, login, LoginAttempt.LoginStatus.SUCCESSFUL, startDate.getTime(), endDate.getTime());
+        assertEquals(Long.valueOf(1L), foundByDateAndStatus);
+
+    }
 }

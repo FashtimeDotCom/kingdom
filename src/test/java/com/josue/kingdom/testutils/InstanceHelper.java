@@ -11,6 +11,7 @@ import com.josue.kingdom.application.entity.ApplicationConfig;
 import com.josue.kingdom.application.entity.ApplicationStatus;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.AccountStatus;
+import com.josue.kingdom.credential.entity.LoginAttempt;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import com.josue.kingdom.domain.entity.Domain;
@@ -202,5 +203,13 @@ public abstract class InstanceHelper {
         event.setToken(new BigInteger(130, random).toString(32));
         event.setValidUntil(mysqlMilliSafeTimestamp());
         return event;
+    }
+
+    public static LoginAttempt createLoginAttempt(String login, LoginAttempt.LoginStatus status) {
+        LoginAttempt attempt = new LoginAttempt();
+        attempt.setLogin(login);
+        attempt.setApplication(getDefaultTestApplication());
+        attempt.setStatus(status);
+        return attempt;
     }
 }

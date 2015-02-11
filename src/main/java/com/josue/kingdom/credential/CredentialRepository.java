@@ -7,13 +7,20 @@ package com.josue.kingdom.credential;
 
 import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.credential.entity.APICredential;
+import com.josue.kingdom.credential.entity.LoginAttempt;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
 import com.josue.kingdom.domain.entity.ManagerMembership;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 /**
@@ -133,4 +140,49 @@ public class CredentialRepository extends JpaRepository {
         return events;
     }
 
+    //startDate and endDate should be validated on control layer
+    public List<LoginAttempt> getLoginAttempts(String appUuid, String login, LoginAttempt.LoginStatus status, Date startDate, Date endDate, Integer limit, Integer offset) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<LoginAttempt> attemptQuery = builder.createQuery(LoginAttempt.class);
+        Root<LoginAttempt> attemptRoot = attemptQuery.from(LoginAttempt.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        if (login != null) {
+            predicates.add(builder.equal(attemptRoot.get("login"), login));
+        }
+        if (status != null) {
+            predicates.add(builder.equal(attemptRoot.get("status"), status));
+        }
+        if (startDate != null && endDate != null) {
+            predicates.add(builder.greaterThanOrEqualTo(attemptRoot.<Date>get("dateCreated"), startDate));
+            predicates.add(builder.lessThanOrEqualTo(attemptRoot.<Date>get("dateCreated"), endDate));
+        }
+
+        attemptQuery.where(predicates.toArray(new Predicate[predicates.size()]));
+        TypedQuery<LoginAttempt> query = em.createQuery(attemptQuery).setMaxResults(limit).setFirstResult(offset);
+        return query.getResultList();
+    }
+
+//     cq.select(em.getCriteriaBuilder().count(root)).where(appPredicate);
+    public Long countLoginAttempts(String appUuid, String login, LoginAttempt.LoginStatus status, Date startDate, Date endDate) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> attemptQuery = builder.createQuery(Long.class);
+        Root<LoginAttempt> attemptRoot = attemptQuery.from(LoginAttempt.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        if (login != null) {
+            predicates.add(builder.equal(attemptRoot.get("login"), login));
+        }
+        if (status != null) {
+            predicates.add(builder.equal(attemptRoot.get("status"), status));
+        }
+        if (startDate != null && endDate != null) {
+            predicates.add(builder.greaterThanOrEqualTo(attemptRoot.<Date>get("dateCreated"), startDate));
+            predicates.add(builder.lessThanOrEqualTo(attemptRoot.<Date>get("dateCreated"), endDate));
+        }
+
+        attemptQuery.select(builder.count(attemptRoot)).where(predicates.toArray(new Predicate[predicates.size()]));
+        TypedQuery<Long> query = em.createQuery(attemptQuery);
+        return query.getSingleResult();
+    }
 }

@@ -7,7 +7,6 @@ package com.josue.kingdom.credential;
 
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
-import com.josue.kingdom.credential.entity.SimpleLogin;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.RestHelper;
 import com.sun.jersey.api.client.ClientResponse;
@@ -33,7 +32,6 @@ public class ManagerResourceIT {
 
     private static final String DEFAULT_KINGDOM_HEADER = "Kingdom";
 
-    private static final String LOGIN_ATTEMPT = "login/attempts";
     private static final String MANAGERS = "managers";
     private static final String CURRENT = "current";
     private static final String PASSWORD_RESET_REQUEST = "password-request";
@@ -113,24 +111,6 @@ public class ManagerResourceIT {
         assertEquals(username, foundManager.getUsername());
         assertEquals(tstInitialInvEmail, foundManager.getEmail());
 
-    }
-
-    @Test
-    public void testLogin() throws Exception {
-        String defaultManagerUsername = "manager1";
-        //manager1:pass123
-        String initialBase64DataManagerCredentials = "bWFuYWdlcjE6cGFzczEyMw==";
-
-        SimpleLogin simpleLogin = new SimpleLogin();
-        simpleLogin.setType(SimpleLogin.LoginType.BASIC);
-        simpleLogin.setValue(initialBase64DataManagerCredentials);
-
-        ClientResponse response = RestHelper.doPostRequest(simpleLogin, MANAGERS, LOGIN_ATTEMPT);
-        RestHelper.assertStatusCode(Response.Status.OK.getStatusCode(), response);
-
-        Manager foundManager = response.getEntity(new GenericType<Manager>() {
-        });
-        assertEquals(defaultManagerUsername, foundManager.getUsername());
     }
 
     @Test

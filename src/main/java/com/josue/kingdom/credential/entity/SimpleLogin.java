@@ -17,7 +17,7 @@ public class SimpleLogin {
     }
 
     private LoginType type;
-    private String value;
+    private String data;
 
     public LoginType getType() {
         return type;
@@ -27,12 +27,12 @@ public class SimpleLogin {
         this.type = type;
     }
 
-    public String getValue() {
-        return value;
+    public String getData() {
+        return data;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setData(String value) {
+        this.data = value;
     }
 
 }

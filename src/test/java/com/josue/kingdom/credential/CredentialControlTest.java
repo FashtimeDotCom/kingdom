@@ -8,6 +8,8 @@ package com.josue.kingdom.credential;
 import com.josue.kingdom.application.entity.Application;
 import com.josue.kingdom.credential.entity.APICredential;
 import com.josue.kingdom.credential.entity.AccountStatus;
+import com.josue.kingdom.credential.entity.LoginAttempt;
+import com.josue.kingdom.credential.entity.LoginAttempt.LoginStatus;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
@@ -747,7 +749,7 @@ public class CredentialControlTest {
 
         SimpleLogin simpleLogin = new SimpleLogin();
         simpleLogin.setType(SimpleLogin.LoginType.BASIC);
-        simpleLogin.setValue(base64Formatted);
+        simpleLogin.setData(base64Formatted);
 
         //For this test, KingdomSecurity should me mocked and no spied
         KingdomSecurity mock = Mockito.mock(KingdomSecurity.class);
@@ -758,7 +760,34 @@ public class CredentialControlTest {
         when(mock.login(token)).thenReturn(new Manager());
         Manager foundManager = control.login(simpleLogin);
         assertNotNull(foundManager);
+        verify(credentialRepository).create(any(LoginAttempt.class));
 
+    }
+
+    @Test(expected = InvalidResourceArgException.class)
+    public void testGetLoginAttemptsInvalidStatus() throws RestException {
+        String invalidStatus = "invalidStatus";
+        control.getLoginAttempts(null, invalidStatus, null, null, DEFAULT_LIMIT, DEFAULT_LIMIT);
+        fail();
+    }
+
+    @Test
+    public void testGetLoginAttempts() throws RestException {
+        String login = "login";
+        String status = "successful";
+        Date startDate = new Date();
+        Date endDate = new Date();
+
+        List<LoginAttempt> foundAttempts = Mockito.spy(new ArrayList<LoginAttempt>());
+        foundAttempts.add(Mockito.mock(LoginAttempt.class));
+
+        LoginStatus loginStatus = LoginStatus.valueOf(status.toUpperCase());
+
+        when(credentialRepository.getLoginAttempts(currentApplication.getUuid(), login, loginStatus, startDate, endDate, DEFAULT_LIMIT, DEFAULT_OFFSET)).thenReturn(foundAttempts);
+        when(credentialRepository.countLoginAttempts(currentApplication.getUuid(), login, loginStatus, startDate, endDate)).thenReturn(1L);
+        ListResource<LoginAttempt> loginAttempts = control.getLoginAttempts(login, status, startDate, endDate, DEFAULT_LIMIT, DEFAULT_OFFSET);
+        assertEquals(1, loginAttempts.getItems().size());
+        assertEquals(foundAttempts.get(0), loginAttempts.getItems().get(0));
     }
 
     @Test
