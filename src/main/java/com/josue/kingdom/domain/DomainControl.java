@@ -153,13 +153,6 @@ public class DomainControl {
     //1. Domain should have at least 1 permission
     //2. if user provide a replacement, update all managers that have the delete permission
     //3. if no replacement provided and user still have the permission, an exception should be throw
-    /**
-     *
-     * @param domainUuid
-     * @param permissionUuid
-     * @param replacementUuid
-     * @throws RestException
-     */
     public void deleteDomainPermission(String domainUuid, String permissionUuid, String replacementUuid) throws RestException {
         Domain foundDomain = checkDomainExists(domainUuid);
         checkOwnerAccess(foundDomain);

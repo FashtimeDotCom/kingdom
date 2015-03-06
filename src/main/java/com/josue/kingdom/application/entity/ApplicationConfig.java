@@ -23,6 +23,8 @@ import javax.validation.constraints.NotNull;
 })
 public class ApplicationConfig extends TenantResource {
 
+    private static final String RESOURCE_PATH = "/configurations";
+
     @NotNull
     @Column(name = "application_url")
     private String applicationUrl;
@@ -43,6 +45,11 @@ public class ApplicationConfig extends TenantResource {
 
     @Column(name = "loginrec_email_template")
     private String loginRecoveryEmailTemplate;
+
+    @Override
+    public String getHref() {
+        return RESOURCE_PATH + "/" + getUuid();
+    }
 
     public String getPasswordCallbackUrl() {
         return passwordCallbackUrl;

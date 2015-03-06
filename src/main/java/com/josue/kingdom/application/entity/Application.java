@@ -34,6 +34,8 @@ import org.apache.shiro.authc.AuthenticationToken;
 })
 public class Application extends Resource implements AuthenticationToken {
 
+    private static String RESOURCE_PATH = "application";
+
     private String name;
     @Column(name = "app_key")
     @NotNull
@@ -77,6 +79,11 @@ public class Application extends Resource implements AuthenticationToken {
 
     public void setAppKey(String appKey) {
         this.appKey = appKey;
+    }
+
+    @Override
+    public String getHref() {
+        return RESOURCE_PATH + "/" + getUuid();
     }
 
     @JsonIgnore

@@ -28,6 +28,8 @@ import org.apache.shiro.authc.AuthenticationToken;
     @UniqueConstraint(columnNames = {"application_uuid", "api_key", "membership_uuid"})})
 public class APICredential extends TenantResource implements AuthenticationToken {
 
+    private static final String RESOURCE_PATH = "/apikeys";
+
     private String name;
 
     @NotNull
@@ -60,6 +62,11 @@ public class APICredential extends TenantResource implements AuthenticationToken
             status = credential.getStatus() != null ? credential.getStatus() : status;
             name = credential.getName() != null ? credential.getName() : name;
         }
+    }
+
+    @Override
+    public String getHref() {
+        return membership.getDomain().getUuid() + RESOURCE_PATH + "/" + getUuid();
     }
 
     public String getName() {

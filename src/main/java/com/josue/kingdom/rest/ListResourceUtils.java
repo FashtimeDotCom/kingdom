@@ -5,9 +5,6 @@
  */
 package com.josue.kingdom.rest;
 
-import com.josue.kingdom.rest.ListResource;
-import com.josue.kingdom.rest.PaginationUtils;
-import com.josue.kingdom.rest.Resource;
 import java.util.List;
 
 /**

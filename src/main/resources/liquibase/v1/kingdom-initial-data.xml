@@ -151,6 +151,8 @@
             <column name="uuid" value="m33cIFaeSx2-OLmjXskCLw"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="email" value="manager3@gmail.com"/>
+             <column name="first_name" value="John"/>
+            <column name="last_name" value="Smith"/>
             <column name="username" value="manager3"/>
             <column name="password" value="8939ing938ng3984"/>
             <column name="status" value="PROVISIONING"/>
@@ -190,8 +192,8 @@
             <column name="uuid" value="U35vaEf8SSaKio1mlxXzAA"/>
             <column name="date_created" valueDate="${now}"/>
             <column name="email" value="manager2@gmail.com"/>
-            <column name="first_name" value="Josue"/>
-            <column name="last_name" value="Eduardo"/>
+            <column name="first_name" value="Luke"/>
+            <column name="last_name" value="Adams"/>
             <column name="password" value="pass123"/>
             <column name="username" value="manager2"/>
             <column name="status" value="ACTIVE"/>
