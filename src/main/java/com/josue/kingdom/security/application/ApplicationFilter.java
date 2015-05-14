@@ -74,7 +74,7 @@ public class ApplicationFilter extends BasicHttpAuthenticationFilter {
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         try {
             //TODO add as json / xml content.. or... find a generic way to return everything
-            httpResponse.getWriter().write("INVALID TOKEN: " + e.getMessage());
+            httpResponse.getWriter().write("INVALID TOKEN (TODO): " + e.getMessage());
         } catch (IOException ex) {
             Logger.getLogger(ApplicationFilter.class.getName()).log(Level.SEVERE, null, ex);
         }

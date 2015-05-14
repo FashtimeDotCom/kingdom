@@ -230,6 +230,8 @@ public class CredentialControl {
         eventBean.setIsValid(false);
         eventBean.setNewPassword(inputEvent.getNewPassword());
         eventBean.getTargetManager().setPassword(inputEvent.getNewPassword());
+        credentialRepository.update(eventBean);
+
         return eventBean.getTargetManager();
     }
 
@@ -244,13 +246,14 @@ public class CredentialControl {
         //This block should run within the same TX
         List<PasswordChangeEvent> events = credentialRepository.getPasswordResetEvents(security.getCurrentApplication().getUuid(), foundManager.getUuid());
         for (PasswordChangeEvent event : events) {
-            event.setIsValid(false);//running inside TX, dont need to explict update it
+            event.setIsValid(false);//running inside TX, dont need to explict update it... TODO, is it correct ?
         }
 
         String token = utils.generateBase64FromUuid();
         PasswordChangeEvent eventBean = new PasswordChangeEvent(foundManager, token);
         eventBean.setApplication(security.getCurrentApplication());
         eventBean.setValidUntil(utils.addFutureDate(Calendar.DAY_OF_MONTH, 1));
+        eventBean.setIsValid(true);
 
         credentialRepository.create(eventBean);
         passwordResetEvent.fire(eventBean);
@@ -324,6 +327,8 @@ public class CredentialControl {
 
         foundInvitation.setStatus(InvitationStatus.COMPLETED);
         foundInvitation.setConfirmationCode(utils.generateBase64FromUuid());
+        invRepository.update(foundInvitation);
+
         return targetManager;
     }
 

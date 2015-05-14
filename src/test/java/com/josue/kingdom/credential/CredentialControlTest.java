@@ -160,6 +160,8 @@ public class CredentialControlTest {
         control.createPasswordChangeEvent(man.getUsername());
 
         PasswordChangeEvent createdEvent = new PasswordChangeEvent(spyManager, token);
+        createdEvent.setIsValid(true);
+
         verify(event).setIsValid(false);
         verify(credentialRepository).create(createdEvent);
         verify(mockEvent).fire(createdEvent);
