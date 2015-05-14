@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources>    
     <datasource jndi-name="java:jboss/datasources/kingdom-testDS" pool-name="KingdomTestPool" enabled="true" use-java-context="true">
-        <connection-url>jdbc:mysql://localhost:3306/kingdom_test</connection-url>
+        <connection-url>jdbc:mysql://mysql.c5pg2umuhqmq.us-west-2.rds.amazonaws.com:3306/kingdom</connection-url>
         <driver>mysql</driver>
         <security>
             <user-name>root</user-name>
