@@ -11,6 +11,9 @@ import java.util.logging.Logger;
 import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.CoordinateParseException;
+import org.jboss.shrinkwrap.resolver.api.InvalidConfigurationFileException;
+import org.jboss.shrinkwrap.resolver.api.ResolutionException;
 import static org.jboss.shrinkwrap.resolver.api.maven.Maven.resolver;
 
 /**
@@ -45,7 +48,7 @@ public abstract class ArquillianTestBase {
                     .addAsWebInfResource(new File("src/main/webapp/WEB-INF/jboss-deployment-structure.xml"))
                     .addAsLibraries(dependecies);
 
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | InvalidConfigurationFileException | ResolutionException | CoordinateParseException e) {
             logger.severe(e.getMessage());
         }
 
