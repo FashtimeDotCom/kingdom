@@ -10,8 +10,6 @@ import com.josue.kingdom.application.ApplicationRepository;
 import com.josue.kingdom.application.entity.ApplicationConfig;
 import com.josue.kingdom.credential.entity.LoginRecoveryEvent;
 import com.josue.kingdom.credential.entity.PasswordChangeEvent;
-import com.josue.kingdom.util.env.Environment;
-import com.josue.kingdom.util.env.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -21,7 +19,7 @@ import javax.mail.MessagingException;
  *
  * @author Josue
  */
-@Environment(stage = Stage.PRODUCTION)
+//@Environment(stage = Stage.PRODUCTION)
 public class CredentialService extends MailService implements CredentialMailService {
 
     @Inject

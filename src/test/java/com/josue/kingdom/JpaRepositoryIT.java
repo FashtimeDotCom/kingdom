@@ -5,10 +5,10 @@
  */
 package com.josue.kingdom;
 
+import com.josue.kingdom.application.ApplicationRepository;
 import com.josue.kingdom.credential.entity.Manager;
 import com.josue.kingdom.domain.entity.Domain;
 import com.josue.kingdom.domain.entity.DomainPermission;
-import com.josue.kingdom.security.AuthRepository;
 import com.josue.kingdom.testutils.ArquillianTestBase;
 import com.josue.kingdom.testutils.InstanceHelper;
 import java.util.List;
@@ -35,14 +35,14 @@ import org.junit.runner.RunWith;
  * @author Josue
  */
 @RunWith(Arquillian.class)
-@Transactional(TransactionMode.DISABLED)
+@Transactional(TransactionMode.ROLLBACK)
 public class JpaRepositoryIT {
 
     @PersistenceContext
     EntityManager em;
 
     @Inject
-    AuthRepository repo;
+    ApplicationRepository jpaRepository;
 
     @Deployment
     @TargetsContainer("wildfly-managed")
@@ -50,53 +50,53 @@ public class JpaRepositoryIT {
         return ArquillianTestBase.createDefaultDeployment();
     }
 
-    private DomainPermission simpleCreate(JpaRepository repo) {
+    private DomainPermission createDomainPermission() {
         Manager manager = InstanceHelper.createManager();
-        repo.create(manager);
+        jpaRepository.create(manager);
         Domain domain = InstanceHelper.createDomain(manager);
-        repo.create(domain);
+        jpaRepository.create(domain);
 
         DomainPermission permission = InstanceHelper.createPermission(domain);
-        repo.create(permission);
+        jpaRepository.create(permission);
         assertNotNull(permission.getUuid());
         return permission;
     }
 
     @Test
     public void testCreate() {
-        DomainPermission permission = simpleCreate(repo);
+        DomainPermission permission = createDomainPermission();
 
-        DomainPermission foundPermission = repo.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
+        DomainPermission foundPermission = jpaRepository.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
         assertNotNull(foundPermission);
     }
 
     @Test
     public void testUpdate() {
 
-        DomainPermission permission = simpleCreate(repo);
+        DomainPermission permission = createDomainPermission();
 
         //Fail prone, if the random methos generate an existing Permission.level
         //For this test purpose its enough
         permission.setLevel(new Random().nextInt(Integer.MAX_VALUE) + 1);
-        DomainPermission editedEntity = repo.update(permission);
+        DomainPermission editedEntity = jpaRepository.update(permission);
         assertEquals(permission.getUuid(), editedEntity.getUuid());
     }
 
     @Test
     public void testDelete() {
 
-        DomainPermission permission = simpleCreate(repo);
+        DomainPermission permission = createDomainPermission();
 
-        repo.delete(permission);
-        DomainPermission foundPermission = repo.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
+        jpaRepository.delete(permission);
+        DomainPermission foundPermission = jpaRepository.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
         assertNull(foundPermission);
     }
 
     @Test
     public void testFind() {
 
-        DomainPermission permission = simpleCreate(repo);
-        DomainPermission foundPermission = repo.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
+        DomainPermission permission = createDomainPermission();
+        DomainPermission foundPermission = jpaRepository.find(DomainPermission.class, InstanceHelper.APP_ID, permission.getUuid());
         assertEquals(permission, foundPermission);
     }
 
@@ -105,10 +105,10 @@ public class JpaRepositoryIT {
         int total = 15;
 
         for (int i = 0; i < total; i++) {
-            simpleCreate(repo);
+            createDomainPermission();
         }
 
-        Long count = repo.count(DomainPermission.class, InstanceHelper.APP_ID);
+        Long count = jpaRepository.count(DomainPermission.class, InstanceHelper.APP_ID);
         assertTrue(count >= total);
     }
 
@@ -118,14 +118,14 @@ public class JpaRepositoryIT {
 
         DomainPermission somePermission = null;
         for (int i = 0; i < total; i++) {
-            somePermission = simpleCreate(repo);
+            somePermission = createDomainPermission();
         }
         assertNotNull(somePermission);
 
         TypedQuery<DomainPermission> query = em.createQuery("SELECT ro from DomainPermission ro where ro.uuid = :uuid", DomainPermission.class);
         query.setParameter("uuid", somePermission.getUuid());
         List<DomainPermission> resultList = query.getResultList();
-        DomainPermission foundPermission = repo.extractSingleResultFromList(resultList);
+        DomainPermission foundPermission = jpaRepository.extractSingleResultFromList(resultList);
         assertEquals(somePermission, foundPermission);
     }
 

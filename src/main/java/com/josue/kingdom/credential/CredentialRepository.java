@@ -21,14 +21,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
 /**
  *
  * @author Josue
  */
 @ApplicationScoped
-@Transactional(Transactional.TxType.NOT_SUPPORTED)
 public class CredentialRepository extends JpaRepository {
 
     public List<APICredential> getAPICredentials(String appUuid, String domainUuid, Integer limit, Integer offset) {

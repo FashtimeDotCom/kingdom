@@ -99,7 +99,6 @@ public class InvitationResourceIT {
         Invitation foundInvitation = getDomainsResponse.getEntity(new GenericType<Invitation>() {
         });
         assertNotNull(foundInvitation);
-
     }
 
 }

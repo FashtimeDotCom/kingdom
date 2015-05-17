@@ -24,7 +24,6 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 public class DomainRepository extends JpaRepository {
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<Domain> getDomains(String appUuid, String nameQuery, Integer limit, Integer offset) {
         Query query;
         if (nameQuery != null) {
@@ -44,7 +43,6 @@ public class DomainRepository extends JpaRepository {
         return query;
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<Domain> getJoinedDomains(String appUuid, String managerUuid, Integer limit, Integer offset) {
         Query query = em.createQuery("SELECT membership.domain FROM ManagerMembership membership WHERE membership.manager.uuid = :managerUuid AND membership.application.uuid = :appUuid", Domain.class);
         query.setParameter("managerUuid", managerUuid);
@@ -54,9 +52,6 @@ public class DomainRepository extends JpaRepository {
         return resultList;
     }
 
-    //Control change some data, we dont want to update it on database
-    //This should return only one result
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public Domain getJoinedDomain(String appUuid, String domainUuid, String managerUuid) {
         Query query = em.createQuery("SELECT membership.domain FROM ManagerMembership membership WHERE membership.manager.uuid = :managerUuid AND membership.domain.uuid = :domainUuid AND membership.application.uuid = :appUuid", Domain.class);
         query.setParameter("managerUuid", managerUuid);
@@ -108,7 +103,6 @@ public class DomainRepository extends JpaRepository {
         return count;
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<DomainPermission> getDomainPermissions(String appUuid, String domainUuid, Integer limit, Integer offset) {
         TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE  r.domain.uuid = :domainUuid AND r.application.uuid = :appUuid", DomainPermission.class);
         query.setParameter("domainUuid", domainUuid);
@@ -118,7 +112,6 @@ public class DomainRepository extends JpaRepository {
         return permissions;
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public DomainPermission getDomainPermission(String appUuid, String domainUuid, String permissionName) {
         TypedQuery<DomainPermission> query = em.createQuery("SELECT r FROM DomainPermission r WHERE r.domain.uuid = :domainUuid AND r.name = :permissionName AND r.application.uuid = :appUuid", DomainPermission.class);
         query.setParameter("domainUuid", domainUuid);
@@ -128,7 +121,6 @@ public class DomainRepository extends JpaRepository {
         return extractSingleResultFromList(permissions);
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public DomainPermission getDomainPermission(String appUuid, String domainUuid, int permissionLevel) {
         TypedQuery<DomainPermission> query = em.createQuery("SELECT domainperm FROM DomainPermission domainperm WHERE  domainperm.domain.uuid = :domainUuid AND domainperm.level = :permissionLevel AND domainperm.application.uuid = :appUuid", DomainPermission.class);
         query.setParameter("domainUuid", domainUuid);

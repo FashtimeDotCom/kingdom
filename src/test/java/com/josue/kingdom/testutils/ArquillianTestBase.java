@@ -5,10 +5,8 @@
  */
 package com.josue.kingdom.testutils;
 
-import com.josue.kingdom.util.LiquibaseHelper;
 import java.io.File;
 import java.util.logging.Logger;
-import org.jboss.shrinkwrap.api.Filters;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.CoordinateParseException;
@@ -37,7 +35,7 @@ public abstract class ArquillianTestBase {
 
             war = ShrinkWrap
                     .create(WebArchive.class, "kingdom-test.war")
-                    .addPackages(true, Filters.exclude(LiquibaseHelper.class), "com.josue.kingdom")
+                    .addPackages(true, "com.josue.kingdom")
                     .addClass(LiquibaseTestHelper.class)
                     .addAsResource("liquibase")
                     .addAsResource("test-persistence.xml", "META-INF/persistence.xml")

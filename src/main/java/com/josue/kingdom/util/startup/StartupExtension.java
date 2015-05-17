@@ -7,6 +7,8 @@ package com.josue.kingdom.util.startup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
@@ -21,6 +23,8 @@ import javax.enterprise.inject.spi.ProcessBean;
  */
 public class StartupExtension implements Extension {
 
+    private static final Logger logger = Logger.getLogger(StartupExtension.class.getName());
+
     private final List<Bean<?>> eagerBeansList = new ArrayList<>();
 
     public <T> void collect(@Observes ProcessBean<T> event) {
@@ -34,6 +38,7 @@ public class StartupExtension implements Extension {
         for (Bean<?> bean : eagerBeansList) {
             // note: toString() is important to instantiate the bean
             beanManager.getReference(bean, bean.getBeanClass(), beanManager.createCreationalContext(bean)).toString();
+            logger.log(Level.INFO, "*** Initializing bean {0}", bean.getName());
         }
     }
 }

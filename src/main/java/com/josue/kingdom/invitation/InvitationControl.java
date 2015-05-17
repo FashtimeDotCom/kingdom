@@ -107,7 +107,7 @@ public class InvitationControl {
         Manager manager = credentialRepository.getManagerByEmail(security.getCurrentApplication().getUuid(), invitation.getTargetManager().getEmail());
         if (manager != null) {// manager or 'empty invitation manager' already exist
             if (manager.equals(security.getCurrentManager())) {//self invitation... this is not allowed
-                throw new InvalidResourceArgException(Invitation.class, "You cannot invit yourself");
+                throw new InvalidResourceArgException(Invitation.class, "You cannot invite yourself");
             }
 
             Invitation existentInvitation = invitationRepository.getInvitation(security.getCurrentApplication().getUuid(), foundDomain.getUuid(), invitation.getTargetManager().getEmail());

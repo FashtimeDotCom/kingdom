@@ -9,7 +9,6 @@ import com.josue.kingdom.JpaRepository;
 import com.josue.kingdom.invitation.entity.Invitation;
 import java.util.List;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 
 /**
  *
@@ -17,7 +16,6 @@ import javax.transaction.Transactional;
  */
 public class InvitationRepository extends JpaRepository {
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<Invitation> getInvitations(String appUuid, String authorUuid, Integer limit, Integer offset) {
         TypedQuery<Invitation> query = em.createQuery("SELECT inv FROM Invitation inv WHERE inv.authorManager.uuid = :authorUuid AND inv.application.uuid = :appUuid", Invitation.class);
         query.setParameter("authorUuid", authorUuid);
@@ -26,7 +24,6 @@ public class InvitationRepository extends JpaRepository {
         return query.getResultList();
     }
 
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public Invitation getInvitation(String appUuid, String domainUuid, String targetEmail) {
         TypedQuery<Invitation> query = em.createQuery("SELECT inv FROM Invitation inv WHERE inv.targetManager.email = :targetEmail AND inv.domain.uuid = :domainUuid AND inv.application.uuid = :appUuid", Invitation.class);
         query.setParameter("appUuid", appUuid);

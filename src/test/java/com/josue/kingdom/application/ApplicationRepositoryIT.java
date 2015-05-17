@@ -17,6 +17,7 @@ import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ import org.junit.runner.RunWith;
  * @author Josue
  */
 @RunWith(Arquillian.class)
-@Transactional(TransactionMode.DISABLED)
+@Transactional(TransactionMode.ROLLBACK)
 public class ApplicationRepositoryIT {
 
     @Inject
@@ -44,6 +45,7 @@ public class ApplicationRepositoryIT {
     public void testGetApplication() {
         Application application = InstanceHelper.createApplication();
         repository.create(application);
+        assertNotNull(application.getUuid());
         Application foundApplication = repository.getApplication(application.getUuid());
         assertEquals(application, foundApplication);
     }

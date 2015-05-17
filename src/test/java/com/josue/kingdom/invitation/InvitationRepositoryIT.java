@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
  * @author Josue
  */
 @RunWith(Arquillian.class)
-@Transactional(TransactionMode.DISABLED)
+@Transactional(TransactionMode.ROLLBACK)
 public class InvitationRepositoryIT {
 
     @Inject

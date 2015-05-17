@@ -14,7 +14,6 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 
 /**
  *
@@ -22,7 +21,6 @@ import javax.transaction.Transactional;
  */
 //Authentication specific Repository
 @ApplicationScoped
-@Transactional(Transactional.TxType.NOT_SUPPORTED)
 public class AuthRepository extends JpaRepository {
 
     public Manager getManagerByEmail(String appKey, String email, String password) {

@@ -8,6 +8,7 @@ package com.josue.kingdom;
 import com.josue.kingdom.application.entity.Application;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Default;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -24,8 +25,9 @@ import javax.transaction.Transactional;
  * @author Josue
  *
  */
+@Default
 @ApplicationScoped
-@Transactional(Transactional.TxType.NOT_SUPPORTED)
+@Transactional(Transactional.TxType.SUPPORTS)
 public class JpaRepository {
 
     @PersistenceContext

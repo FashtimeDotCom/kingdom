@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
  * @author Josue
  */
 @RunWith(Arquillian.class)
-@Transactional(TransactionMode.DISABLED)
+@Transactional(TransactionMode.ROLLBACK)
 public class DomainRepositoryIT {
 
     private static final Integer DEFAULT_LIMIT = 100;
