@@ -29,22 +29,8 @@ public class DatabaseHelper {
 
     @Resource(lookup = "java:jboss/datasources/kingdom-testDS")
     private DataSource datasource;
-    private static final Logger LOG = Logger.getLogger(LiquibaseTestHelper.class.getName());
+    private static final Logger LOG = Logger.getLogger(DatabaseHelper.class.getName());
 
-    private final String REMOVE_MANAGER_DOMAIN_CREDENTIAL = "DELETE FROM MANAGER_DOMAIN_CREDENTIAL";
-    private final String REMOVE_API_DOMAIN_CREDENTIAL = "DELETE FROM API_DOMAIN_CREDENTIAL";
-    private final String REMOVE_MANAGER_CREDENTIAL = "DELETE FROM MANAGER_CREDENTIAL";
-    private final String REMOVE_API_CREDENTIAL = "DELETE FROM API_CREDENTIAL";
-    private final String REMOVE_INVITATION = "DELETE FROM INVITATION";
-    private final String REMOVE_MANAGER = "DELETE FROM MANAGER";
-    private final String REMOVE_DOMAIN_PERMISSION = "DELETE FROM DOMAIN_PERMISSION";
-    private final String REMOVE_DOMAIN = "DELETE FROM DOMAIN";
-
-    private final String DISABLE_CONSTRAINTS = "SET FOREIGN_KEY_CHECKS=0;";
-    private final String ENABLE_CONSTRAINT = "SET FOREIGN_KEY_CHECKS=1;";
-
-    //TODO check full DB deletion... FK constraint error
-//    @PostConstruct
     public void cleanDatabase() {
 
         LOG.log(Level.INFO, "### REMOVING DATABASE DATA ###");
